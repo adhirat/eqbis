@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Form Submissions - Adhirat Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind Configuration -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Global Assets -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+
+<body
+    class="pt-0 bg-background-light dark:bg-dark-bg text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full overflow-hidden">
+        <div id="portal-sidebar" class="contents"></div>
+
+        <main class="flex-1 flex flex-col min-w-0">
+            <div id="portal-header" class="contents"></div>
+
+            <div class="flex-1 overflow-y-auto p-4 sm:p-8 animate-fade-in-up">
+                <div class="max-w-[1280px] mx-auto flex flex-col gap-8">
+                    <!-- Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                        <div>
+                            <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Contact Form
+                                Submissions</h1>
+                            <p class="text-slate-500 dark:text-slate-400">View and respond to contact form inquiries.
+                            </p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="openNewSubmissionModal()"
+                                class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-blue-600 transition-colors shadow-sm"
+                                data-permission="respond_submissions">
+                                <span class="material-symbols-outlined text-[18px]">add</span>
+                                New Submission
+                            </button>
+                            <button onclick="exportSubmissions()"
+                                class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
+                                data-permission="export_submissions">
+                                <span class="material-symbols-outlined text-[18px]">download</span>
+                                Export CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+                                    <span class="material-symbols-outlined text-2xl">inbox</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Messages</p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="stat-total">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-amber-600 dark:text-amber-400">
+                                    <span class="material-symbols-outlined text-2xl">mark_email_unread</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">New</p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="stat-new">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-purple-600 dark:text-purple-400">
+                                    <span class="material-symbols-outlined text-2xl">drafts</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Read</p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="stat-read">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-emerald-600 dark:text-emerald-400">
+                                    <span class="material-symbols-outlined text-2xl">reply</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Responded</p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="stat-responded">0
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submissions List -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- List Panel -->
+                        <div
+                            class="lg:col-span-1 bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col max-h-[600px]">
+                            <div
+                                class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+                                <div class="relative">
+                                    <input type="text" id="search-messages" placeholder="Search messages..."
+                                        class="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm">
+                                    <span
+                                        class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+                                </div>
+                            </div>
+                            <div class="flex border-b border-slate-200 dark:border-slate-700">
+                                <button onclick="filterMessages('')"
+                                    class="filter-btn flex-1 px-3 py-2 text-sm font-medium text-primary border-b-2 border-primary"
+                                    data-filter="">All</button>
+                                <button onclick="filterMessages('new')"
+                                    class="filter-btn flex-1 px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                                    data-filter="new">New</button>
+                                <button onclick="filterMessages('responded')"
+                                    class="filter-btn flex-1 px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                                    data-filter="responded">Replied</button>
+                            </div>
+                            <div id="messages-list"
+                                class="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+                                <div class="flex items-center justify-center py-12">
+                                    <span
+                                        class="material-symbols-outlined text-4xl text-slate-400 animate-spin">progress_activity</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detail Panel -->
+                        <div
+                            class="lg:col-span-2 bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col">
+                            <div id="message-detail" class="flex-1 flex items-center justify-center p-8">
+                                <div class="text-center">
+                                    <span class="material-symbols-outlined text-5xl text-slate-300 mb-4">mail</span>
+                                    <p class="text-slate-500">Select a message to view details</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="text-center text-sm text-slate-500 py-6">
+                        © 2024 Adhirat Technologies. All rights reserved.
+                    </footer>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Reply Modal -->
+    <div id="reply-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeReplyModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl max-w-lg w-full border border-slate-200 dark:border-slate-700 animate-fade-in-up">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">Add Response Note</h3>
+                    <button onclick="closeReplyModal()"
+                        class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <input type="hidden" id="reply-sub-id">
+                <textarea id="reply-text" rows="5" placeholder="Enter your response notes..."
+                    class="w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 resize-none focus:ring-2 focus:ring-primary"></textarea>
+                <p class="text-xs text-slate-500 mt-2">This note is for internal record keeping only.</p>
+            </div>
+            <div
+                class="p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3">
+                <button onclick="closeReplyModal()"
+                    class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
+                <button onclick="saveReply()" class="px-6 py-2 rounded-lg bg-primary text-white hover:bg-blue-600">Save
+                    Response</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeDeleteModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-700 animate-fade-in-up">
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-red-500 text-2xl">delete_forever</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Delete Message</h3>
+                        <p class="text-sm text-slate-500">This cannot be undone</p>
+                    </div>
+                </div>
+                <input type="hidden" id="delete-msg-id">
+                <div class="flex gap-3">
+                    <button onclick="closeDeleteModal()"
+                        class="flex-1 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
+                    <button onclick="confirmDelete()"
+                        class="flex-1 px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Submission Modal -->
+    <div id="new-submission-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeNewSubmissionModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 dark:border-slate-700 animate-fade-in-up max-h-[90vh] overflow-y-auto">
+            <div
+                class="p-6 border-b border-slate-200 dark:border-slate-700 sticky top-0 bg-white dark:bg-dark-card z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">New Contact Submission</h3>
+                        <p class="text-sm text-slate-500">Add a new contact record manually</p>
+                    </div>
+                    <button onclick="closeNewSubmissionModal()"
+                        class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+            </div>
+            <form id="new-submission-form" class="p-6 space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300" for="new-name">Full Name
+                            *</label>
+                        <div class="relative">
+                            <input
+                                class="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                id="new-name" name="name" placeholder="John Doe" type="text" required />
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                                <span class="material-symbols-outlined text-slate-400 text-lg">person</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300" for="new-email">Email
+                            Address *</label>
+                        <div class="relative">
+                            <input
+                                class="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                id="new-email" name="email" placeholder="john@company.com" type="email" required />
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                                <span class="material-symbols-outlined text-slate-400 text-lg">alternate_email</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300" for="new-phone">Phone
+                            <span class="text-slate-400 font-normal">(optional)</span></label>
+                        <div class="relative">
+                            <input
+                                class="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                id="new-phone" name="phone" placeholder="+61 400 000 000" type="tel" />
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                                <span class="material-symbols-outlined text-slate-400 text-lg">call</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+                            for="new-company">Company / Brand / Project *</label>
+                        <div class="relative">
+                            <input
+                                class="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                id="new-company" name="company" placeholder="Acme Corp" type="text" required />
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                                <span class="material-symbols-outlined text-slate-400 text-lg">business</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300" for="new-service">Service
+                        Interest *</label>
+                    <div class="relative">
+                        <select
+                            class="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 appearance-none"
+                            id="new-service" name="service" required>
+                            <option value="" disabled selected>Select a Service</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="UI/UX Design">UI/UX Design</option>
+                            <option value="Mobile App Development">Mobile App Development</option>
+                            <option value="AI Solutions">AI Solutions</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                            <span class="material-symbols-outlined text-slate-400 text-lg">expand_more</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300" for="new-message">Message /
+                        Project Details *</label>
+                    <textarea
+                        class="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
+                        id="new-message" name="message"
+                        placeholder="Tell us about the project goals, timeline, and budget..." rows="4"
+                        required></textarea>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Attachments
+                        <span class="text-slate-400 font-normal">(optional)</span></label>
+                    <div id="portal-attachment-dropzone"
+                        class="relative border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-4 text-center hover:border-primary hover:bg-primary/5 transition-all cursor-pointer">
+                        <input class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" id="new-attachments"
+                            name="attachments" type="file" multiple
+                            accept="image/*, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .zip" />
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="material-symbols-outlined text-2xl text-slate-400">cloud_upload</span>
+                            <p class="text-xs text-slate-500">Drag files here or <span
+                                    class="text-primary font-semibold">browse</span></p>
+                        </div>
+                    </div>
+                    <div id="portal-attachment-preview" class="hidden mt-2 space-y-2"></div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300" for="new-status">Initial
+                        Status</label>
+                    <div class="flex gap-3">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="status" value="new" checked
+                                class="text-primary focus:ring-primary" />
+                            <span class="text-sm text-slate-600 dark:text-slate-400">New</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="status" value="read" class="text-primary focus:ring-primary" />
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Read</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="status" value="responded"
+                                class="text-primary focus:ring-primary" />
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Responded</span>
+                        </label>
+                    </div>
+                </div>
+            </form>
+            <div
+                class="p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 sticky bottom-0">
+                <button onclick="closeNewSubmissionModal()"
+                    class="px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Cancel</button>
+                <button onclick="submitNewSubmission()" id="submit-new-btn"
+                    class="px-6 py-2.5 rounded-lg bg-primary text-white hover:bg-blue-600 font-semibold flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">add</span>
+                    Create Submission
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import {
+            initRBACGuard,
+            getAllSubmissions,
+            updateSubmissionStatus,
+            addResponseToSubmission,
+            deleteSubmission,
+            createSubmission,
+            exportToCSV,
+            PERMISSIONS
+        } from '../assets/js/rbac.js';
+        import {
+            db, storage, doc, collection, addDoc, updateDoc, serverTimestamp,
+            ref, uploadBytes, getDownloadURL
+        } from '../assets/js/firebase-config.js';
+        import {
+            getAuth, createUserWithEmailAndPassword, sendPasswordResetEmail
+        } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+        import { getCurrentOrgId } from '../assets/js/firebase-modules.js';
+
+        initRBACGuard([PERMISSIONS.VIEW_SUBMISSIONS]);
+
+        let allSubmissions = [];
+        let currentFilter = '';
+        let selectedMessage = null;
+        let portalSelectedFiles = [];
+
+        // Setup portal file attachment handling
+        function setupPortalFileHandling() {
+            const fileInput = document.getElementById('new-attachments');
+            const dropzone = document.getElementById('portal-attachment-dropzone');
+            const previewContainer = document.getElementById('portal-attachment-preview');
+
+            function updatePreview() {
+                if (portalSelectedFiles.length === 0) {
+                    previewContainer.classList.add('hidden');
+                    return;
+                }
+
+                previewContainer.classList.remove('hidden');
+                previewContainer.innerHTML = portalSelectedFiles.map((file, index) => {
+                    const icon = file.type.startsWith('image/') ? 'image' :
+                        file.type.includes('pdf') ? 'picture_as_pdf' : 'description';
+                    const size = (file.size / 1024 / 1024).toFixed(2);
+                    return `
+                        <div class="flex items-center justify-between gap-2 p-2 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="material-symbols-outlined text-primary text-lg">${icon}</span>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-medium text-slate-900 dark:text-white truncate">${file.name}</p>
+                                    <p class="text-xs text-slate-500">${size} MB</p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="removePortalFile(${index})" class="p-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors">
+                                <span class="material-symbols-outlined text-red-500 text-sm">close</span>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            window.removePortalFile = function (index) {
+                portalSelectedFiles.splice(index, 1);
+                updatePreview();
+            };
+
+            fileInput?.addEventListener('change', (e) => {
+                const newFiles = Array.from(e.target.files).filter(file => file.size <= 10 * 1024 * 1024);
+                portalSelectedFiles = [...portalSelectedFiles, ...newFiles];
+                updatePreview();
+                e.target.value = '';
+            });
+
+            ['dragenter', 'dragover'].forEach(evt => {
+                dropzone?.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add('border-primary', 'bg-primary/5');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(evt => {
+                dropzone?.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('border-primary', 'bg-primary/5');
+                });
+            });
+
+            dropzone?.addEventListener('drop', (e) => {
+                const newFiles = Array.from(e.dataTransfer.files).filter(file => file.size <= 10 * 1024 * 1024);
+                portalSelectedFiles = [...portalSelectedFiles, ...newFiles];
+                updatePreview();
+            });
+        }
+
+        // Initialize after DOM ready
+        setTimeout(setupPortalFileHandling, 100);
+
+        async function loadSubmissions() {
+            const result = await getAllSubmissions();
+            if (result.success) {
+                allSubmissions = result.submissions;
+                renderMessages(allSubmissions);
+                updateStats();
+
+                if (selectedMessage) {
+                    const updated = allSubmissions.find(s => s.id === selectedMessage.id);
+                    if (updated) {
+                        selectedMessage = updated;
+                        renderMessageDetail(updated);
+                    }
+                }
+            }
+        }
+
+        function renderMessages(messages) {
+            const container = document.getElementById('messages-list');
+
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-12">
+                        <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">inbox</span>
+                        <p class="text-slate-500 text-sm">No messages found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = messages.map(msg => {
+                const date = msg.createdAt?.toDate ? formatRelativeDate(msg.createdAt.toDate()) : 'Unknown';
+                const isNew = msg.status === 'new' || !msg.status;
+                const isSelected = selectedMessage?.id === msg.id;
+
+                return `
+                    <div onclick="selectMessage('${msg.id}')" 
+                        class="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isSelected ? 'bg-primary/5 border-l-4 border-primary' : ''} ${isNew ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}">
+                        <div class="flex items-start justify-between gap-2 mb-1">
+                            <div class="flex items-center gap-2">
+                                ${isNew ? '<span class="w-2 h-2 rounded-full bg-blue-500"></span>' : ''}
+                                <h4 class="font-semibold text-slate-900 dark:text-white text-sm truncate max-w-[180px]">${msg.name || 'Anonymous'}</h4>
+                            </div>
+                            <span class="text-xs text-slate-500 whitespace-nowrap">${date}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-1 truncate">${msg.email}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">${msg.message?.substring(0, 80) || 'No message'}...</p>
+                        ${msg.service ? `<span class="inline-block mt-2 px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">${msg.service}</span>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.selectMessage = async function (id) {
+            const msg = allSubmissions.find(m => m.id === id);
+            if (!msg) return;
+
+            selectedMessage = msg;
+            renderMessages(getFilteredMessages());
+
+            // Mark as read if new
+            if (msg.status === 'new' || !msg.status) {
+                await updateSubmissionStatus(id, 'read');
+                msg.status = 'read';
+                updateStats();
+            }
+
+            renderMessageDetail(msg);
+        };
+
+        function renderMessageDetail(msg) {
+            const container = document.getElementById('message-detail');
+            const date = msg.createdAt?.toDate ? formatDate(msg.createdAt.toDate()) : 'Unknown';
+            const statusColors = {
+                new: 'bg-blue-100 text-blue-600',
+                read: 'bg-slate-100 text-slate-600',
+                responded: 'bg-emerald-100 text-emerald-600',
+                archived: 'bg-slate-100 text-slate-500'
+            };
+            const statusColor = statusColors[msg.status] || statusColors.new;
+
+            container.innerHTML = `
+                <div class="flex flex-col h-full">
+                    <!-- Header -->
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white font-bold">
+                                    ${(msg.name || 'A').charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-900 dark:text-white">${msg.name || 'Anonymous'}</h3>
+                                    <p class="text-sm text-slate-500">${msg.email}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-1 text-xs font-medium rounded-full ${statusColor}">${msg.status || 'new'}</span>
+                                <button onclick="openReplyModal('${msg.id}')" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" title="Add Response" data-permission="respond_submissions">
+                                    <span class="material-symbols-outlined text-primary">reply</span>
+                                </button>
+                                <button onclick="openDeleteModal('${msg.id}')" class="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg" title="Delete" data-permission="delete_submissions">
+                                    <span class="material-symbols-outlined text-red-500">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex-1 p-6 overflow-y-auto">
+                        <div class="space-y-6">
+                            <!-- Meta Info -->
+                            <div class="grid grid-cols-2 gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                                <div>
+                                    <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Received</p>
+                                    <p class="text-sm font-medium text-slate-900 dark:text-white">${date}</p>
+                                </div>
+                                ${msg.phone ? `
+                                <div>
+                                    <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Phone</p>
+                                    <p class="text-sm font-medium text-slate-900 dark:text-white">${msg.phone}</p>
+                                </div>
+                                ` : ''}
+                                ${msg.company ? `
+                                <div>
+                                    <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Company</p>
+                                    <p class="text-sm font-medium text-slate-900 dark:text-white">${msg.company}</p>
+                                </div>
+                                ` : ''}
+                                ${msg.service ? `
+                                <div>
+                                    <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Service</p>
+                                    <p class="text-sm font-medium text-slate-900 dark:text-white">${msg.service}</p>
+                                </div>
+                                ` : ''}
+                            </div>
+
+                            <!-- Message -->
+                            <div>
+                                <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-2">Message</h4>
+                                <div class="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                                    <p class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">${msg.message || 'No message provided.'}</p>
+                                </div>
+                            </div>
+
+                            ${renderAttachments(msg)}
+
+                            ${msg.response ? `
+                            <div>
+                                <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
+                                    Response Notes
+                                </h4>
+                                <div class="p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+                                    <p class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">${msg.response}</p>
+                                    ${msg.respondedAt ? `<p class="text-xs text-slate-500 mt-2">Responded: ${formatDate(msg.respondedAt.toDate())}</p>` : ''}
+                                </div>
+                            </div>
+                            ` : ''}
+
+                            <!-- Admin Actions -->
+                            ${!msg.clientCreated ? `
+                            <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+                                <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-3">Quick Actions</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <button onclick="createClientFromSubmission('${msg.id}')" 
+                                        class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-blue-600 text-white rounded-lg hover:shadow-lg transition-all text-sm font-semibold"
+                                        data-permission="manage_clients">
+                                        <span class="material-symbols-outlined text-lg">person_add</span>
+                                        Create Client & Project
+                                    </button>
+                                    <button onclick="createClientOnlyFromSubmission('${msg.id}')" 
+                                        class="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm font-semibold"
+                                        data-permission="manage_clients">
+                                        <span class="material-symbols-outlined text-lg">person_add</span>
+                                        Create Client Only
+                                    </button>
+                                </div>
+                            </div>
+                            ` : `
+                            <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+                                <div class="flex items-center gap-2 text-emerald-600">
+                                    <span class="material-symbols-outlined">check_circle</span>
+                                    <span class="text-sm font-medium">Client created: ${msg.clientName || 'N/A'}</span>
+                                </div>
+                                ${msg.projectCreated ? `
+                                <div class="flex items-center gap-2 text-emerald-600 mt-1">
+                                    <span class="material-symbols-outlined">check_circle</span>
+                                    <span class="text-sm font-medium">Project created: ${msg.projectName || 'N/A'}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAttachments(msg) {
+            // Handle new attachments array format
+            if (msg.attachments && msg.attachments.length > 0) {
+                return `
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-2">Attachments (${msg.attachments.length})</h4>
+                    <div class="space-y-2">
+                        ${msg.attachments.map(att => {
+                    const icon = att.type?.startsWith('image/') ? 'image' :
+                        att.type?.includes('pdf') ? 'picture_as_pdf' : 'description';
+                    const size = att.size ? (att.size / 1024 / 1024).toFixed(2) + ' MB' : '';
+                    return `
+                                <a href="${att.url}" target="_blank" 
+                                   class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700">
+                                    <span class="material-symbols-outlined text-primary">${icon}</span>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-sm font-medium text-slate-900 dark:text-white truncate">${att.name || 'Attachment'}</p>
+                                        ${size ? `<p class="text-xs text-slate-500">${size}</p>` : ''}
+                                    </div>
+                                    <span class="material-symbols-outlined text-slate-400">open_in_new</span>
+                                </a>
+                            `;
+                }).join('')}
+                    </div>
+                </div>
+                `;
+            }
+            // Fallback for legacy single attachment
+            else if (msg.attachmentUrl) {
+                return `
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-2">Attachment</h4>
+                    <a href="${msg.attachmentUrl}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        <span class="material-symbols-outlined text-lg">attach_file</span>
+                        <span class="text-sm font-medium">View Attachment</span>
+                    </a>
+                </div>
+                `;
+            }
+            return '';
+        }
+
+        function updateStats() {
+            const total = allSubmissions.length;
+            const newCount = allSubmissions.filter(s => s.status === 'new' || !s.status).length;
+            const read = allSubmissions.filter(s => s.status === 'read').length;
+            const responded = allSubmissions.filter(s => s.status === 'responded').length;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-new').textContent = newCount;
+            document.getElementById('stat-read').textContent = read;
+            document.getElementById('stat-responded').textContent = responded;
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatRelativeDate(date) {
+            const now = new Date();
+            const diff = now - date;
+            const mins = Math.floor(diff / 60000);
+            const hours = Math.floor(mins / 60);
+            const days = Math.floor(hours / 24);
+
+            if (mins < 1) return 'Just now';
+            if (mins < 60) return `${mins}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function getFilteredMessages() {
+            if (!currentFilter) return allSubmissions;
+            if (currentFilter === 'new') return allSubmissions.filter(s => s.status === 'new' || !s.status);
+            return allSubmissions.filter(s => s.status === currentFilter);
+        }
+
+        window.filterMessages = function (filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === filter) {
+                    btn.classList.add('text-primary', 'border-b-2', 'border-primary');
+                    btn.classList.remove('text-slate-500');
+                } else {
+                    btn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                    btn.classList.add('text-slate-500');
+                }
+            });
+            renderMessages(getFilteredMessages());
+        };
+
+        // Search
+        document.getElementById('search-messages').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allSubmissions.filter(m =>
+                (m.name || '').toLowerCase().includes(query) ||
+                (m.email || '').toLowerCase().includes(query) ||
+                (m.message || '').toLowerCase().includes(query)
+            );
+            renderMessages(filtered);
+        });
+
+        // Reply Modal
+        window.openReplyModal = function (id) {
+            document.getElementById('reply-sub-id').value = id;
+            const msg = allSubmissions.find(m => m.id === id);
+            document.getElementById('reply-text').value = msg?.response || '';
+            document.getElementById('reply-modal').classList.remove('hidden');
+        };
+
+        window.closeReplyModal = function () {
+            document.getElementById('reply-modal').classList.add('hidden');
+        };
+
+        window.saveReply = async function () {
+            const id = document.getElementById('reply-sub-id').value;
+            const response = document.getElementById('reply-text').value.trim();
+
+            if (!response) {
+                showToast('Please enter a response', 'error');
+                return;
+            }
+
+            const result = await addResponseToSubmission(id, response);
+            if (result.success) {
+                showToast('Response saved', 'success');
+                closeReplyModal();
+                loadSubmissions();
+            } else {
+                showToast(result.error, 'error');
+            }
+        };
+
+        // Delete Modal
+        window.openDeleteModal = function (id) {
+            document.getElementById('delete-msg-id').value = id;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        };
+
+        window.closeDeleteModal = function () {
+            document.getElementById('delete-modal').classList.add('hidden');
+        };
+
+        window.confirmDelete = async function () {
+            const id = document.getElementById('delete-msg-id').value;
+            const result = await deleteSubmission(id);
+            if (result.success) {
+                showToast('Message deleted', 'success');
+                closeDeleteModal();
+                selectedMessage = null;
+                document.getElementById('message-detail').innerHTML = `
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-5xl text-slate-300 mb-4">mail</span>
+                        <p class="text-slate-500">Select a message to view details</p>
+                    </div>
+                `;
+                loadSubmissions();
+            } else {
+                showToast(result.error, 'error');
+            }
+        };
+
+        // Export
+        window.exportSubmissions = function () {
+            const data = allSubmissions.map(s => ({
+                name: s.name,
+                email: s.email,
+                phone: s.phone || '',
+                company: s.company || '',
+                service: s.service || '',
+                message: s.message,
+                status: s.status || 'new',
+                createdAt: s.createdAt?.toDate?.().toISOString() || '',
+                response: s.response || ''
+            }));
+            exportToCSV(data, 'contact_submissions');
+            showToast('Export started', 'success');
+        };
+
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-4 right-4 ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in-up z-50`;
+            toast.innerHTML = `<span class="material-symbols-outlined">${type === 'success' ? 'check_circle' : 'error'}</span>${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // New Submission Modal
+        window.openNewSubmissionModal = function () {
+            document.getElementById('new-submission-modal').classList.remove('hidden');
+            document.getElementById('new-submission-form').reset();
+        };
+
+        window.closeNewSubmissionModal = function () {
+            document.getElementById('new-submission-modal').classList.add('hidden');
+        };
+
+        window.submitNewSubmission = async function () {
+            const form = document.getElementById('new-submission-form');
+
+            // Basic validation
+            const name = document.getElementById('new-name').value.trim();
+            const email = document.getElementById('new-email').value.trim();
+            const company = document.getElementById('new-company').value.trim();
+            const service = document.getElementById('new-service').value;
+            const message = document.getElementById('new-message').value.trim();
+            const phone = document.getElementById('new-phone').value.trim();
+            const status = form.querySelector('input[name="status"]:checked')?.value || 'new';
+
+            if (!name || !email || !company || !service || !message) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showToast('Please enter a valid email address', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('submit-new-btn');
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined text-lg animate-spin">progress_activity</span> Uploading...';
+
+            try {
+                // Upload files if any
+                let attachments = [];
+                if (portalSelectedFiles.length > 0) {
+                    for (const file of portalSelectedFiles) {
+                        const storageRef = ref(storage, `contact-attachments/${Date.now()}_${file.name}`);
+                        const snapshot = await uploadBytes(storageRef, file);
+                        const downloadUrl = await getDownloadURL(snapshot.ref);
+                        attachments.push({
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            url: downloadUrl
+                        });
+                    }
+                }
+
+                btn.innerHTML = '<span class="material-symbols-outlined text-lg animate-spin">progress_activity</span> Creating...';
+
+                const submissionData = {
+                    name,
+                    email,
+                    phone,
+                    company,
+                    service,
+                    message,
+                    status,
+                    attachments,
+                    attachmentUrl: attachments.length > 0 ? attachments[0].url : null
+                };
+
+                const result = await createSubmission(submissionData);
+
+                if (result.success) {
+                    showToast('Submission created successfully', 'success');
+                    portalSelectedFiles = [];
+                    closeNewSubmissionModal();
+                    loadSubmissions();
+                } else {
+                    showToast(result.error || 'Failed to create submission', 'error');
+                }
+            } catch (error) {
+                console.error('Error creating submission:', error);
+                showToast('Error: ' + error.message, 'error');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = originalContent;
+        };
+
+        // Create client and project from submission
+        window.createClientFromSubmission = async function (submissionId) {
+            const msg = allSubmissions.find(s => s.id === submissionId);
+            if (!msg) return;
+
+            if (!confirm(`Create a new client and project from this submission?\n\nClient: ${msg.name}\nCompany: ${msg.company || 'N/A'}\nEmail: ${msg.email}`)) {
+                return;
+            }
+
+            showToast('Creating client and project...', 'success');
+
+            try {
+                // 1. Create client record
+                const clientRef = await addDoc(collection(db, 'clients'), {
+                    name: msg.name,
+                    email: msg.email,
+                    phone: msg.phone || '',
+                    company: msg.company || '',
+                    address: '',
+                    status: 'active',
+                    notes: `Created from contact form submission.\nService Interest: ${msg.service || 'N/A'}\nOriginal Message: ${msg.message || ''}`,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp(),
+                    sourceSubmissionId: submissionId,
+                    orgId: getCurrentOrgId()
+                });
+
+                // 2. Create project record with attachments
+                const projectRef = await addDoc(collection(db, 'projects'), {
+                    name: `${msg.company || msg.name} - ${msg.service || 'New Project'}`,
+                    description: msg.message || '',
+                    clientId: clientRef.id,
+                    clientName: msg.name,
+                    status: 'planning',
+                    priority: 'medium',
+                    startDate: new Date().toISOString().split('T')[0],
+                    dueDate: '',
+                    budget: 0,
+                    attachments: msg.attachments || (msg.attachmentUrl ? [{ url: msg.attachmentUrl, name: 'Original Attachment' }] : []),
+                    notes: `Service Interest: ${msg.service || 'N/A'}`,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp(),
+                    sourceSubmissionId: submissionId,
+                    orgId: getCurrentOrgId()
+                });
+
+                // 3. Update submission with created records
+                await updateDoc(doc(db, 'messages', submissionId), {
+                    clientCreated: true,
+                    clientId: clientRef.id,
+                    clientName: msg.name,
+                    projectCreated: true,
+                    projectId: projectRef.id,
+                    projectName: `${msg.company || msg.name} - ${msg.service || 'New Project'}`,
+                    updatedAt: serverTimestamp()
+                });
+
+                // Update local data
+                msg.clientCreated = true;
+                msg.clientName = msg.name;
+                msg.projectCreated = true;
+                msg.projectName = `${msg.company || msg.name} - ${msg.service || 'New Project'}`;
+
+                // Refresh display
+                renderMessageDetail(msg);
+
+                showToast('Client and project created successfully!', 'success');
+            } catch (error) {
+                console.error('Error creating client/project:', error);
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        // Create client only (no project)
+        window.createClientOnlyFromSubmission = async function (submissionId) {
+            const msg = allSubmissions.find(s => s.id === submissionId);
+            if (!msg) return;
+
+            if (!confirm(`Create a new client from this submission?\n\nClient: ${msg.name}\nCompany: ${msg.company || 'N/A'}\nEmail: ${msg.email}`)) {
+                return;
+            }
+
+            showToast('Creating client...', 'success');
+
+            try {
+                // Create client record
+                const clientRef = await addDoc(collection(db, 'clients'), {
+                    name: msg.name,
+                    email: msg.email,
+                    phone: msg.phone || '',
+                    company: msg.company || '',
+                    address: '',
+                    status: 'active',
+                    notes: `Created from contact form submission.\nService Interest: ${msg.service || 'N/A'}\nOriginal Message: ${msg.message || ''}`,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp(),
+                    sourceSubmissionId: submissionId,
+                    orgId: getCurrentOrgId()
+                });
+
+                // Update submission with created client
+                await updateDoc(doc(db, 'messages', submissionId), {
+                    clientCreated: true,
+                    clientId: clientRef.id,
+                    clientName: msg.name,
+                    updatedAt: serverTimestamp()
+                });
+
+                // Update local data
+                msg.clientCreated = true;
+                msg.clientName = msg.name;
+
+                // Refresh display
+                renderMessageDetail(msg);
+
+                showToast('Client created successfully!', 'success');
+            } catch (error) {
+                console.error('Error creating client:', error);
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        loadSubmissions();
+    </script>
+</body>
+
+</html>

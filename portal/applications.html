@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Applications - Adhirat Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+    <style>
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+
+<body
+    class="pt-0 bg-background-light dark:bg-dark-bg text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full overflow-hidden">
+        <div id="portal-sidebar" class="contents"></div>
+        <main class="flex-1 flex flex-col min-w-0">
+            <div id="portal-header" class="contents"></div>
+            <div class="flex-1 overflow-y-auto p-4 sm:p-8 animate-fade-in-up">
+                <div class="max-w-[1280px] mx-auto flex flex-col gap-8">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Career
+                                    Applications
+                                </h1>
+                                <p class="text-slate-500 dark:text-slate-400">Manage and track job applications.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+
+                        <!-- Filter Bar -->
+                        <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex gap-4">
+                            <input type="text" id="search-input" placeholder="Search by name..."
+                                class="rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-primary w-full max-w-sm">
+                            <select id="position-filter"
+                                class="rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-primary">
+                                <option value="">All Positions</option>
+                                <!-- Loaded via JS -->
+                            </select>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-slate-500 dark:text-slate-400">
+                                <thead
+                                    class="bg-slate-50 dark:bg-[#1a202c] text-xs uppercase font-semibold text-slate-500 dark:text-slate-400">
+                                    <tr>
+                                        <th class="px-6 py-3">Applicant</th>
+                                        <th class="px-6 py-3">Position</th>
+                                        <th class="px-6 py-3">Experience</th>
+                                        <th class="px-6 py-3">Applied Date</th>
+                                        <th class="px-6 py-3">Status</th>
+                                        <th class="px-6 py-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body" class="divide-y divide-slate-200 dark:divide-border-dark">
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-12 text-center">
+                                            <span
+                                                class="material-symbols-outlined text-4xl text-slate-400 animate-spin mb-2">progress_activity</span>
+                                            <p>Loading applications...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create User Modal -->
+    <div id="create-user-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeCreateUserModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl w-full max-w-md p-6 border border-slate-200 dark:border-slate-700 animate-fade-in-up">
+            <h2 class="text-xl font-bold mb-4">Create User Profile</h2>
+            <p class="text-sm text-slate-500 mb-4">Create a new user account for this applicant.</p>
+
+            <form id="create-user-form" class="space-y-4">
+                <input type="hidden" id="cu-app-id">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Full Name</label>
+                    <input type="text" id="cu-name" readonly
+                        class="w-full rounded-lg bg-slate-100 dark:bg-slate-800 border-none cursor-not-allowed opacity-75">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Email</label>
+                    <input type="email" id="cu-email" readonly
+                        class="w-full rounded-lg bg-slate-100 dark:bg-slate-800 border-none cursor-not-allowed opacity-75">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Passsword (Min 8 chars)</label>
+                    <input type="password" id="cu-password" required minlength="8"
+                        class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-primary">
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeCreateUserModal()"
+                        class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-primary text-white flex items-center gap-2">
+                        <span id="cu-spinner"
+                            class="material-symbols-outlined animate-spin hidden text-sm">progress_activity</span>
+                        Create User
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <script type="module">
+        import { db, collection, getDocs, doc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, setDoc, where } from '../assets/js/firebase-config.js';
+        import { initAuthObserver, generateNextEmployeeId, getCurrentOrgId } from '../assets/js/firebase-modules.js';
+        import { createUserWithEmailAndPassword, getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        initAuthObserver(true);
+
+        let applications = [];
+        let positions = [];
+
+        async function loadData() {
+            try {
+                // Load Applications
+                const appQ = query(collection(db, 'applications'), where('orgId', '==', getCurrentOrgId()), orderBy('appliedAt', 'desc'));
+                const appSnap = await getDocs(appQ);
+                applications = appSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                // Load Positions for Filter
+                const posQ = query(collection(db, 'careers'), where('orgId', '==', getCurrentOrgId()));
+                const posSnap = await getDocs(posQ);
+                positions = posSnap.docs.map(doc => ({ id: doc.id, name: doc.data().name }));
+
+                populatePositionFilter();
+                renderTable();
+            } catch (error) {
+                console.error("Error loading data:", error);
+                renderTable(); // Remove spinner
+                showToast("Error loading data", "error");
+            }
+        }
+
+
+
+        function populatePositionFilter() {
+            const select = document.getElementById('position-filter');
+            select.innerHTML = '<option value="">All Positions</option>' +
+                positions.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+
+            select.addEventListener('change', renderTable);
+            document.getElementById('search-input').addEventListener('input', renderTable);
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            const filterPos = document.getElementById('position-filter').value;
+            const search = document.getElementById('search-input').value.toLowerCase();
+
+            let filtered = applications.filter(app => {
+                const matchPos = !filterPos || app.positionId === filterPos;
+                const name = `${app.firstName} ${app.lastName}`.toLowerCase();
+                const matchSearch = !search || name.includes(search) || app.email.toLowerCase().includes(search);
+                return matchPos && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-slate-500">No applications found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(app => {
+                const statusColors = {
+                    'New': 'bg-blue-100 text-blue-800',
+                    'Reviewed': 'bg-yellow-100 text-yellow-800',
+                    'Interviewing': 'bg-purple-100 text-purple-800',
+                    'Offer': 'bg-emerald-100 text-emerald-800',
+                    'Rejected': 'bg-red-100 text-red-800'
+                };
+                const statusClass = statusColors[app.status] || 'bg-slate-100 text-slate-800';
+
+                return `
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="font-medium text-slate-900 dark:text-white">
+                                <span class="text-xs text-slate-500 mr-1">${app.title || ''}.</span>
+                                ${app.firstName} ${app.lastName}
+                            </div>
+                        </div>
+                        <div class="text-xs text-slate-500">${app.email}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-slate-900 dark:text-white">${app.positionName || 'Unknown Position'}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm">${app.experience || 0} Years</div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-500">
+                        ${app.appliedAt ? new Date(app.appliedAt.seconds * 1000).toLocaleDateString() : '-'}
+                    </td>
+                    <td class="px-6 py-4">
+                        <select onchange="updateStatus('${app.id}', this.value)" 
+                            class="text-xs font-semibold rounded-full px-2 py-1 border-none focus:ring-0 cursor-pointer ${statusClass}">
+                            <option value="New" ${app.status === 'New' ? 'selected' : ''}>New</option>
+                            <option value="Reviewed" ${app.status === 'Reviewed' ? 'selected' : ''}>Reviewed</option>
+                            <option value="Interviewing" ${app.status === 'Interviewing' ? 'selected' : ''}>Interviewing</option>
+                            <option value="Offer" ${app.status === 'Offer' ? 'selected' : ''}>Offer</option>
+                            <option value="Rejected" ${app.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <a href="${app.resumeUrl}" target="_blank" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-primary" title="View Resume">
+                                <span class="material-symbols-outlined text-lg">description</span>
+                            </a>
+                            <button onclick="openCreateUserModal('${app.id}')" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-emerald-500" title="Create User Profile">
+                                <span class="material-symbols-outlined text-lg">person_add</span>
+                            </button>
+                            <button onclick="deleteApplication('${app.id}')" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-red-500" title="Delete">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        window.updateStatus = async function (id, newStatus) {
+            try {
+                await updateDoc(doc(db, 'applications', id), { status: newStatus });
+
+                // Update local state without full reload for speed
+                const app = applications.find(a => a.id === id);
+                if (app) app.status = newStatus;
+                renderTable();
+
+                showToast(`Status updated to ${newStatus}`, 'success');
+            } catch (e) {
+                console.error(e);
+                showToast('Failed to update status', 'error');
+            }
+        }
+
+        window.deleteApplication = async function (id) {
+            if (!confirm('Are you sure you want to delete this application?')) return;
+            try {
+                await deleteDoc(doc(db, 'applications', id));
+                applications = applications.filter(a => a.id !== id);
+                renderTable();
+                showToast('Application deleted', 'success');
+            } catch (e) {
+                showToast('Error deleting application', 'error');
+            }
+        }
+
+        // Create User Logic
+        window.openCreateUserModal = function (id) {
+            const app = applications.find(a => a.id === id);
+            if (!app) return;
+
+            document.getElementById('cu-app-id').value = id;
+            document.getElementById('cu-name').value = `${app.firstName} ${app.lastName}`;
+            document.getElementById('cu-email').value = app.email;
+            document.getElementById('cu-password').value = '';
+            document.getElementById('create-user-modal').classList.remove('hidden');
+        }
+
+        window.closeCreateUserModal = function () {
+            document.getElementById('create-user-modal').classList.add('hidden');
+        }
+
+        document.getElementById('create-user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const spinner = document.getElementById('cu-spinner');
+
+            const name = document.getElementById('cu-name').value;
+            const email = document.getElementById('cu-email').value;
+            const password = document.getElementById('cu-password').value;
+
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+
+            try {
+                // Generate Employee ID
+                const idResult = await generateNextEmployeeId();
+                const customId = idResult.success ? idResult.id : null;
+
+                // Use secondary app approach to avoid logging out admin
+                const secondaryApp = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js').then(m => {
+                    const config = {
+                        apiKey: "AIzaSyBDy4XLTYhuT0RMGio_DUQ1rqpD2ZcdQwQ", // Assuming same config as main app
+                        authDomain: "adhirat-website.firebaseapp.com",
+                        projectId: "adhirat-website"
+                    };
+                    try { return m.getApp('secondary'); }
+                    catch { return m.initializeApp(config, 'secondary'); }
+                });
+
+                const secondaryAuth = getAuth(secondaryApp);
+                const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+
+                // Create User Doc
+                await setDoc(doc(db, 'users', cred.user.uid), {
+                    email,
+                    fullName: name,
+                    customId: customId,
+                    role: 'guest', // Default role
+                    createdAt: serverTimestamp(),
+                    createdBy: 'admin_via_application',
+                    orgIds: [getCurrentOrgId()]
+                });
+
+                await secondaryAuth.signOut();
+
+                showToast('User created successfully!', 'success');
+                closeCreateUserModal();
+            } catch (e) {
+                console.error(e);
+                showToast('Error: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+            }
+        });
+
+        function showToast(msg, type) {
+            const t = document.createElement('div');
+            t.className = `fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white`;
+            t.innerHTML = `<span>${msg}</span>`;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        // Init
+        loadData();
+    </script>
+</body>
+
+</html>

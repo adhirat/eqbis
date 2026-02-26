@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Sign Up - Adhirat Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <!-- Material Icons -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.3);
+            border-radius: 4px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(0, 245, 255, 0.3);
+        }
+
+        /* Portal-specific glass effects */
+        .portal-glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+        }
+
+        .dark .portal-glass-card {
+            background: rgba(26, 26, 62, 0.85);
+            border: 1px solid rgba(0, 245, 255, 0.15);
+        }
+    </style>
+</head>
+
+<body
+    class="pt-0 font-display antialiased bg-slate-50 dark:bg-dark-bg text-slate-900 dark:text-white transition-colors duration-300 min-h-screen flex flex-col relative overflow-x-hidden selection:bg-primary/30 selection:text-primary">
+
+    <!-- Background Decoration -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden mesh-background">
+        <!-- Floating Orbs -->
+        <div class="floating-orb orb-violet w-[500px] h-[500px] top-[-10%] right-[-10%] opacity-30 dark:opacity-40">
+        </div>
+        <div class="floating-orb orb-cyan w-[400px] h-[400px] bottom-[-10%] left-[-10%] opacity-25 dark:opacity-35"
+            style="animation-delay: -5s;"></div>
+        <div class="floating-orb orb-magenta w-[300px] h-[300px] top-[60%] left-[20%] opacity-20 dark:opacity-25"
+            style="animation-delay: -8s;"></div>
+    </div>
+
+    <!-- Grid Pattern -->
+    <div class="fixed inset-0 bg-grid-pattern opacity-30 pointer-events-none z-0"></div>
+
+    <!-- Top Navigation -->
+    <header
+        class="relative z-20 w-full border-b border-neon-violet/10 dark:border-neon-cyan/20 bg-white/50 dark:bg-dark-card/50 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="../index.html" class="flex items-center gap-3 group hover-tilt">
+                    <div class="size-8 text-primary">
+                        <img src="../assets/images/logo.svg" alt="Logo"
+                            class="w-full h-full transform rotate-180 dark:brightness-0 dark:invert transition-all duration-300">
+                    </div>
+                    <h2 class="text-lg font-display font-bold tracking-tight text-slate-900 dark:text-white">
+                        Adhirat<span class="text-gradient-animated">.Portal</span></h2>
+                </a>
+                <!-- Theme Toggle -->
+                <button onclick="toggleTheme()"
+                    class="flex items-center justify-center w-10 h-10 rounded-lg glass-card border border-neon-violet/10 dark:border-neon-cyan/20 hover:shadow-neon text-slate-500 dark:text-slate-400 transition-all">
+                    <span class="material-symbols-outlined dark:hidden">dark_mode</span>
+                    <span class="material-symbols-outlined hidden dark:block text-neon-cyan">light_mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center relative z-10 px-4 py-12 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md space-y-8">
+            <!-- Invitation Only Card -->
+            <div
+                class="portal-glass-card rounded-2xl shadow-neon-lg p-8 sm:p-10 transition-all duration-300 reveal reveal-up gradient-border-animated">
+                <!-- Heading -->
+                <div class="text-center mb-8">
+                    <div
+                        class="inline-flex items-center justify-center size-16 rounded-full bg-neon-violet/10 dark:bg-neon-cyan/10 text-neon-violet dark:text-neon-cyan mb-6">
+                        <span class="material-symbols-outlined text-3xl">lock_person</span>
+                    </div>
+                    <h1 class="text-2xl font-display font-bold tracking-tight text-slate-900 dark:text-white mb-3">
+                        Invitation <span class="text-gradient-animated">Only</span>
+                    </h1>
+                    <p class="text-slate-600 dark:text-slate-300 text-base font-body leading-relaxed">
+                        Account creation is restricted to administrators.
+                    </p>
+                </div>
+
+                <div class="space-y-6">
+                    <div
+                        class="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-5 border border-slate-200 dark:border-slate-700">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 font-body text-center leading-relaxed">
+                            To get started with Adhirat Portal, please submit your project details via our contact page.
+                            Our team will review your request and send an invitation link to your email.
+                        </p>
+                    </div>
+
+                    <a href="../contact.html#contact-form"
+                        class="flex w-full justify-center rounded-xl btn-futuristic px-3 py-3.5 text-sm font-display font-bold leading-6 text-white shadow-neon-lg transition-all transform active:scale-[0.98] items-center gap-2 group">
+                        <span>Submit a Project</span>
+                        <span
+                            class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </a>
+                </div>
+
+                <!-- Divider -->
+                <div class="relative mt-8">
+                    <div aria-hidden="true" class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-neon-violet/10 dark:border-neon-cyan/20"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm font-medium leading-6">
+                        <span class="portal-glass-card px-4 text-slate-500 dark:text-slate-400 rounded-full">Already
+                            have an account?</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-center">
+                    <a href="login.html"
+                        class="font-bold text-neon-violet dark:text-neon-cyan hover:text-neon-magenta transition-colors flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">login</span>
+                        Sign in instead
+                    </a>
+                </div>
+            </div>
+
+            <!-- Footer Links -->
+            <p class="text-center text-xs leading-5 text-slate-500 dark:text-slate-400 font-body">
+                © 2024 Adhirat Technologies.
+                <a class="font-medium text-slate-600 dark:text-slate-300 hover:text-neon-violet dark:hover:text-neon-cyan underline-offset-2 hover:underline ml-1"
+                    href="../legal.html">Privacy Policy</a> ·
+                <a class="font-medium text-slate-600 dark:text-slate-300 hover:text-neon-violet dark:hover:text-neon-cyan underline-offset-2 hover:underline ml-1"
+                    href="../contact.html">Help Center</a> ·
+                <a class="font-medium text-slate-600 dark:text-slate-300 hover:text-neon-violet dark:hover:text-neon-cyan underline-offset-2 hover:underline ml-1"
+                    href="../index.html">Back to Website</a>
+            </p>
+        </div>
+    </main>
+
+    <script type="module">
+        import { registerUser, initAuthObserver } from '../assets/js/firebase-modules.js';
+
+        // Initialize auth observer (will redirect to dashboard if already logged in)
+        initAuthObserver(false);
+
+        // Password Visibility Toggle
+        const togglePassword = document.getElementById('toggle-password');
+        const password = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+
+        togglePassword.addEventListener('click', function () {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            eyeIcon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+        });
+
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const passwordVal = document.getElementById('password').value;
+            const btn = document.getElementById('submit-btn');
+
+            // Loading State
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="animate-spin material-symbols-outlined text-sm">progress_activity</span> Creating Account...';
+
+            const result = await registerUser(email, passwordVal, name);
+
+            if (result.success) {
+                showToast('Account created successfully! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            } else {
+                showToast(result.error || 'Registration failed', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        });
+
+        // Toast function
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'from-green-500/20 to-emerald-500/20 border-green-500/50' : 'from-red-500/20 to-rose-500/20 border-red-500/50';
+            const textColor = type === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+            const icon = type === 'success' ? 'check_circle' : 'error';
+
+            toast.className = `fixed bottom-4 right-4 glass-card bg-gradient-to-r ${bgColor} p-4 rounded-xl border flex items-center gap-3 animate-fade-in-up z-50 shadow-neon`;
+            toast.innerHTML = `<span class="material-symbols-outlined ${textColor}">${icon}</span><span class="${textColor} font-medium">${message}</span>`;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+
+</html>

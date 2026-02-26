@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Admin Setup - Adhirat Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind Configuration -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Global Assets -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <style>
+        .step-done {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+
+        .step-pending {
+            background: linear-gradient(135deg, #6B7280, #4B5563);
+        }
+
+        .step-running {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            animation: pulse 1.5s infinite;
+        }
+
+        .step-error {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-8">
+    <div class="w-full max-w-2xl">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <div
+                class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-purple-600 mb-6">
+                <span class="material-symbols-outlined text-white text-4xl">settings</span>
+            </div>
+            <h1 class="text-4xl font-bold text-white mb-3">Portal Setup</h1>
+            <p class="text-slate-400 text-lg">Initialize roles and configure admin access</p>
+        </div>
+
+        <!-- Setup Card -->
+        <div class="bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-8 shadow-2xl">
+            <!-- Status -->
+            <div id="setup-status" class="mb-8 p-4 rounded-xl bg-slate-800/50 border border-slate-700">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-slate-400" id="status-icon">info</span>
+                    <span class="text-slate-300" id="status-text">Ready to setup. Click the button below to
+                        begin.</span>
+                </div>
+            </div>
+
+            <!-- Steps -->
+            <div class="space-y-4 mb-8" id="steps-container">
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-800/30 border border-slate-700" id="step-1">
+                    <div
+                        class="w-10 h-10 rounded-full step-pending flex items-center justify-center text-white font-bold">
+                        1</div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-white">Initialize Default Roles</p>
+                        <p class="text-sm text-slate-400">Create admin, manager, employee, and guest roles</p>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-500" id="step-1-icon">pending</span>
+                </div>
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-800/30 border border-slate-700" id="step-2">
+                    <div
+                        class="w-10 h-10 rounded-full step-pending flex items-center justify-center text-white font-bold">
+                        2</div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-white">Find Admin User</p>
+                        <p class="text-sm text-slate-400">Locate admin@adhirat.com in users collection</p>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-500" id="step-2-icon">pending</span>
+                </div>
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-800/30 border border-slate-700" id="step-3">
+                    <div
+                        class="w-10 h-10 rounded-full step-pending flex items-center justify-center text-white font-bold">
+                        3</div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-white">Assign Admin Role</p>
+                        <p class="text-sm text-slate-400">Set admin@adhirat.com as administrator</p>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-500" id="step-3-icon">pending</span>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <button id="setup-btn" onclick="runSetup()"
+                class="w-full py-4 rounded-xl bg-gradient-to-r from-primary to-purple-600 text-white font-bold text-lg hover:opacity-90 transition-all flex items-center justify-center gap-3">
+                <span class="material-symbols-outlined">rocket_launch</span>
+                Run Setup
+            </button>
+
+            <!-- Login Prompt (hidden initially) -->
+            <div id="login-prompt" class="hidden mt-6 p-4 rounded-xl bg-amber-500/20 border border-amber-500/30">
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-amber-400">warning</span>
+                    <div>
+                        <p class="font-semibold text-amber-300">Authentication Required</p>
+                        <p class="text-sm text-amber-200/80 mt-1">You need to be logged in to run the setup.</p>
+                        <a href="login.html"
+                            class="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-lg bg-amber-500 text-white font-semibold hover:bg-amber-600 transition-colors">
+                            <span class="material-symbols-outlined text-lg">login</span>
+                            Go to Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Message (hidden initially) -->
+            <div id="success-message" class="hidden mt-6 p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/30">
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-emerald-400">check_circle</span>
+                    <div>
+                        <p class="font-semibold text-emerald-300">Setup Complete!</p>
+                        <p class="text-sm text-emerald-200/80 mt-1">Admin role has been assigned to admin@adhirat.com
+                        </p>
+                        <a href="index.html"
+                            class="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-lg bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors">
+                            <span class="material-symbols-outlined text-lg">home</span>
+                            Go to Portal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <p class="text-center text-slate-500 text-sm mt-8">
+            This page should only be run once during initial setup.<br>
+            Delete this file after setup is complete for security.
+        </p>
+    </div>
+
+    <script type="module">
+        import {
+            db,
+            auth,
+            collection,
+            doc,
+            setDoc,
+            getDoc,
+            getDocs,
+            updateDoc,
+            query,
+            where,
+            serverTimestamp,
+            onAuthStateChanged
+        } from '../assets/js/firebase-config.js';
+        import { initializeDefaultRoles, PERMISSIONS, DEFAULT_ROLES } from '../assets/js/rbac.js';
+
+        let currentUser = null;
+
+        // Check auth state
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (!user) {
+                document.getElementById('login-prompt').classList.remove('hidden');
+                document.getElementById('setup-btn').disabled = true;
+                document.getElementById('setup-btn').classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                document.getElementById('login-prompt').classList.add('hidden');
+                document.getElementById('setup-btn').disabled = false;
+                document.getElementById('setup-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
+        function updateStep(stepNum, status) {
+            const step = document.getElementById(`step-${stepNum}`);
+            const icon = document.getElementById(`step-${stepNum}-icon`);
+            const badge = step.querySelector('.rounded-full');
+
+            badge.className = `w-10 h-10 rounded-full step-${status} flex items-center justify-center text-white font-bold`;
+
+            const icons = {
+                pending: 'pending',
+                running: 'sync',
+                done: 'check_circle',
+                error: 'error'
+            };
+            icon.textContent = icons[status];
+            icon.className = `material-symbols-outlined ${status === 'done' ? 'text-emerald-400' : status === 'error' ? 'text-red-400' : status === 'running' ? 'text-blue-400 animate-spin' : 'text-slate-500'}`;
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusText = document.getElementById('status-text');
+            const statusIcon = document.getElementById('status-icon');
+            const statusBox = document.getElementById('setup-status');
+
+            statusText.textContent = message;
+
+            const configs = {
+                info: { icon: 'info', iconClass: 'text-slate-400', boxClass: 'bg-slate-800/50 border-slate-700' },
+                running: { icon: 'sync', iconClass: 'text-blue-400 animate-spin', boxClass: 'bg-blue-900/30 border-blue-700' },
+                success: { icon: 'check_circle', iconClass: 'text-emerald-400', boxClass: 'bg-emerald-900/30 border-emerald-700' },
+                error: { icon: 'error', iconClass: 'text-red-400', boxClass: 'bg-red-900/30 border-red-700' }
+            };
+
+            const config = configs[type];
+            statusIcon.textContent = config.icon;
+            statusIcon.className = `material-symbols-outlined ${config.iconClass}`;
+            statusBox.className = `mb-8 p-4 rounded-xl ${config.boxClass}`;
+        }
+
+        async function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        window.runSetup = async function () {
+            if (!currentUser) {
+                updateStatus('Please log in first', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('setup-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Running Setup...';
+
+            try {
+                // Step 1: Initialize Default Roles
+                updateStep(1, 'running');
+                updateStatus('Creating default roles...', 'running');
+                await sleep(500);
+
+                // Manually create roles to ensure they exist
+                for (const [roleId, roleData] of Object.entries(DEFAULT_ROLES)) {
+                    const roleDocRef = doc(db, 'roles', roleId);
+                    const roleDoc = await getDoc(roleDocRef);
+
+                    if (!roleDoc.exists()) {
+                        await setDoc(roleDocRef, {
+                            ...roleData,
+                            createdAt: serverTimestamp(),
+                            updatedAt: serverTimestamp()
+                        });
+                        console.log(`Created role: ${roleData.name}`);
+                    } else {
+                        console.log(`Role already exists: ${roleData.name}`);
+                    }
+                }
+
+                updateStep(1, 'done');
+                updateStatus('Default roles created successfully', 'success');
+                await sleep(500);
+
+                // Step 2: Find or Create Admin User
+                updateStep(2, 'running');
+                updateStatus('Looking for admin@adhirat.com...', 'running');
+                await sleep(500);
+
+                let adminUserId;
+                let adminUserData;
+
+                // First check if user exists by querying
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('email', '==', 'admin@adhirat.com'));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    // User document doesn't exist - check if current user IS admin@adhirat.com
+                    if (currentUser.email === 'admin@adhirat.com') {
+                        updateStatus('Creating user profile for admin@adhirat.com...', 'running');
+
+                        // Create the user document
+                        adminUserId = currentUser.uid;
+                        adminUserData = {
+                            email: currentUser.email,
+                            fullName: currentUser.displayName || 'Admin',
+                            photoURL: currentUser.photoURL || null,
+                            provider: currentUser.providerData[0]?.providerId || 'email',
+                            role: 'guest', // Will be updated to admin in step 3
+                            createdAt: serverTimestamp(),
+                            lastLoginAt: serverTimestamp()
+                        };
+
+                        await setDoc(doc(db, 'users', adminUserId), adminUserData);
+                        console.log('Created user profile for:', currentUser.email);
+                    } else {
+                        updateStep(2, 'error');
+                        updateStatus(`You are logged in as ${currentUser.email}, not admin@adhirat.com`, 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = '<span class="material-symbols-outlined">rocket_launch</span> Retry Setup';
+                        return;
+                    }
+                } else {
+                    const adminUserDoc = snapshot.docs[0];
+                    adminUserId = adminUserDoc.id;
+                    adminUserData = adminUserDoc.data();
+                }
+
+                console.log('Admin user ID:', adminUserId);
+                updateStep(2, 'done');
+                updateStatus(`Found/Created user: ${adminUserData.fullName || adminUserData.email}`, 'success');
+                await sleep(500);
+
+                // Step 3: Assign Admin Role
+                updateStep(3, 'running');
+                updateStatus('Assigning admin role...', 'running');
+                await sleep(500);
+
+                await updateDoc(doc(db, 'users', adminUserId), {
+                    role: 'admin',
+                    roleUpdatedAt: serverTimestamp()
+                });
+
+                updateStep(3, 'done');
+                updateStatus('✓ Setup completed successfully!', 'success');
+
+                // Show success
+                btn.classList.add('hidden');
+                document.getElementById('success-message').classList.remove('hidden');
+
+                console.log('Setup complete! admin@adhirat.com now has admin role.');
+
+            } catch (error) {
+                console.error('Setup error:', error);
+                updateStatus(`Error: ${error.message}`, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-symbols-outlined">rocket_launch</span> Retry Setup';
+            }
+        };
+    </script>
+</body>
+
+</html>

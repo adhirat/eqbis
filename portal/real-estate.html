@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Real Estate - Adhirat Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
+    <style>
+        .property-card:hover .property-image {
+            transform: scale(1.05);
+        }
+
+        .filter-btn.active {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .dark .filter-btn.active {
+            background-color: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+            border-color: rgba(6, 182, 212, 0.2);
+        }
+    </style>
+    <!-- Global Assets -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+</head>
+
+<body
+    class="pt-0 font-display bg-slate-50 dark:bg-dark-bg text-slate-900 dark:text-white antialiased overflow-hidden h-screen flex">
+
+    <!-- Global Sidebar -->
+    <div id="portal-sidebar" class="contents"></div>
+
+    <!-- Main Wrapper -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Global Header -->
+        <div id="portal-header" class="contents"></div>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 animate-fade-in-up">
+            <div class="max-w-[1600px] mx-auto w-full space-y-8">
+
+                <!-- Page Header -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-1">Real Estate</h1>
+                        <p class="text-slate-500 dark:text-slate-400">Manage properties, listings, and rental
+                            agreements.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button
+                            class="btn-secondary px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 font-bold text-sm bg-white dark:bg-dark-card hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
+                            <span class="material-symbols-outlined">tune</span>
+                            Filters
+                        </button>
+                        <button
+                            class="btn-primary px-6 py-2.5 rounded-lg bg-neon-violet text-white font-bold shadow-lg shadow-neon-violet/25 hover:scale-105 transition-transform flex items-center gap-2">
+                            <span class="material-symbols-outlined">add_home</span>
+                            Add Listing
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-6">
+                    <div
+                        class="bg-white dark:bg-dark-card rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
+                        <div
+                            class="size-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                            <span class="material-symbols-outlined text-2xl">home_work</span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase font-bold tracking-wider">Total Listings</p>
+                            <h3 class="text-2xl font-black text-slate-900 dark:text-white">142</h3>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-dark-card rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
+                        <div
+                            class="size-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                            <span class="material-symbols-outlined text-2xl">attach_money</span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase font-bold tracking-wider">Sold/Rented</p>
+                            <h3 class="text-2xl font-black text-slate-900 dark:text-white">85</h3>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-dark-card rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
+                        <div
+                            class="size-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                            <span class="material-symbols-outlined text-2xl">visibility</span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase font-bold tracking-wider">Views (30d)</p>
+                            <h3 class="text-2xl font-black text-slate-900 dark:text-white">12.5k</h3>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-dark-card rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
+                        <div
+                            class="size-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                            <span class="material-symbols-outlined text-2xl">landscape</span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase font-bold tracking-wider">Land Avail.</p>
+                            <h3 class="text-2xl font-black text-slate-900 dark:text-white">15</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="space-y-6">
+
+                    <!-- Type Filter Tabs -->
+                    <div class="flex flex-wrap gap-2 border-b border-slate-200 dark:border-slate-700 pb-1">
+                        <button
+                            class="filter-btn active px-4 py-2 rounded-t-lg border-b-2 border-neon-violet font-bold text-sm text-neon-violet transition-colors">All
+                            Listings</button>
+                        <button
+                            class="filter-btn px-4 py-2 rounded-t-lg border-b-2 border-transparent font-medium text-sm text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">Properties
+                            for Sale</button>
+                        <button
+                            class="filter-btn px-4 py-2 rounded-t-lg border-b-2 border-transparent font-medium text-sm text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">For
+                            Rent</button>
+                        <button
+                            class="filter-btn px-4 py-2 rounded-t-lg border-b-2 border-transparent font-medium text-sm text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">Land
+                            / Plots</button>
+                    </div>
+
+                    <!-- Listings Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+
+                        <!-- Listing Card 1: Sale -->
+                        <div
+                            class="bg-white dark:bg-dark-card rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-xl dark:hover:shadow-neon-violet/10 transition-all group property-card flex flex-col">
+                            <div class="h-56 relative overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1600596542815-2a4d9f6facb8?q=80&w=2936&auto=format&fit=crop"
+                                    class="w-full h-full object-cover transition-transform duration-500 property-image"
+                                    alt="House">
+                                <div class="absolute top-3 left-3 flex gap-2">
+                                    <span
+                                        class="px-2 py-1 rounded-md bg-white/90 dark:bg-black/60 backdrop-blur text-slate-900 dark:text-white text-xs font-bold shadow-sm">
+                                        For Sale
+                                    </span>
+                                    <span
+                                        class="px-2 py-1 rounded-md bg-emerald-500 text-white text-xs font-bold shadow-sm shadow-emerald-500/20">
+                                        New
+                                    </span>
+                                </div>
+                                <button
+                                    class="absolute top-3 right-3 size-8 rounded-full bg-white/50 backdrop-blur hover:bg-white text-slate-900 flex items-center justify-center transition-colors">
+                                    <span class="material-symbols-outlined text-sm">favorite</span>
+                                </button>
+                                <div class="absolute bottom-3 left-3">
+                                    <span class="text-2xl font-black text-white drop-shadow-lg">$1,250,000</span>
+                                </div>
+                            </div>
+                            <div class="p-5 flex-1 flex flex-col">
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1 truncate">Modern Luxury
+                                    Villa</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px]">location_on</span>
+                                    128 Beverly Hills, CA
+                                </p>
+
+                                <div
+                                    class="flex items-center gap-4 mb-4 text-xs font-medium text-slate-600 dark:text-slate-300">
+                                    <span
+                                        class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+                                        <span class="material-symbols-outlined text-sm">bed</span> 5 Beds
+                                    </span>
+                                    <span
+                                        class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+                                        <span class="material-symbols-outlined text-sm">bathtub</span> 4 Baths
+                                    </span>
+                                    <span
+                                        class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+                                        <span class="material-symbols-outlined text-sm">square_foot</span> 3,400 sqft
+                                    </span>
+                                </div>
+
+                                <div
+                                    class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <img src="https://i.pravatar.cc/100?img=12"
+                                            class="size-8 rounded-full border border-slate-200 dark:border-slate-700"
+                                            alt="Agent">
+                                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Sarah
+                                            J.</span>
+                                    </div>
+                                    <button class="text-sm font-bold text-neon-violet hover:underline">View
+                                        Details</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Listing Card 2: Rent -->
+                        <div
+                            class="bg-white dark:bg-dark-card rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-xl dark:hover:shadow-neon-violet/10 transition-all group property-card flex flex-col">
+                            <div class="h-56 relative overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=2835&auto=format&fit=crop"
+                                    class="w-full h-full object-cover transition-transform duration-500 property-image"
+                                    alt="Apartment">
+                                <div class="absolute top-3 left-3 flex gap-2">
+                                    <span
+                                        class="px-2 py-1 rounded-md bg-white/90 dark:bg-black/60 backdrop-blur text-slate-900 dark:text-white text-xs font-bold shadow-sm">
+                                        For Rent
+                                    </span>
+                                </div>
+                                <button
+                                    class="absolute top-3 right-3 size-8 rounded-full bg-white/50 backdrop-blur hover:bg-white text-slate-900 flex items-center justify-center transition-colors">
+                                    <span class="material-symbols-outlined text-sm">favorite</span>
+                                </button>
+                                <div class="absolute bottom-3 left-3">
+                                    <span class="text-2xl font-black text-white drop-shadow-lg">$3,500<span
+                                            class="text-sm font-medium">/mo</span></span>
+                                </div>
+                            </div>
+                            <div class="p-5 flex-1 flex flex-col">
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1 truncate">Downtown Loft
+                                    Apartment</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px]">location_on</span>
+                                    45 Market St, San Francisco
+                                </p>
+
+                                <div
+                                    class="flex items-center gap-4 mb-4 text-xs font-medium text-slate-600 dark:text-slate-300">
+                                    <span
+                                        class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+                                        <span class="material-symbols-outlined text-sm">bed</span> 2 Beds
+                                    </span>
+                                    <span
+                                        class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+                                        <span class="material-symbols-outlined text-sm">bathtub</span> 2 Baths
+                                    </span>
+                                    <span
+                                        class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+                                        <span class="material-symbols-outlined text-sm">square_foot</span> 1,100 sqft
+                                    </span>
+                                </div>
+
+                                <div
+                                    class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <img src="https://i.pravatar.cc/100?img=33"
+                                            class="size-8 rounded-full border border-slate-200 dark:border-slate-700"
+                                            alt="Agent">
+                                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Mike
+                                            C.</span>
+                                    </div>
+                                    <button class="text-sm font-bold text-neon-violet hover:underline">View
+                                        Details</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Listing Card 3: Land -->
+                        <div
+                            class="bg-white dark:bg-dark-card rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-xl dark:hover:shadow-neon-violet/10 transition-all group property-card flex flex-col">
+                            <div class="h-56 relative overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2832&auto=format&fit=crop"
+                                    class="w-full h-full object-cover transition-transform duration-500 property-image"
+                                    alt="Land">
+                                <div class="absolute top-3 left-3 flex gap-2">
+                                    <span
+                                        class="px-2 py-1 rounded-md bg-white/90 dark:bg-black/60 backdrop-blur text-slate-900 dark:text-white text-xs font-bold shadow-sm">
+                                        Land Plot
+                                    </span>
+                                </div>
+                                <button
+                                    class="absolute top-3 right-3 size-8 rounded-full bg-white/50 backdrop-blur hover:bg-white text-slate-900 flex items-center justify-center transition-colors">
+                                    <span class="material-symbols-outlined text-sm">favorite</span>
+                                </button>
+                                <div class="absolute bottom-3 left-3">
+                                    <span class="text-2xl font-black text-white drop-shadow-lg">$450,000</span>
+                                </div>
+                            </div>
+                            <div class="p-5 flex-1 flex flex-col">
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1 truncate">Scenic
+                                    Hillside Plot</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px]">location_on</span>
+                                    Valley Rd, Austin, TX
+                                </p>
+
+                                <div
+                                    class="flex items-center gap-4 mb-4 text-xs font-medium text-slate-600 dark:text-slate-300">
+                                    <span
+                                        class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+                                        <span class="material-symbols-outlined text-sm">landscape</span> 2.5 Acres
+                                    </span>
+                                    <span
+                                        class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+                                        <span class="material-symbols-outlined text-sm">water_drop</span> Water Access
+                                    </span>
+                                </div>
+
+                                <div
+                                    class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <img src="https://i.pravatar.cc/100?img=5"
+                                            class="size-8 rounded-full border border-slate-200 dark:border-slate-700"
+                                            alt="Agent">
+                                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">David
+                                            W.</span>
+                                    </div>
+                                    <button class="text-sm font-bold text-neon-violet hover:underline">View
+                                        Details</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Marketplace/Features Section (Bottom) -->
+                    <div class="mt-12">
+                        <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6">Real Estate Marketplace</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                            <!-- Feature 1 -->
+                            <div
+                                class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white text-center">
+                                <div
+                                    class="size-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur">
+                                    <span class="material-symbols-outlined text-3xl">handshake</span>
+                                </div>
+                                <h3 class="font-bold text-lg mb-2">Buyer Connect</h3>
+                                <p class="text-sm opacity-90 mb-4">Match with pre-qualified buyers instantly through our
+                                    AI matching engine.</p>
+                                <button
+                                    class="w-full py-2 rounded-lg bg-white text-indigo-600 font-bold text-sm hover:bg-indigo-50 transition-colors">Start
+                                    Matching</button>
+                            </div>
+
+                            <!-- Feature 2 -->
+                            <div
+                                class="bg-white dark:bg-dark-card rounded-2xl p-6 border border-slate-200 dark:border-slate-700 text-center hover:border-neon-violet/50 transition-colors group">
+                                <div
+                                    class="size-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                    <span
+                                        class="material-symbols-outlined text-3xl text-emerald-600 dark:text-emerald-400">key</span>
+                                </div>
+                                <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">Rental Management</h3>
+                                <p class="text-sm text-slate-500 mb-4">Automate rent collection, tenant screening, and
+                                    maintenance requests.</p>
+                                <button
+                                    class="w-full py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">Manage
+                                    Rentals</button>
+                            </div>
+
+                            <!-- Feature 3 -->
+                            <div
+                                class="bg-white dark:bg-dark-card rounded-2xl p-6 border border-slate-200 dark:border-slate-700 text-center hover:border-neon-violet/50 transition-colors group">
+                                <div
+                                    class="size-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                    <span
+                                        class="material-symbols-outlined text-3xl text-blue-600 dark:text-blue-400">gavel</span>
+                                </div>
+                                <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">Legal & Contracts</h3>
+                                <p class="text-sm text-slate-500 mb-4">Generate compliant sale deeds, rental agreements,
+                                    and legal notices.</p>
+                                <button
+                                    class="w-full py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">Create
+                                    Contract</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+
+</html>

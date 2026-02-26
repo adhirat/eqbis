@@ -1,0 +1,20 @@
+[
+  {
+    "origin": [
+      "https://adhirat.com",
+      "https://www.adhirat.com",
+      "http://localhost:*",
+      "http://127.0.0.1:*"
+    ],
+    "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": [
+      "Content-Type",
+      "Content-Length",
+      "Authorization",
+      "User-Agent",
+      "x-goog-*",
+      "X-Firebase-*"
+    ]
+  }
+]

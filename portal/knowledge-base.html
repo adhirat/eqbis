@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Knowledge Base - Adhirat Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .kb-gradient {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+        }
+    </style>
+    <!-- Global Assets -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+</head>
+
+<body
+    class="pt-0 font-display bg-slate-50 dark:bg-dark-bg text-slate-900 dark:text-white antialiased overflow-hidden h-screen flex">
+
+    <!-- Global Sidebar -->
+    <div id="portal-sidebar" class="contents"></div>
+
+    <!-- Main Wrapper -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Global Header -->
+        <div id="portal-header" class="contents"></div>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 animate-fade-in-up">
+            <div class="max-w-[1200px] mx-auto w-full space-y-12">
+
+                <!-- Hero Search Section -->
+                <div
+                    class="text-center py-12 px-4 rounded-3xl kb-gradient border border-white/20 dark:border-white/5 relative overflow-hidden">
+                    <!-- Decor elements -->
+                    <div class="absolute top-0 right-0 p-12 opacity-10 pointer-events-none">
+                        <span class="material-symbols-outlined text-[200px] text-neon-violet">menu_book</span>
+                    </div>
+
+                    <div class="relative z-10 max-w-2xl mx-auto">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4">How can we help you?</h1>
+                        <p class="text-slate-600 dark:text-slate-300 mb-8">Search for guides, API references, and
+                            troubleshooting tips.</p>
+
+                        <div class="relative group">
+                            <input type="text" placeholder="Search documentation..."
+                                class="w-full pl-12 pr-4 py-4 rounded-xl bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-600 shadow-xl focus:ring-4 focus:ring-neon-violet/20 focus:border-neon-violet transition-all text-slate-900 dark:text-white"
+                                onkeyup="filterKB(this.value)">
+                            <span class="material-symbols-outlined absolute left-4 top-4 text-slate-400">search</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Getting Started -->
+                    <a href="#getting-started"
+                        class="glass-card p-6 rounded-2xl hover:bg-neon-violet/5 hover:border-neon-violet/30 transition-all group">
+                        <div
+                            class="size-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-3xl">rocket_launch</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Getting Started</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Essential guides to set up your account
+                            and dashboard.</p>
+                        <ul class="mt-4 space-y-2 text-sm text-neon-violet dark:text-neon-cyan">
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> Account Setup</li>
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> Navigation Tour</li>
+                        </ul>
+                    </a>
+
+                    <!-- Websites & Composer -->
+                    <a href="#websites"
+                        class="glass-card p-6 rounded-2xl hover:bg-neon-violet/5 hover:border-neon-violet/30 transition-all group">
+                        <div
+                            class="size-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-3xl">web</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Websites & Composer</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Learn how to build and manage your
+                            websites.</p>
+                        <ul class="mt-4 space-y-2 text-sm text-neon-violet dark:text-neon-cyan">
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> Using the Drag & Drop
+                                Editor</li>
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> Publishing your site
+                            </li>
+                        </ul>
+                    </a>
+
+                    <!-- Team & Organization -->
+                    <a href="#organization"
+                        class="glass-card p-6 rounded-2xl hover:bg-neon-violet/5 hover:border-neon-violet/30 transition-all group">
+                        <div
+                            class="size-12 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-3xl">groups</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Team & Organization</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Manage users, roles, and permissions.</p>
+                        <ul class="mt-4 space-y-2 text-sm text-neon-violet dark:text-neon-cyan">
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> Inviting Members</li>
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> Role Hierarchy</li>
+                        </ul>
+                    </a>
+
+                    <!-- Billings & Settings -->
+                    <a href="#billing"
+                        class="glass-card p-6 rounded-2xl hover:bg-neon-violet/5 hover:border-neon-violet/30 transition-all group">
+                        <div
+                            class="size-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-3xl">receipt_long</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Billing & Settings</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Manage subscriptions and global
+                            configuration.</p>
+                        <ul class="mt-4 space-y-2 text-sm text-neon-violet dark:text-neon-cyan">
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> Invoices</li>
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> API Keys</li>
+                        </ul>
+                    </a>
+
+                    <!-- Campaigns -->
+                    <a href="#campaigns"
+                        class="glass-card p-6 rounded-2xl hover:bg-neon-violet/5 hover:border-neon-violet/30 transition-all group">
+                        <div
+                            class="size-12 rounded-xl bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-3xl">campaign</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Campaigns</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Email marketing and audience engagement.
+                        </p>
+                        <ul class="mt-4 space-y-2 text-sm text-neon-violet dark:text-neon-cyan">
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> Creating a Campaign
+                            </li>
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> Analytics</li>
+                        </ul>
+                    </a>
+
+                    <!-- Support -->
+                    <a href="#support"
+                        class="glass-card p-6 rounded-2xl hover:bg-neon-violet/5 hover:border-neon-violet/30 transition-all group">
+                        <div
+                            class="size-12 rounded-xl bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-3xl">support_agent</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Support</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Contact our support team for help.</p>
+                        <ul class="mt-4 space-y-2 text-sm text-neon-violet dark:text-neon-cyan">
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> Ticket Status</li>
+                            <li class="flex items-center gap-1 hover:underline"><span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span> Live Chat</li>
+                        </ul>
+                    </a>
+                </div>
+
+                <!-- Articles List (Detailed) -->
+                <div class="space-y-8" id="articles-container">
+
+                    <div id="website-composer" class="space-y-4">
+                        <h2 class="text-2xl font-bold border-b border-slate-200 dark:border-slate-700 pb-2">Website
+                            Composer Guide</h2>
+                        <div class="prose dark:prose-invert max-w-none">
+                            <h3>Introduction</h3>
+                            <p>The Website Composer is a powerful drag-and-drop tool that allows you to create
+                                professional websites without writing a single line of code.</p>
+
+                            <h3>Drag & Drop Interface</h3>
+                            <p>To start building, simply drag an element from the "Elements" panel on the left and drop
+                                it onto your canvas. You can rearrange elements by dragging them to a new position.</p>
+
+                            <h3>Editing Content</h3>
+                            <p>Click on any text element to edit it inline. For images and other rich media, selecting
+                                the element will open the "Properties" panel on the right where you can update sources
+                                and styles.</p>
+                        </div>
+                    </div>
+
+                    <div id="user-management" class="space-y-4">
+                        <h2 class="text-2xl font-bold border-b border-slate-200 dark:border-slate-700 pb-2">User
+                            Management</h2>
+                        <div class="prose dark:prose-invert max-w-none">
+                            <p>Admittance to the portal is controlled via the Organization module.</p>
+                            <h3>Roles</h3>
+                            <ul class="list-disc pl-5">
+                                <li><strong>Admin:</strong> Full access to all modules and settings.</li>
+                                <li><strong>Editor:</strong> Can edit content but cannot change billing or organization
+                                    settings.</li>
+                                <li><strong>Viewer:</strong> Read-only access to dashboards.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="text-center py-12 border-t border-slate-200 dark:border-slate-700">
+                    <p class="text-slate-500 mb-4">Still need help?</p>
+                    <button
+                        class="bg-neon-violet text-white px-6 py-3 rounded-xl font-bold shadow-neon hover:scale-105 transition">Contact
+                        Support</button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function filterKB(query) {
+            const filter = query.toLowerCase();
+            const articles = document.getElementById('articles-container').children;
+
+            // Simple filter for demo purposes
+            for (let i = 0; i < articles.length; i++) {
+                const text = articles[i].textContent || articles[i].innerText;
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    articles[i].style.display = "";
+                } else {
+                    articles[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

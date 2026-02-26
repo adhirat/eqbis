@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Hierarchy - Adhirat Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+    <style>
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Tree Diagram CSS */
+        .tree {
+            white-space: nowrap;
+            overflow: auto;
+            padding-bottom: 50px;
+        }
+
+        .tree ul {
+            padding-top: 20px;
+            position: relative;
+            transition: all 0.5s;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tree li {
+            text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 20px 10px 0 10px;
+            transition: all 0.5s;
+        }
+
+        /* Connectors */
+        .tree li::before,
+        .tree li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 1px solid #94a3b8;
+            /* Slate-400 */
+            width: 50%;
+            height: 20px;
+        }
+
+        .tree li::after {
+            right: auto;
+            left: 50%;
+            border-left: 1px solid #94a3b8;
+        }
+
+        .tree li:only-child::after,
+        .tree li:only-child::before {
+            display: none;
+        }
+
+        .tree li:only-child {
+            padding-top: 0;
+        }
+
+        .tree li:first-child::before,
+        .tree li:last-child::after {
+            border: 0 none;
+        }
+
+        .tree li:last-child::before {
+            border-right: 1px solid #94a3b8;
+            border-radius: 0 5px 0 0;
+        }
+
+        .tree li:first-child::after {
+            border-radius: 5px 0 0 0;
+        }
+
+        .tree ul ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 1px solid #94a3b8;
+            width: 0;
+            height: 20px;
+        }
+
+        /* Dark mode overrides for lines */
+        .dark .tree li::before,
+        .dark .tree li::after,
+        .dark .tree ul ul::before,
+        .dark .tree li:last-child::before {
+            border-color: #475569;
+            /* Slate-600 */
+        }
+    </style>
+</head>
+
+<body
+    class="pt-0 bg-background-light dark:bg-dark-bg text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full overflow-hidden">
+        <div id="portal-sidebar" class="contents"></div>
+        <main class="flex-1 flex flex-col min-w-0">
+            <div id="portal-header" class="contents"></div>
+            <div class="flex-1 overflow-y-auto p-4 sm:p-8 animate-fade-in-up">
+                <div class="max-w-[1280px] mx-auto flex flex-col gap-8 h-full">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+                                    Organization Hierarchy
+                                </h1>
+                                <p class="text-slate-500 dark:text-slate-400">Define and view reporting structures.</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="saveHierarchy()"
+                                    class="btn-primary-sm flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark transition-colors hover-tilt shadow-lg shadow-primary/20">
+                                    <span class="material-symbols-outlined">save</span>
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="hierarchy-container"
+                        class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex-1 relative min-h-[600px] flex items-center justify-center bg-graph-paper">
+                        <!-- Tree renders here -->
+                        <div class="tree" id="org-tree"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Node Modal -->
+    <div id="node-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeNodeModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl w-full max-w-sm p-6 border border-slate-200 dark:border-slate-700 animate-fade-in-up">
+            <h2 class="text-xl font-bold mb-4" id="modal-title">Edit Role</h2>
+            <form id="node-form" class="space-y-4">
+                <input type="hidden" id="node-id">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Role Title</label>
+                    <input type="text" id="node-role" required
+                        class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-primary">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Assigned Person</label>
+                    <select id="node-user-select"
+                        class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-primary">
+                        <option value="">Unassigned</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-between pt-4">
+                    <button type="button" onclick="deleteNode()" id="btn-delete"
+                        class="text-red-500 hover:text-red-600 font-medium">Delete</button>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="closeNodeModal()"
+                            class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
+                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-primary text-white">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <script type="module">
+        import { db, doc, getDoc, setDoc, collection, getDocs } from '../assets/js/firebase-config.js';
+        import { initAuthObserver } from '../assets/js/firebase-modules.js';
+
+        initAuthObserver(true);
+
+        let portalUsers = [];
+
+        // Load users for dropdown
+        async function loadPortalUsers() {
+            try {
+                const querySnapshot = await getDocs(collection(db, 'users'));
+                portalUsers = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // Fallback to name or email if customId missing
+                    portalUsers.push({
+                        id: doc.id,
+                        name: data.fullName || data.email,
+                        email: data.email,
+                        customId: data.customId || 'N/A'
+                    });
+                });
+                populateUserSelect();
+                // Re-render tree to update avatar names/initials now that users are loaded
+                renderTree();
+            } catch (error) {
+                console.error("Error loading users:", error);
+            }
+        }
+
+        function populateUserSelect() {
+            const select = document.getElementById('node-user-select');
+            // Keep first option (Unassigned)
+            select.innerHTML = '<option value="">Unassigned</option>';
+
+            portalUsers.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id; // Store Doc ID as value
+                option.textContent = `${user.name} (${user.customId})`;
+                select.appendChild(option);
+            });
+        }
+
+        // Helper functions from users.html
+        function getInitials(name) {
+            if (!name) return '?';
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        function adjustColor(color, amount) {
+            const hex = color.replace('#', '');
+            const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
+            const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
+            const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
+            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        }
+
+        function stringToColor(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            let color = '#';
+            for (let i = 0; i < 3; i++) {
+                let value = (hash >> (i * 8)) & 0xFF;
+                color += ('00' + value.toString(16)).substr(-2);
+            }
+            return color;
+        }
+
+        // Initial Data for Org Tree (Default if DB empty)
+        let hierarchyData = {
+            id: 'root',
+            role: "CEO",
+            name: "CEO Name",
+            children: []
+        };
+
+        async function loadHierarchy() {
+            try {
+                const docRef = doc(db, 'settings', 'organization');
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().hierarchy) {
+                    hierarchyData = docSnap.data().hierarchy;
+                    renderTree();
+                } else {
+                    // If no data, render default
+                    renderTree();
+                }
+            } catch (error) {
+                console.error("Error loading hierarchy:", error);
+                showToast("Error loading hierarchy data.", "error");
+            }
+        }
+
+        let selectedNodeId = null;
+
+        function findNode(node, id) {
+            if (node.id === id) return node;
+            if (node.children) {
+                for (let child of node.children) {
+                    const found = findNode(child, id);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+
+        function deleteNodeRecursive(parent, id) {
+            if (!parent.children) return false;
+            const index = parent.children.findIndex(c => c.id === id);
+            if (index !== -1) {
+                parent.children.splice(index, 1);
+                return true;
+            }
+            for (let child of parent.children) {
+                // Recursively search in children
+                if (deleteNodeRecursive(child, id)) return true;
+            }
+            return false;
+        }
+
+        // Add child node
+        window.addChild = function (parentId) {
+            const parent = findNode(hierarchyData, parentId);
+            if (!parent) return;
+
+            const newId = 'n-' + Date.now();
+            if (!parent.children) parent.children = [];
+            parent.children.push({
+                id: newId,
+                role: "New Role",
+                name: "",
+                children: []
+            });
+            renderTree();
+            openNodeModal(newId);
+        }
+
+        window.openNodeModal = function (id) {
+            const node = findNode(hierarchyData, id);
+            if (!node) return;
+
+            selectedNodeId = id;
+            document.getElementById('node-id').value = id;
+            document.getElementById('node-role').value = node.role;
+
+            // Set selected user in dropdown
+            const select = document.getElementById('node-user-select');
+            select.value = node.userId || "";
+
+            document.getElementById('modal-title').textContent = id === 'root' ? 'Edit Root Node' : 'Edit Role';
+
+            // Cannot delete root
+            const delBtn = document.getElementById('btn-delete');
+            if (id === 'root') delBtn.classList.add('hidden');
+            else delBtn.classList.remove('hidden');
+
+            document.getElementById('node-modal').classList.remove('hidden');
+        }
+
+        window.closeNodeModal = function () {
+            document.getElementById('node-modal').classList.add('hidden');
+        }
+
+        document.getElementById('node-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const node = findNode(hierarchyData, selectedNodeId);
+            if (node) {
+                node.role = document.getElementById('node-role').value;
+
+                const select = document.getElementById('node-user-select');
+                const selectedUserId = select.value;
+
+                if (selectedUserId) {
+                    const user = portalUsers.find(u => u.id === selectedUserId);
+                    node.userId = selectedUserId;
+                    node.name = user ? user.name : 'Unknown';
+                    node.customId = user ? user.customId : '';
+                } else {
+                    node.userId = null;
+                    node.name = "";
+                    node.customId = "";
+                }
+
+                renderTree();
+                closeNodeModal();
+            }
+        });
+
+        window.deleteNode = function () {
+            if (!selectedNodeId || selectedNodeId === 'root') return;
+            if (confirm('Are you sure? This will remove all sub-roles as well.')) {
+                // Determine parent is not directly available, so we traverse from root
+                // Actually 'parent' logic is handled by recursive delete function
+                if (deleteNodeRecursive(hierarchyData, selectedNodeId)) {
+                    renderTree();
+                    closeNodeModal();
+                } else {
+                    console.error("Could not delete node");
+                }
+            }
+        }
+
+        window.saveHierarchy = async function () {
+            const btn = document.querySelector('button[onclick="saveHierarchy()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Saving...';
+            btn.disabled = true;
+
+            try {
+                await setDoc(doc(db, 'settings', 'organization'), { hierarchy: hierarchyData });
+                showToast("Organization hierarchy saved successfully!", "success");
+            } catch (error) {
+                console.error("Error saving hierarchy:", error);
+                showToast("Failed to save hierarchy.", "error");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function renderTreeHtml(node) {
+            // Prepare Avatar HTML
+            let avatarHtml = '';
+            if (node.userId) {
+                const user = portalUsers.find(u => u.id === node.userId);
+                const name = user ? user.name : (node.name || 'Unknown');
+                const color = stringToColor(name);
+                avatarHtml = `
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-md mb-2" 
+                            style="background: linear-gradient(135deg, ${color}, ${adjustColor(color, -30)})">
+                        ${getInitials(name)}
+                    </div>
+                `;
+            } else {
+                avatarHtml = `
+                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 mb-2">
+                        <span class="material-symbols-outlined text-lg">person</span>
+                    </div>
+                `;
+            }
+
+            let html = `
+                <li>
+                    <div class="inline-flex flex-col items-center">
+                        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 min-w-[150px] shadow-sm hover:shadow-neon hover:border-primary/50 transition-all relative group cursor-pointer"
+                             onclick="openNodeModal('${node.id}')">
+                            
+                            <!-- Avatar Display -->
+                            <div class="flex justify-center">
+                                ${avatarHtml}
+                            </div>
+
+                            <div class="font-bold text-slate-800 dark:text-white text-sm">${node.role}</div>
+                            <div class="text-xs text-slate-500 truncate max-w-[140px]">${node.name || '<span class="italic opacity-50">Unassigned</span>'}</div>
+                            ${node.customId ? `<div class="text-[10px] text-primary bg-primary/10 px-1.5 py-0.5 rounded mt-1 inline-block">${node.customId}</div>` : ''}
+                            
+                            <!-- Add Child Buton -->
+                            <button onclick="event.stopPropagation(); addChild('${node.id}')" 
+                                class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:scale-110 shadow-lg" title="Add Reportee">
+                                <span class="material-symbols-outlined text-sm block">add</span>
+                            </button>
+                        </div>
+                    </div>
+            `;
+
+            if (node.children && node.children.length > 0) {
+                html += '<ul>';
+                node.children.forEach(child => {
+                    html += renderTreeHtml(child);
+                });
+                html += '</ul>';
+            }
+
+            html += '</li>';
+            return html;
+        }
+
+        function renderTree() {
+            const container = document.getElementById('org-tree');
+            container.innerHTML = '<ul>' + renderTreeHtml(hierarchyData) + '</ul>';
+        }
+
+        function showToast(msg, type) {
+            const t = document.createElement('div');
+            t.className = `fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white animate-fade-in-up`;
+            t.innerHTML = `<span>${msg}</span>`;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        // Init
+        loadHierarchy();
+        loadPortalUsers();
+
+    </script>
+</body>
+
+</html>

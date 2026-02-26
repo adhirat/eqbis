@@ -1,0 +1,118 @@
+<!-- Chat Widget Container (Fixed) -->
+<div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+
+    <!-- Chat Window (Hidden by default) -->
+    <div id="chat-window"
+        class="w-[360px] h-[520px] bg-white dark:bg-[#1e293b] rounded-2xl shadow-2xl ring-1 ring-black/5 dark:ring-white/10 flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right transform scale-95 opacity-0 invisible translate-y-4">
+
+        <!-- Header -->
+        <div class="p-4 bg-primary text-white flex justify-between items-center shrink-0 shadow-md relative z-10">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <div class="size-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                        <span class="material-symbols-outlined text-[20px]">smart_toy</span>
+                    </div>
+                    <span
+                        class="absolute bottom-0 right-0 size-2.5 bg-green-400 border-2 border-primary rounded-full"></span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">Adhirat Assistant</h3>
+                    <p class="text-xs text-blue-100 flex items-center gap-1">
+                        <span class="inline-block size-1.5 bg-green-400 rounded-full animate-pulse"></span>
+                        Online
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-1">
+                <button onclick="toggleChat()"
+                    class="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/80 hover:text-white">
+                    <span class="material-symbols-outlined text-[20px]">remove</span>
+                </button>
+                <button onclick="toggleChat()"
+                    class="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/80 hover:text-white">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="flex-1 bg-slate-50 dark:bg-[#0f172a] p-4 overflow-y-auto custom-scrollbar flex flex-col gap-4"
+            id="chat-messages">
+            <!-- Time Divider -->
+            <div class="flex justify-center my-2">
+                <span
+                    class="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-600 tracking-wider">Today</span>
+            </div>
+
+            <!-- Bot Message -->
+            <div class="flex gap-3 max-w-[85%]">
+                <div
+                    class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 mt-1">
+                    <span class="material-symbols-outlined text-[16px]">smart_toy</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <div
+                        class="bg-white dark:bg-[#1e293b] p-3 rounded-2xl rounded-tl-none shadow-sm border border-slate-100 dark:border-slate-800 text-sm text-slate-700 dark:text-slate-200">
+                        Hello! 👋 How can I help you today?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bot Suggestion Chips -->
+            <div class="flex flex-wrap gap-2 pl-11">
+                <button
+                    class="px-3 py-1.5 bg-white dark:bg-[#1e293b] border border-primary/20 text-primary text-xs font-medium rounded-full hover:bg-primary/5 transition-colors shadow-sm">
+                    Checks status?
+                </button>
+                <button
+                    class="px-3 py-1.5 bg-white dark:bg-[#1e293b] border border-primary/20 text-primary text-xs font-medium rounded-full hover:bg-primary/5 transition-colors shadow-sm">
+                    New Ticket
+                </button>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-white dark:bg-[#1e293b] border-t border-slate-100 dark:border-slate-800 shrink-0">
+            <form onsubmit="handleChatSubmit(event)" class="relative">
+                <input type="text" id="chat-input" placeholder="Type your message..."
+                    class="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm rounded-xl pl-4 pr-12 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-inner">
+
+                <button type="submit"
+                    class="absolute right-2 top-1.5 p-1.5 bg-primary text-white rounded-lg shadow-sm hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                    <span class="material-symbols-outlined text-[18px]">send</span>
+                </button>
+            </form>
+            <div class="mt-2 flex justify-center items-center gap-1 text-[10px] text-slate-400 dark:text-slate-600">
+                <span class="material-symbols-outlined text-[12px]">lock</span>
+                <span>Encrypted & Private</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button onclick="toggleChat()" id="chat-fab"
+        class="size-14 bg-primary text-white rounded-full shadow-xl shadow-primary/25 hover:scale-110 hover:shadow-2xl hover:shadow-primary/40 active:scale-95 transition-all duration-300 flex items-center justify-center group z-50">
+        <span class="material-symbols-outlined text-[28px] group-hover:rotate-12 transition-transform duration-300"
+            id="chat-icon">chat_bubble</span>
+    </button>
+</div>
+
+<style>
+    /* Chat Specific Animations */
+    #chat-window.visible {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #chat-fab.active {
+        background-color: #ef4444;
+        /* Red color for close state */
+        transform: rotate(90deg);
+        box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.4);
+    }
+
+    #chat-fab.active span {
+        content: 'close';
+    }
+</style>

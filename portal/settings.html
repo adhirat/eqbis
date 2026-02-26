@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Portal Settings - Adhirat Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
+    <style>
+        .theme-card.active {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        .dark .theme-card.active {
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+        }
+
+        /* Toggle Switch Animation */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #8b5cf6;
+        }
+
+        .toggle-checkbox:checked+.toggle-label {
+            background-color: #8b5cf6;
+        }
+
+        .dark .toggle-checkbox:checked+.toggle-label {
+            background-color: #06b6d4;
+        }
+    </style>
+    <!-- Global Assets -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+</head>
+
+<body
+    class="pt-0 font-display bg-slate-50 dark:bg-dark-bg text-slate-900 dark:text-white antialiased overflow-hidden h-screen flex">
+
+    <!-- Global Sidebar -->
+    <div id="portal-sidebar" class="contents"></div>
+
+    <!-- Main Wrapper -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Global Header -->
+        <div id="portal-header" class="contents"></div>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 animate-fade-in-up">
+            <div class="max-w-[1200px] mx-auto w-full space-y-8">
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2">Portal Settings</h1>
+                        <p class="text-slate-500 dark:text-slate-400">Manage your subscription, themes, and team
+                            preferences.</p>
+                    </div>
+                    <button
+                        class="btn-primary px-6 py-2.5 rounded-lg bg-neon-violet text-white font-bold shadow-lg shadow-neon-violet/25 hover:scale-105 transition-transform flex items-center gap-2">
+                        <span class="material-symbols-outlined">save</span>
+                        Save Changes
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+                    <!-- Settings Navigation -->
+                    <div class="lg:col-span-1 space-y-1">
+                        <button onclick="switchTab('subscription')" id="tab-subscription"
+                            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-neon-violet/10 text-neon-violet font-bold text-sm transition-colors text-left border border-neon-violet/20">
+                            <span class="material-symbols-outlined">credit_card</span>
+                            Subscription & Modules
+                        </button>
+                        <button onclick="switchTab('themes')" id="tab-themes"
+                            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-sm transition-colors text-left">
+                            <span class="material-symbols-outlined">palette</span>
+                            Appearance & Themes
+                        </button>
+                        <button onclick="switchTab('team')" id="tab-team"
+                            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-sm transition-colors text-left">
+                            <span class="material-symbols-outlined">group</span>
+                            Team Settings
+                        </button>
+                    </div>
+
+                    <!-- Content Area -->
+                    <div class="lg:col-span-3 space-y-8">
+
+                        <!-- Subscription Section -->
+                        <div id="section-subscription" class="space-y-6">
+
+                            <!-- Cost Summary Card -->
+                            <div
+                                class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-8 relative overflow-hidden shadow-2xl">
+                                <div class="absolute top-0 right-0 p-12 opacity-10">
+                                    <span class="material-symbols-outlined text-9xl">rocket_launch</span>
+                                </div>
+                                <div class="relative z-10 flex flex-col md:flex-row justify-between items-end gap-6">
+                                    <div>
+                                        <p class="text-slate-400 font-medium mb-1">Estimated Monthly Cost</p>
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="text-5xl font-black tracking-tight"
+                                                id="total-price">$129</span>
+                                            <span class="text-xl text-slate-400">/mo</span>
+                                        </div>
+                                        <p class="text-sm text-slate-400 mt-2">Includes Base Platform + 3 Active Modules
+                                        </p>
+                                    </div>
+                                    <div class="w-full md:w-auto">
+                                        <div class="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/10">
+                                            <div class="flex justify-between items-center text-sm mb-2">
+                                                <span>Current Plan</span>
+                                                <span class="font-bold text-neon-cyan">Enterprise</span>
+                                            </div>
+                                            <div class="flex justify-between items-center text-sm">
+                                                <span>Next Billing</span>
+                                                <span class="font-bold">Feb 28, 2026</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Module Selector -->
+                            <div
+                                class="bg-white dark:bg-dark-card rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Active Modules</h2>
+                                    <p class="text-sm text-slate-500 mt-1">Select the comprehensive modules you need.
+                                        Pay only for what you use.</p>
+                                </div>
+                                <div class="divide-y divide-slate-100 dark:divide-slate-700">
+
+                                    <!-- Module Item: HR -->
+                                    <div
+                                        class="p-6 flex items-center justify-between group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <div class="flex items-center gap-4">
+                                            <div
+                                                class="size-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                                                <span class="material-symbols-outlined text-2xl">badge</span>
+                                            </div>
+                                            <div>
+                                                <h3
+                                                    class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                                    HR & People
+                                                    <span
+                                                        class="px-2 py-0.5 rounded text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500">Core</span>
+                                                </h3>
+                                                <p class="text-sm text-slate-500">Employee records, leave management,
+                                                    and payroll.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-6">
+                                            <span class="font-bold text-slate-900 dark:text-white">$29<span
+                                                    class="text-xs text-slate-500 font-normal">/mo</span></span>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" checked class="sr-only peer module-toggle"
+                                                    data-price="29">
+                                                <div
+                                                    class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neon-violet">
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Module Item: CRM -->
+                                    <div
+                                        class="p-6 flex items-center justify-between group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <div class="flex items-center gap-4">
+                                            <div
+                                                class="size-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                                <span class="material-symbols-outlined text-2xl">hub</span>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-bold text-slate-900 dark:text-white">CRM & Projects</h3>
+                                                <p class="text-sm text-slate-500">Lead tracking, project pipelines, and
+                                                    tasks.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-6">
+                                            <span class="font-bold text-slate-900 dark:text-white">$39<span
+                                                    class="text-xs text-slate-500 font-normal">/mo</span></span>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" checked class="sr-only peer module-toggle"
+                                                    data-price="39">
+                                                <div
+                                                    class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neon-violet">
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Module Item: Store -->
+                                    <div
+                                        class="p-6 flex items-center justify-between group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <div class="flex items-center gap-4">
+                                            <div
+                                                class="size-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                                                <span class="material-symbols-outlined text-2xl">storefront</span>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-bold text-slate-900 dark:text-white">Commerce &
+                                                    Campaigns</h3>
+                                                <p class="text-sm text-slate-500">Online store, inventory, and
+                                                    fundraising campaigns.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-6">
+                                            <span class="font-bold text-slate-900 dark:text-white">$49<span
+                                                    class="text-xs text-slate-500 font-normal">/mo</span></span>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" checked class="sr-only peer module-toggle"
+                                                    data-price="49">
+                                                <div
+                                                    class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neon-violet">
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Module Item: LMS -->
+                                    <div
+                                        class="p-6 flex items-center justify-between group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <div class="flex items-center gap-4">
+                                            <div
+                                                class="size-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                                                <span class="material-symbols-outlined text-2xl">school</span>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-bold text-slate-900 dark:text-white">Learning Center
+                                                </h3>
+                                                <p class="text-sm text-slate-500">Course creation, student management,
+                                                    and quizzes.</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-6">
+                                            <span class="font-bold text-slate-900 dark:text-white">$39<span
+                                                    class="text-xs text-slate-500 font-normal">/mo</span></span>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" class="sr-only peer module-toggle"
+                                                    data-price="39">
+                                                <div
+                                                    class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neon-violet">
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div
+                                    class="bg-slate-50 dark:bg-slate-800/80 p-4 px-6 flex justify-between items-center border-t border-slate-200 dark:border-slate-700">
+                                    <span class="text-sm text-slate-500">Base Platform Fee</span>
+                                    <span class="font-bold text-slate-900 dark:text-white">$12.00/mo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Themes Section (Hidden by default) -->
+                        <div id="section-themes" class="space-y-6 hidden">
+                            <div
+                                class="bg-white dark:bg-dark-card rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+                                <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Interface Theme</h2>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                                    <!-- Theme 1: Adhirat Neon -->
+                                    <div class="cursor-pointer group">
+                                        <div
+                                            class="theme-card active rounded-xl border-2 border-transparent overflow-hidden mb-3 relative">
+                                            <div class="h-32 bg-slate-900 relative">
+                                                <!-- Mock UI -->
+                                                <div
+                                                    class="absolute left-0 top-0 bottom-0 w-8 bg-slate-800 border-r border-slate-700">
+                                                </div>
+                                                <div class="absolute inset-0 pl-10 pt-4 pr-2">
+                                                    <div class="h-2 w-20 bg-slate-700 rounded mb-4"></div>
+                                                    <div class="grid grid-cols-2 gap-2">
+                                                        <div
+                                                            class="h-16 bg-slate-800 rounded border border-neon-violet/30">
+                                                        </div>
+                                                        <div class="h-16 bg-slate-800 rounded"></div>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="absolute inset-0 bg-gradient-to-tr from-neon-violet/20 to-transparent pointer-events-none">
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="absolute top-2 right-2 bg-neon-violet text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                                Active</div>
+                                        </div>
+                                        <h3 class="font-bold text-slate-900 dark:text-white">Adhirat Neon</h3>
+                                        <p class="text-xs text-slate-500">Our signature futuristic look.</p>
+                                    </div>
+
+                                    <!-- Theme 2: Minimalist Light -->
+                                    <div class="cursor-pointer group">
+                                        <div
+                                            class="theme-card rounded-xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden mb-3 group-hover:border-slate-400 transition-colors">
+                                            <div class="h-32 bg-white relative">
+                                                <!-- Mock UI -->
+                                                <div
+                                                    class="absolute left-0 top-0 bottom-0 w-8 bg-slate-50 border-r border-slate-200">
+                                                </div>
+                                                <div class="absolute inset-0 pl-10 pt-4 pr-2">
+                                                    <div class="h-2 w-20 bg-slate-200 rounded mb-4"></div>
+                                                    <div class="grid grid-cols-2 gap-2">
+                                                        <div class="h-16 bg-slate-50 rounded border border-slate-200">
+                                                        </div>
+                                                        <div class="h-16 bg-slate-50 rounded border border-slate-200">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h3 class="font-bold text-slate-900 dark:text-white">Soft Minimal</h3>
+                                        <p class="text-xs text-slate-500">Clean, crisp, and distraction-free.</p>
+                                    </div>
+
+                                    <!-- Theme 3: Midnight Blue -->
+                                    <div class="cursor-pointer group">
+                                        <div
+                                            class="theme-card rounded-xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden mb-3 group-hover:border-blue-500 transition-colors">
+                                            <div class="h-32 bg-[#0f172a] relative">
+                                                <!-- Mock UI -->
+                                                <div
+                                                    class="absolute left-0 top-0 bottom-0 w-8 bg-[#1e293b] border-r border-slate-700">
+                                                </div>
+                                                <div class="absolute inset-0 pl-10 pt-4 pr-2">
+                                                    <div class="h-2 w-20 bg-slate-700 rounded mb-4"></div>
+                                                    <div class="grid grid-cols-2 gap-2">
+                                                        <div
+                                                            class="h-16 bg-[#1e293b] rounded border border-blue-500/30">
+                                                        </div>
+                                                        <div class="h-16 bg-[#1e293b] rounded"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h3 class="font-bold text-slate-900 dark:text-white">Midnight Blue</h3>
+                                        <p class="text-xs text-slate-500">Deep blues for high contrast.</p>
+                                    </div>
+
+                                </div>
+
+                                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h3 class="font-bold text-slate-900 dark:text-white">Color Mode</h3>
+                                            <p class="text-sm text-slate-500">Switch between light and dark appearances.
+                                            </p>
+                                        </div>
+                                        <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex items-center">
+                                            <button
+                                                class="px-4 py-2 rounded-md text-sm font-medium text-slate-500 hover:text-slate-900">Light</button>
+                                            <button
+                                                class="px-4 py-2 rounded-md bg-white dark:bg-neon-cyan/20 text-slate-900 dark:text-neon-cyan shadow-sm text-sm font-bold">Dark</button>
+                                            <button
+                                                class="px-4 py-2 rounded-md text-sm font-medium text-slate-500 hover:text-slate-900">Auto</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Team Section (Hidden by default) -->
+                        <div id="section-team" class="space-y-6 hidden">
+                            <div
+                                class="bg-white dark:bg-dark-card rounded-2xl p-8 border border-slate-200 dark:border-slate-700 text-center">
+                                <div
+                                    class="size-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span class="material-symbols-outlined text-3xl text-slate-400">construction</span>
+                                </div>
+                                <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">Team Settings</h3>
+                                <p class="text-slate-500">This section allows you to manage roles, permissions, and
+                                    company details.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simple Tab Switching Logic
+        function switchTab(tabName) {
+            // Hide all sections
+            document.getElementById('section-subscription').classList.add('hidden');
+            document.getElementById('section-themes').classList.add('hidden');
+            document.getElementById('section-team').classList.add('hidden');
+
+            // Show selected section
+            document.getElementById('section-' + tabName).classList.remove('hidden');
+
+            // Reset Tab Styles
+            const tabs = ['subscription', 'themes', 'team'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('tab-' + t);
+                btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-sm transition-colors text-left";
+            });
+
+            // Set Active Tab Style
+            const activeBtn = document.getElementById('tab-' + tabName);
+            activeBtn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-neon-violet/10 text-neon-violet font-bold text-sm transition-colors text-left border border-neon-violet/20";
+        }
+
+        // Live Price Calculator
+        const basePrice = 12;
+        const totalDisplay = document.getElementById('total-price');
+        const toggles = document.querySelectorAll('.module-toggle');
+
+        function updatePrice() {
+            let total = basePrice;
+            toggles.forEach(toggle => {
+                if (toggle.checked) {
+                    total += parseInt(toggle.dataset.price);
+                }
+            });
+            totalDisplay.textContent = '$' + total;
+        }
+
+        toggles.forEach(toggle => {
+            toggle.addEventListener('change', updatePrice);
+        });
+
+        // Initialize price
+        updatePrice();
+    </script>
+
+</body>
+
+</html>

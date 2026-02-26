@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Role Management - Adhirat Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind Configuration -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Global Assets -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+        /* Permission tag styles */
+        .permission-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 500;
+            background: rgba(139, 92, 246, 0.1);
+            color: #8B5CF6;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .dark .permission-tag {
+            background: rgba(0, 245, 255, 0.1);
+            color: #00F5FF;
+            border-color: rgba(0, 245, 255, 0.2);
+        }
+
+        /* Modal styles */
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+
+<body
+    class="pt-0 bg-background-light dark:bg-dark-bg text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <div id="portal-sidebar" class="contents"></div>
+
+        <!-- Main Content Wrapper -->
+        <main class="flex-1 flex flex-col min-w-0">
+            <!-- Top Header -->
+            <div id="portal-header" class="contents"></div>
+
+            <!-- Dashboard Content Scrollable Area -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-8 animate-fade-in-up">
+                <div class="max-w-[1280px] mx-auto flex flex-col gap-8">
+                    <!-- Page Heading -->
+                    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                        <div class="flex flex-col gap-1">
+                            <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Role Management
+                            </h1>
+                            <p class="text-slate-500 dark:text-slate-400">Create and manage roles with custom
+                                permissions.</p>
+                        </div>
+                        <div class="flex gap-3" data-permission="create_role">
+                            <button onclick="openCreateRoleModal()"
+                                class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-blue-600 transition-colors shadow-lg shadow-primary/25 btn-primary">
+                                <span class="material-symbols-outlined text-[18px]">add</span>
+                                Create Role
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-purple-600 dark:text-purple-400">
+                                    <span class="material-symbols-outlined text-2xl">shield</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Roles</p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="total-roles-count">
+                                        0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+                                    <span class="material-symbols-outlined text-2xl">admin_panel_settings</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Default Roles</p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white"
+                                        id="default-roles-count">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-emerald-600 dark:text-emerald-400">
+                                    <span class="material-symbols-outlined text-2xl">tune</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Custom Roles</p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white"
+                                        id="custom-roles-count">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-amber-600 dark:text-amber-400">
+                                    <span class="material-symbols-outlined text-2xl">key</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Permissions
+                                    </p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white"
+                                        id="total-permissions-count">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Roles Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="roles-container">
+                        <!-- Roles will be loaded here dynamically -->
+                        <div class="col-span-full flex items-center justify-center py-12">
+                            <div class="flex flex-col items-center gap-4">
+                                <span
+                                    class="material-symbols-outlined text-4xl text-slate-400 animate-spin">progress_activity</span>
+                                <p class="text-slate-500">Loading roles...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="text-center text-sm text-slate-500 py-6">
+                        © 2024 Adhirat Technologies. All rights reserved.
+                    </footer>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create/Edit Role Modal -->
+    <div id="role-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeRoleModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-slate-200 dark:border-slate-700 animate-fade-in-up">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center justify-between">
+                    <h2 id="modal-title" class="text-xl font-bold text-slate-900 dark:text-white">Create New Role</h2>
+                    <button onclick="closeRoleModal()"
+                        class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+            </div>
+            <form id="role-form" class="p-6 overflow-y-auto max-h-[60vh]">
+                <input type="hidden" id="role-id" value="">
+
+                <div class="space-y-6">
+                    <!-- Basic Info -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Role Name
+                                *</label>
+                            <input type="text" id="role-name" required
+                                class="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                placeholder="e.g., Content Manager">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Role
+                                Color</label>
+                            <div class="flex items-center gap-3">
+                                <input type="color" id="role-color" value="#8B5CF6"
+                                    class="w-12 h-10 rounded-lg border border-slate-200 dark:border-slate-700 cursor-pointer">
+                                <span id="color-preview" class="text-sm text-slate-500">Selected color</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Description</label>
+                        <textarea id="role-description" rows="2"
+                            class="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+                            placeholder="Brief description of this role..."></textarea>
+                    </div>
+
+                    <!-- Permissions -->
+                    <div>
+                        <label
+                            class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-4">Permissions</label>
+                        <div class="space-y-6" id="permissions-container">
+                            <!-- Dashboard Permissions -->
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+                                <h4
+                                    class="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">dashboard</span>
+                                    Dashboard Access
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="perm-dashboard"></div>
+                            </div>
+
+                            <!-- User Management -->
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+                                <h4
+                                    class="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">group</span>
+                                    User Management
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="perm-users"></div>
+                            </div>
+
+                            <!-- Role Management -->
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+                                <h4
+                                    class="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">shield</span>
+                                    Role Management
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="perm-roles"></div>
+                            </div>
+
+                            <!-- Subscriptions & Forms -->
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+                                <h4
+                                    class="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">mail</span>
+                                    Subscriptions & Forms
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="perm-forms"></div>
+                            </div>
+
+                            <!-- Employee Management -->
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+                                <h4
+                                    class="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">badge</span>
+                                    Employee & Recruitment
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="perm-employees"></div>
+                            </div>
+
+                            <!-- Finance -->
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+                                <h4
+                                    class="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">payments</span>
+                                    Finance
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="perm-finance"></div>
+                            </div>
+
+                            <!-- Documents & Timesheet -->
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+                                <h4
+                                    class="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">description</span>
+                                    Documents & Timesheet
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="perm-documents"></div>
+                            </div>
+
+                            <!-- Settings -->
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+                                <h4
+                                    class="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">settings</span>
+                                    Settings
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="perm-settings"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div
+                class="p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3">
+                <button type="button" onclick="closeRoleModal()"
+                    class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold">
+                    Cancel
+                </button>
+                <button type="button" onclick="saveRole()"
+                    class="px-6 py-2 rounded-lg bg-primary text-white hover:bg-blue-600 transition-colors font-semibold shadow-lg shadow-primary/25">
+                    Save Role
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeDeleteModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-700 animate-fade-in-up">
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-red-500 text-2xl">warning</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Delete Role</h3>
+                        <p class="text-sm text-slate-500">This action cannot be undone</p>
+                    </div>
+                </div>
+                <p class="text-slate-600 dark:text-slate-400 mb-6">Are you sure you want to delete the role "<span
+                        id="delete-role-name" class="font-semibold"></span>"?</p>
+                <input type="hidden" id="delete-role-id">
+                <div class="flex gap-3">
+                    <button onclick="closeDeleteModal()"
+                        class="flex-1 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold">
+                        Cancel
+                    </button>
+                    <button onclick="confirmDeleteRole()"
+                        class="flex-1 px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors font-semibold">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initAuthObserver } from '../assets/js/firebase-modules.js';
+        import {
+            initRBACGuard,
+            getAllRoles,
+            createRole,
+            updateRole,
+            deleteRole,
+            initializeDefaultRoles,
+            PERMISSIONS
+        } from '../assets/js/rbac.js';
+
+        // Initialize auth observer and RBAC guard
+        initRBACGuard([PERMISSIONS.VIEW_ROLES]);
+
+        // Initialize default roles on page load
+        await initializeDefaultRoles();
+
+        // Store permissions and roles globally
+        window.PERMISSIONS = PERMISSIONS;
+        window.allRoles = [];
+
+        // Permission categories for the form
+        const permissionCategories = {
+            'perm-dashboard': [
+                { id: 'view_dashboard', label: 'View Dashboard' },
+                { id: 'view_admin_dashboard', label: 'View Admin Dashboard' },
+                { id: 'view_employee_dashboard', label: 'View Employee Dashboard' }
+            ],
+            'perm-users': [
+                { id: 'view_users', label: 'View Users' },
+                { id: 'create_user', label: 'Create Users' },
+                { id: 'edit_user', label: 'Edit Users' },
+                { id: 'delete_user', label: 'Delete Users' },
+                { id: 'assign_roles', label: 'Assign Roles' }
+            ],
+            'perm-roles': [
+                { id: 'view_roles', label: 'View Roles' },
+                { id: 'create_role', label: 'Create Roles' },
+                { id: 'edit_role', label: 'Edit Roles' },
+                { id: 'delete_role', label: 'Delete Roles' }
+            ],
+            'perm-forms': [
+                { id: 'view_subscriptions', label: 'View Subscriptions' },
+                { id: 'manage_subscriptions', label: 'Manage Subscriptions' },
+                { id: 'export_subscriptions', label: 'Export Subscriptions' },
+                { id: 'view_submissions', label: 'View Form Submissions' },
+                { id: 'respond_submissions', label: 'Respond to Submissions' },
+                { id: 'delete_submissions', label: 'Delete Submissions' },
+                { id: 'export_submissions', label: 'Export Submissions' }
+            ],
+            'perm-employees': [
+                { id: 'view_employees', label: 'View Employees' },
+                { id: 'create_employee', label: 'Create Employees' },
+                { id: 'edit_employee', label: 'Edit Employees' },
+                { id: 'delete_employee', label: 'Delete Employees' },
+                { id: 'view_applications', label: 'View Applications' },
+                { id: 'manage_applications', label: 'Manage Applications' }
+            ],
+            'perm-finance': [
+                { id: 'view_invoices', label: 'View Invoices' },
+                { id: 'create_invoice', label: 'Create Invoices' },
+                { id: 'edit_invoice', label: 'Edit Invoices' },
+                { id: 'view_payroll', label: 'View Payroll' },
+                { id: 'manage_payroll', label: 'Manage Payroll' }
+            ],
+            'perm-documents': [
+                { id: 'view_documents', label: 'View Documents' },
+                { id: 'create_document', label: 'Create Documents' },
+                { id: 'edit_document', label: 'Edit Documents' },
+                { id: 'delete_document', label: 'Delete Documents' },
+                { id: 'view_timesheet', label: 'View Timesheet' },
+                { id: 'manage_timesheet', label: 'Manage Timesheet' },
+                { id: 'approve_timesheet', label: 'Approve Timesheet' }
+            ],
+            'perm-settings': [
+                { id: 'view_settings', label: 'View Settings' },
+                { id: 'manage_settings', label: 'Manage Settings' }
+            ]
+        };
+
+        // Initialize permissions form
+        function initPermissionsForm() {
+            Object.entries(permissionCategories).forEach(([containerId, permissions]) => {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                container.innerHTML = permissions.map(perm => `
+                    <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 cursor-pointer transition-colors">
+                        <input type="checkbox" value="${perm.id}" class="perm-checkbox w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary">
+                        <span class="text-sm text-slate-700 dark:text-slate-300">${perm.label}</span>
+                    </label>
+                `).join('');
+            });
+        }
+
+        // Load roles
+        async function loadRoles() {
+            const result = await getAllRoles();
+            if (result.success) {
+                window.allRoles = result.roles;
+                renderRoles(result.roles);
+                updateStats(result.roles);
+            }
+        }
+
+        // Render roles grid
+        function renderRoles(roles) {
+            const container = document.getElementById('roles-container');
+
+            if (roles.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full flex flex-col items-center justify-center py-12 bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700">
+                        <span class="material-symbols-outlined text-5xl text-slate-300 mb-4">shield</span>
+                        <p class="text-slate-500 mb-4">No roles found</p>
+                        <button onclick="openCreateRoleModal()" class="px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors">
+                            Create First Role
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = roles.map(role => `
+                <div class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-300 overflow-hidden group">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: ${role.color}20">
+                                    <span class="material-symbols-outlined" style="color: ${role.color}">shield</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-900 dark:text-white">${role.name}</h3>
+                                    <div class="flex items-center gap-2">
+                                        ${role.isDefault ? '<span class="text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full font-medium">Default</span>' : '<span class="text-xs px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-full font-medium">Custom</span>'}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="openEditRoleModal('${role.id}')" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" data-permission="edit_role">
+                                    <span class="material-symbols-outlined text-lg text-slate-500">edit</span>
+                                </button>
+                                ${!role.isDefault ? `
+                                <button onclick="openDeleteModal('${role.id}', '${role.name}')" class="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors" data-permission="delete_role">
+                                    <span class="material-symbols-outlined text-lg text-red-500">delete</span>
+                                </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">${role.description || 'No description'}</p>
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="material-symbols-outlined text-lg text-slate-400">key</span>
+                            <span class="text-slate-600 dark:text-slate-300">${role.permissions?.length || 0} permissions</span>
+                        </div>
+                    </div>
+                    <div class="px-6 py-3 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700">
+                        <div class="flex flex-wrap gap-1 max-h-20 overflow-hidden">
+                            ${(role.permissions || []).slice(0, 5).map(p => `
+                                <span class="permission-tag">${p.replace(/_/g, ' ')}</span>
+                            `).join('')}
+                            ${role.permissions?.length > 5 ? `
+                                <span class="permission-tag">+${role.permissions.length - 5} more</span>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update stats
+        function updateStats(roles) {
+            const total = roles.length;
+            const defaultRoles = roles.filter(r => r.isDefault).length;
+            const customRoles = roles.filter(r => !r.isDefault).length;
+            const totalPerms = Object.keys(PERMISSIONS).length;
+
+            document.getElementById('total-roles-count').textContent = total;
+            document.getElementById('default-roles-count').textContent = defaultRoles;
+            document.getElementById('custom-roles-count').textContent = customRoles;
+            document.getElementById('total-permissions-count').textContent = totalPerms;
+        }
+
+        // Modal functions
+        window.openCreateRoleModal = function () {
+            document.getElementById('modal-title').textContent = 'Create New Role';
+            document.getElementById('role-id').value = '';
+            document.getElementById('role-name').value = '';
+            document.getElementById('role-description').value = '';
+            document.getElementById('role-color').value = '#8B5CF6';
+            document.querySelectorAll('.perm-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('role-modal').classList.remove('hidden');
+        };
+
+        window.openEditRoleModal = function (roleId) {
+            const role = window.allRoles.find(r => r.id === roleId);
+            if (!role) return;
+
+            document.getElementById('modal-title').textContent = 'Edit Role';
+            document.getElementById('role-id').value = roleId;
+            document.getElementById('role-name').value = role.name;
+            document.getElementById('role-description').value = role.description || '';
+            document.getElementById('role-color').value = role.color || '#8B5CF6';
+
+            // Set permissions
+            document.querySelectorAll('.perm-checkbox').forEach(cb => {
+                cb.checked = (role.permissions || []).includes(cb.value);
+            });
+
+            document.getElementById('role-modal').classList.remove('hidden');
+        };
+
+        window.closeRoleModal = function () {
+            document.getElementById('role-modal').classList.add('hidden');
+        };
+
+        window.openDeleteModal = function (roleId, roleName) {
+            document.getElementById('delete-role-id').value = roleId;
+            document.getElementById('delete-role-name').textContent = roleName;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        };
+
+        window.closeDeleteModal = function () {
+            document.getElementById('delete-modal').classList.add('hidden');
+        };
+
+        // Save role
+        window.saveRole = async function () {
+            const roleId = document.getElementById('role-id').value;
+            const name = document.getElementById('role-name').value.trim();
+            const description = document.getElementById('role-description').value.trim();
+            const color = document.getElementById('role-color').value;
+
+            if (!name) {
+                showToast('Please enter a role name', 'error');
+                return;
+            }
+
+            const permissions = [];
+            document.querySelectorAll('.perm-checkbox:checked').forEach(cb => {
+                permissions.push(cb.value);
+            });
+
+            const roleData = { name, description, color, permissions };
+
+            let result;
+            if (roleId) {
+                result = await updateRole(roleId, roleData);
+            } else {
+                result = await createRole(roleData);
+            }
+
+            if (result.success) {
+                showToast(roleId ? 'Role updated successfully' : 'Role created successfully', 'success');
+                closeRoleModal();
+                loadRoles();
+            } else {
+                showToast(result.error || 'Failed to save role', 'error');
+            }
+        };
+
+        // Delete role
+        window.confirmDeleteRole = async function () {
+            const roleId = document.getElementById('delete-role-id').value;
+            const result = await deleteRole(roleId);
+
+            if (result.success) {
+                showToast('Role deleted successfully', 'success');
+                closeDeleteModal();
+                loadRoles();
+            } else {
+                showToast(result.error || 'Failed to delete role', 'error');
+            }
+        };
+
+        // Toast function
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-emerald-500' : 'bg-red-500';
+            toast.className = `fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in-up z-50`;
+            toast.innerHTML = `
+                <span class="material-symbols-outlined">${type === 'success' ? 'check_circle' : 'error'}</span>
+                ${message}
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize
+        initPermissionsForm();
+        loadRoles();
+    </script>
+</body>
+
+</html>

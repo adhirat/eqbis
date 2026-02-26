@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Profile Settings - Adhirat Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Global Assets -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+    <style>
+        .tab-active {
+            background: linear-gradient(135deg, #8B5CF6, #6366F1);
+            color: white;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body
+    class="pt-0 font-display bg-slate-50 dark:bg-dark-bg text-slate-900 dark:text-white antialiased overflow-hidden h-screen flex">
+
+    <!-- Global Sidebar -->
+    <div id="portal-sidebar" class="contents"></div>
+
+    <!-- Main Wrapper -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Global Header -->
+        <div id="portal-header" class="contents"></div>
+
+        <!-- Scrollable Page Content -->
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 animate-fade-in-up">
+            <div class="max-w-[1400px] mx-auto w-full">
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <!-- Inner Settings Sidebar -->
+                    <aside class="hidden lg:flex flex-col w-64 shrink-0 gap-6">
+                        <div class="flex flex-col gap-1">
+                            <h1
+                                class="text-slate-900 dark:text-white text-2xl font-black leading-tight tracking-[-0.033em]">
+                                Settings</h1>
+                            <p class="text-slate-500 dark:text-gray-400 text-base font-normal">Manage your account</p>
+                        </div>
+                        <nav class="flex flex-col gap-2" id="settings-nav">
+                            <button
+                                class="settings-tab tab-active flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all"
+                                data-tab="personal">
+                                <span class="material-symbols-outlined" style="font-size: 24px;">person</span>
+                                <span class="text-sm font-medium leading-normal">Personal Info</span>
+                            </button>
+                            <button
+                                class="settings-tab flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-dark-card transition-all"
+                                data-tab="security">
+                                <span class="material-symbols-outlined" style="font-size: 24px;">lock</span>
+                                <span class="text-sm font-medium leading-normal">Security Settings</span>
+                            </button>
+                            <button
+                                class="settings-tab flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-dark-card transition-all"
+                                data-tab="notifications">
+                                <span class="material-symbols-outlined"
+                                    style="font-size: 24px;">notifications_active</span>
+                                <span class="text-sm font-medium leading-normal">Notifications</span>
+                            </button>
+                        </nav>
+                    </aside>
+
+                    <!-- Settings Content -->
+                    <div class="flex-1 min-w-0">
+                        <!-- Mobile Heading -->
+                        <div class="lg:hidden mb-6">
+                            <h1
+                                class="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-[-0.033em] mb-2">
+                                Profile Settings</h1>
+                            <p class="text-slate-500 dark:text-gray-400 text-sm">Manage your personal information and
+                                account security.</p>
+                            <!-- Mobile Tabs -->
+                            <div
+                                class="flex overflow-x-auto gap-2 mt-4 pb-2 border-b border-slate-200 dark:border-slate-800 scrollbar-hide">
+                                <button
+                                    class="mobile-tab whitespace-nowrap px-4 py-2 rounded-full bg-primary text-white text-sm font-bold"
+                                    data-tab="personal">Personal Info</button>
+                                <button
+                                    class="mobile-tab whitespace-nowrap px-4 py-2 rounded-full bg-slate-100 dark:bg-dark-card text-slate-600 dark:text-gray-400 text-sm font-medium"
+                                    data-tab="security">Security</button>
+                                <button
+                                    class="mobile-tab whitespace-nowrap px-4 py-2 rounded-full bg-slate-100 dark:bg-dark-card text-slate-600 dark:text-gray-400 text-sm font-medium"
+                                    data-tab="notifications">Notifications</button>
+                            </div>
+                        </div>
+
+                        <!-- Personal Info Tab -->
+                        <div id="tab-personal" class="tab-content">
+                            <!-- Profile Header Card -->
+                            <div
+                                class="bg-white dark:bg-dark-card rounded-xl p-6 mb-6 shadow-sm border border-slate-200 dark:border-slate-700">
+                                <div
+                                    class="flex flex-col sm:flex-row gap-6 items-center sm:items-start justify-between">
+                                    <div class="flex flex-col sm:flex-row gap-6 items-center text-center sm:text-left">
+                                        <div class="relative group cursor-pointer" id="avatar-container">
+                                            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-24 sm:size-32 ring-4 ring-slate-50 dark:ring-dark-card shadow-lg flex items-center justify-center bg-gradient-to-br from-primary to-purple-600 text-white text-4xl font-bold"
+                                                id="user-avatar">
+                                                <span id="avatar-initial">?</span>
+                                            </div>
+                                            <div
+                                                class="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                <span class="material-symbols-outlined text-white">camera_enhance</span>
+                                            </div>
+                                            <input type="file" id="photo-input" accept="image/*" class="hidden">
+                                        </div>
+                                        <div class="flex flex-col justify-center gap-1">
+                                            <h2 class="text-slate-900 dark:text-white text-2xl font-bold leading-tight"
+                                                id="display-name">Loading...</h2>
+                                            <p class="text-slate-500 dark:text-gray-400 text-base font-normal"
+                                                id="display-role">Loading...</p>
+                                            <p class="text-slate-400 dark:text-slate-600 text-sm font-normal"
+                                                id="display-email">Loading...</p>
+
+                                            <!-- Employee ID Display -->
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <span
+                                                    class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-xs font-mono text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
+                                                    id="display-employee-id">
+                                                    ID: -
+                                                </span>
+                                                <button type="button" id="generate-id-btn"
+                                                    class="hidden text-xs text-primary hover:underline font-medium">
+                                                    Generate ID
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-3 w-full sm:w-auto">
+                                        <button type="button" id="change-photo-btn"
+                                            class="flex-1 sm:flex-none cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-100 dark:bg-dark-bg hover:bg-slate-200 dark:hover:bg-[#323b46] text-slate-900 dark:text-white text-sm font-bold border border-slate-200 dark:border-transparent transition-all">
+                                            Change Photo
+                                        </button>
+                                        <button type="button" id="remove-photo-btn"
+                                            class="flex-1 sm:flex-none cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-white dark:bg-transparent border border-slate-200 dark:border-slate-700 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-bold transition-all">
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Forms Section -->
+                            <form id="profile-form" class="flex flex-col gap-6">
+                                <!-- Basic Information -->
+                                <section
+                                    class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                    <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                                        <h3 class="text-slate-900 dark:text-white text-lg font-bold">Basic Information
+                                        </h3>
+                                    </div>
+                                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <label class="flex flex-col gap-2">
+                                            <span class="text-slate-600 dark:text-gray-400 text-sm font-medium">Full
+                                                Name *</span>
+                                            <input id="input-fullName"
+                                                class="form-input w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-slate-400"
+                                                placeholder="Your full name" required />
+                                        </label>
+                                        <label class="flex flex-col gap-2">
+                                            <span class="text-slate-600 dark:text-gray-400 text-sm font-medium">Display
+                                                Name</span>
+                                            <input id="input-displayName"
+                                                class="form-input w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-slate-400"
+                                                placeholder="How you want to be called" />
+                                        </label>
+                                        <label class="flex flex-col gap-2">
+                                            <span class="text-slate-600 dark:text-gray-400 text-sm font-medium">Job
+                                                Title</span>
+                                            <input id="input-jobTitle"
+                                                class="form-input w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-slate-400"
+                                                placeholder="e.g. Software Engineer" />
+                                        </label>
+                                        <label class="flex flex-col gap-2">
+                                            <span class="text-slate-600 dark:text-gray-400 text-sm font-medium">Date of
+                                                Birth</span>
+                                            <input id="input-dob"
+                                                class="form-input w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary"
+                                                type="date" />
+                                        </label>
+                                        <label class="flex flex-col gap-2 md:col-span-2">
+                                            <span
+                                                class="text-slate-600 dark:text-gray-400 text-sm font-medium">Bio</span>
+                                            <textarea id="input-bio"
+                                                class="form-textarea w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-slate-400 resize-none h-24"
+                                                placeholder="Tell us a little about yourself..."
+                                                maxlength="500"></textarea>
+                                            <span class="text-xs text-slate-400 dark:text-slate-600 text-right"><span
+                                                    id="bio-count">0</span>/500 characters</span>
+                                        </label>
+                                    </div>
+                                </section>
+
+                                <!-- Contact Details -->
+                                <section
+                                    class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                    <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                                        <h3 class="text-slate-900 dark:text-white text-lg font-bold">Contact Details
+                                        </h3>
+                                    </div>
+                                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <label class="flex flex-col gap-2">
+                                            <span
+                                                class="text-slate-600 dark:text-gray-400 text-sm font-medium">Email</span>
+                                            <div
+                                                class="flex items-center rounded-lg bg-slate-100 dark:bg-[#1e242b] border border-slate-200 dark:border-transparent px-4 py-2.5 opacity-80 cursor-not-allowed">
+                                                <span class="material-symbols-outlined text-slate-400 mr-2"
+                                                    style="font-size: 20px;">mail</span>
+                                                <input id="input-email"
+                                                    class="w-full bg-transparent border-none p-0 text-slate-500 dark:text-slate-400 focus:ring-0"
+                                                    disabled readonly />
+                                                <span class="material-symbols-outlined text-slate-400"
+                                                    style="font-size: 16px;">lock</span>
+                                            </div>
+                                            <span class="text-xs text-slate-400">Email cannot be changed</span>
+                                        </label>
+                                        <label class="flex flex-col gap-2">
+                                            <span class="text-slate-600 dark:text-gray-400 text-sm font-medium">Phone
+                                                Number</span>
+                                            <div
+                                                class="flex items-center rounded-lg bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-transparent px-4 py-2.5 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+                                                <span class="material-symbols-outlined text-slate-400 mr-2"
+                                                    style="font-size: 20px;">call</span>
+                                                <input id="input-phone"
+                                                    class="w-full bg-transparent border-none p-0 text-slate-900 dark:text-white focus:ring-0 placeholder:text-slate-400"
+                                                    placeholder="+1 (555) 000-0000" />
+                                            </div>
+                                        </label>
+                                    </div>
+                                </section>
+
+                                <!-- Location -->
+                                <section
+                                    class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                    <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                                        <h3 class="text-slate-900 dark:text-white text-lg font-bold">Location</h3>
+                                    </div>
+                                    <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <label class="flex flex-col gap-2">
+                                            <span
+                                                class="text-slate-600 dark:text-gray-400 text-sm font-medium">Country</span>
+                                            <select id="input-country"
+                                                class="form-select w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary cursor-pointer">
+                                                <option value="">Select country</option>
+                                                <option value="US">United States</option>
+                                                <option value="CA">Canada</option>
+                                                <option value="UK">United Kingdom</option>
+                                                <option value="AU">Australia</option>
+                                                <option value="IN">India</option>
+                                                <option value="DE">Germany</option>
+                                                <option value="FR">France</option>
+                                                <option value="JP">Japan</option>
+                                                <option value="SG">Singapore</option>
+                                                <option value="OTHER">Other</option>
+                                            </select>
+                                        </label>
+                                        <label class="flex flex-col gap-2">
+                                            <span
+                                                class="text-slate-600 dark:text-gray-400 text-sm font-medium">City</span>
+                                            <input id="input-city"
+                                                class="form-input w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-slate-400"
+                                                placeholder="Your city" />
+                                        </label>
+                                        <label class="flex flex-col gap-2">
+                                            <span
+                                                class="text-slate-600 dark:text-gray-400 text-sm font-medium">Timezone</span>
+                                            <select id="input-timezone"
+                                                class="form-select w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary cursor-pointer">
+                                                <option value="">Select timezone</option>
+                                                <option value="America/Los_Angeles">(GMT-08:00) Pacific Time</option>
+                                                <option value="America/Denver">(GMT-07:00) Mountain Time</option>
+                                                <option value="America/Chicago">(GMT-06:00) Central Time</option>
+                                                <option value="America/New_York">(GMT-05:00) Eastern Time</option>
+                                                <option value="Europe/London">(GMT+00:00) London</option>
+                                                <option value="Europe/Paris">(GMT+01:00) Paris</option>
+                                                <option value="Asia/Dubai">(GMT+04:00) Dubai</option>
+                                                <option value="Asia/Kolkata">(GMT+05:30) India</option>
+                                                <option value="Asia/Singapore">(GMT+08:00) Singapore</option>
+                                                <option value="Asia/Tokyo">(GMT+09:00) Tokyo</option>
+                                                <option value="Australia/Sydney">(GMT+11:00) Sydney</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </section>
+
+                                <!-- Action Bar -->
+                                <div
+                                    class="sticky bottom-0 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md p-4 -mx-4 -mb-10 mt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 z-40 rounded-b-xl">
+                                    <button type="button" id="cancel-btn"
+                                        class="px-6 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-dark-card text-slate-700 dark:text-white font-bold text-sm hover:bg-slate-50 dark:hover:bg-[#323b46] transition-colors">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" id="save-btn"
+                                        class="px-6 py-2.5 rounded-lg bg-primary text-white font-bold text-sm hover:bg-blue-600 transition-colors shadow-lg shadow-primary/25 flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-lg hidden"
+                                            id="save-spinner">sync</span>
+                                        Save Changes
+                                    </button>
+                                </div>
+                                <div class="h-8"></div>
+                            </form>
+                        </div>
+
+                        <!-- Security Tab -->
+                        <div id="tab-security" class="tab-content hidden">
+                            <!-- Password Change -->
+                            <section
+                                class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden mb-6">
+                                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                                    <h3 class="text-slate-900 dark:text-white text-lg font-bold">Change Password</h3>
+                                    <p class="text-sm text-slate-500 mt-1">Update your password to keep your account
+                                        secure</p>
+                                </div>
+                                <form id="password-form" class="p-6 space-y-6">
+                                    <label class="flex flex-col gap-2">
+                                        <span class="text-slate-600 dark:text-gray-400 text-sm font-medium">Current
+                                            Password</span>
+                                        <input id="current-password" type="password"
+                                            class="form-input w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-slate-400"
+                                            placeholder="Enter current password" />
+                                    </label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <label class="flex flex-col gap-2">
+                                            <span class="text-slate-600 dark:text-gray-400 text-sm font-medium">New
+                                                Password</span>
+                                            <input id="new-password" type="password"
+                                                class="form-input w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-slate-400"
+                                                placeholder="Enter new password" />
+                                        </label>
+                                        <label class="flex flex-col gap-2">
+                                            <span class="text-slate-600 dark:text-gray-400 text-sm font-medium">Confirm
+                                                New Password</span>
+                                            <input id="confirm-password" type="password"
+                                                class="form-input w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-slate-400"
+                                                placeholder="Confirm new password" />
+                                        </label>
+                                    </div>
+                                    <!-- Password Requirements -->
+                                    <div class="bg-slate-50 dark:bg-dark-bg rounded-lg p-4">
+                                        <p class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Password
+                                            Requirements:</p>
+                                        <ul class="space-y-1 text-sm text-slate-500 dark:text-slate-400">
+                                            <li class="flex items-center gap-2" id="req-length">
+                                                <span
+                                                    class="material-symbols-outlined text-slate-400 text-lg">radio_button_unchecked</span>
+                                                At least 8 characters
+                                            </li>
+                                            <li class="flex items-center gap-2" id="req-upper">
+                                                <span
+                                                    class="material-symbols-outlined text-slate-400 text-lg">radio_button_unchecked</span>
+                                                One uppercase letter
+                                            </li>
+                                            <li class="flex items-center gap-2" id="req-lower">
+                                                <span
+                                                    class="material-symbols-outlined text-slate-400 text-lg">radio_button_unchecked</span>
+                                                One lowercase letter
+                                            </li>
+                                            <li class="flex items-center gap-2" id="req-number">
+                                                <span
+                                                    class="material-symbols-outlined text-slate-400 text-lg">radio_button_unchecked</span>
+                                                One number
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="flex justify-end">
+                                        <button type="submit"
+                                            class="px-6 py-2.5 rounded-lg bg-primary text-white font-bold text-sm hover:bg-blue-600 transition-colors shadow-lg shadow-primary/25">
+                                            Update Password
+                                        </button>
+                                    </div>
+                                </form>
+                            </section>
+
+                            <!-- Account Info -->
+                            <section
+                                class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden mb-6">
+                                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                                    <h3 class="text-slate-900 dark:text-white text-lg font-bold">Account Information
+                                    </h3>
+                                </div>
+                                <div class="p-6 space-y-4">
+                                    <div
+                                        class="flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                                        <div>
+                                            <p class="font-medium text-slate-900 dark:text-white">Account Created</p>
+                                            <p class="text-sm text-slate-500" id="account-created">-</p>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                                        <div>
+                                            <p class="font-medium text-slate-900 dark:text-white">Last Login</p>
+                                            <p class="text-sm text-slate-500" id="last-login">-</p>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                                        <div>
+                                            <p class="font-medium text-slate-900 dark:text-white">Login Provider</p>
+                                            <p class="text-sm text-slate-500" id="login-provider">-</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between py-3">
+                                        <div>
+                                            <p class="font-medium text-slate-900 dark:text-white">Role</p>
+                                            <p class="text-sm text-slate-500" id="user-role">-</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- Danger Zone -->
+                            <section
+                                class="bg-white dark:bg-dark-card rounded-xl border border-red-200 dark:border-red-900/30 overflow-hidden">
+                                <div
+                                    class="px-6 py-4 border-b border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-900/10">
+                                    <h3 class="text-red-600 dark:text-red-400 text-lg font-bold">Danger Zone</h3>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="font-medium text-slate-900 dark:text-white">Delete Account</p>
+                                            <p class="text-sm text-slate-500">Permanently delete your account and all
+                                                data</p>
+                                        </div>
+                                        <button type="button" id="delete-account-btn"
+                                            class="px-4 py-2 rounded-lg border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 font-bold text-sm hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                            Delete Account
+                                        </button>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                        <!-- Notifications Tab -->
+                        <div id="tab-notifications" class="tab-content hidden">
+                            <section
+                                class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                                    <h3 class="text-slate-900 dark:text-white text-lg font-bold">Notification
+                                        Preferences</h3>
+                                    <p class="text-sm text-slate-500 mt-1">Manage how you receive notifications</p>
+                                </div>
+                                <form id="notifications-form" class="p-6 space-y-6">
+                                    <div class="space-y-4">
+                                        <label
+                                            class="flex items-center justify-between p-4 rounded-lg bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-transparent cursor-pointer hover:border-primary transition-colors">
+                                            <div>
+                                                <p class="font-medium text-slate-900 dark:text-white">Email
+                                                    Notifications</p>
+                                                <p class="text-sm text-slate-500">Receive updates via email</p>
+                                            </div>
+                                            <input type="checkbox" id="notif-email" checked
+                                                class="form-checkbox rounded text-primary focus:ring-primary w-5 h-5">
+                                        </label>
+                                        <label
+                                            class="flex items-center justify-between p-4 rounded-lg bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-transparent cursor-pointer hover:border-primary transition-colors">
+                                            <div>
+                                                <p class="font-medium text-slate-900 dark:text-white">Security Alerts
+                                                </p>
+                                                <p class="text-sm text-slate-500">Get notified of security events</p>
+                                            </div>
+                                            <input type="checkbox" id="notif-security" checked
+                                                class="form-checkbox rounded text-primary focus:ring-primary w-5 h-5">
+                                        </label>
+                                        <label
+                                            class="flex items-center justify-between p-4 rounded-lg bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-transparent cursor-pointer hover:border-primary transition-colors">
+                                            <div>
+                                                <p class="font-medium text-slate-900 dark:text-white">Marketing Updates
+                                                </p>
+                                                <p class="text-sm text-slate-500">Receive news and promotional content
+                                                </p>
+                                            </div>
+                                            <input type="checkbox" id="notif-marketing"
+                                                class="form-checkbox rounded text-primary focus:ring-primary w-5 h-5">
+                                        </label>
+                                    </div>
+                                    <div class="flex justify-end">
+                                        <button type="submit"
+                                            class="px-6 py-2.5 rounded-lg bg-primary text-white font-bold text-sm hover:bg-blue-600 transition-colors shadow-lg shadow-primary/25">
+                                            Save Preferences
+                                        </button>
+                                    </div>
+                                </form>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <script type="module">
+        import { db, auth, doc, getDoc, updateDoc, serverTimestamp, onAuthStateChanged, collection, getDocs } from '../assets/js/firebase-config.js';
+        import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getRole } from '../assets/js/rbac.js';
+        import { uploadProfilePhoto, generateNextEmployeeId } from '../assets/js/firebase-modules.js';
+
+        let currentUser = null; // Auth user
+        let targetUserId = null; // ID of the user being edited (could be self or other)
+        let userData = null;
+        let originalData = {};
+        let isAdmin = false;
+
+        // Toast function
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-emerald-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500'
+            };
+            toast.className = `${colors[type]} text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 animate-fade-in-up`;
+            toast.innerHTML = `
+                <span class="material-symbols-outlined">${type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info'}</span>
+                <span>${message}</span>
+            `;
+            document.getElementById('toast-container').appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        // Tab switching
+        function initTabs() {
+            const handleTabClick = (tab) => {
+                const tabId = tab.dataset.tab;
+
+                // Update sidebar tabs
+                document.querySelectorAll('.settings-tab').forEach(t => {
+                    t.classList.remove('tab-active');
+                    t.classList.add('text-slate-600', 'dark:text-gray-400', 'hover:bg-slate-100', 'dark:hover:bg-dark-card');
+                });
+
+                // Update mobile tabs
+                document.querySelectorAll('.mobile-tab').forEach(t => {
+                    t.classList.remove('bg-primary', 'text-white');
+                    t.classList.add('bg-slate-100', 'dark:bg-dark-card', 'text-slate-600', 'dark:text-gray-400');
+                });
+
+                // Activate clicked tab
+                document.querySelectorAll(`[data-tab="${tabId}"]`).forEach(t => {
+                    if (t.classList.contains('settings-tab')) {
+                        t.classList.add('tab-active');
+                        t.classList.remove('text-slate-600', 'dark:text-gray-400', 'hover:bg-slate-100', 'dark:hover:bg-dark-card');
+                    } else {
+                        t.classList.add('bg-primary', 'text-white');
+                        t.classList.remove('bg-slate-100', 'dark:bg-dark-card', 'text-slate-600', 'dark:text-gray-400');
+                    }
+                });
+
+                // Show/hide content
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            };
+
+            document.querySelectorAll('.settings-tab, .mobile-tab').forEach(tab => {
+                tab.addEventListener('click', () => handleTabClick(tab));
+            });
+        }
+
+        // Populate form with user data
+        function populateForm(data, email) {
+            // Header display
+            document.getElementById('display-name').textContent = data.fullName || 'User';
+            document.getElementById('display-email').textContent = email;
+
+            // Avatar
+            const avatarEl = document.getElementById('user-avatar');
+            const initial = (data.fullName || email || '?').charAt(0).toUpperCase();
+
+            if (data.photoURL) {
+                avatarEl.style.backgroundImage = `url("${data.photoURL}")`;
+                avatarEl.innerHTML = '';
+            } else {
+                avatarEl.style.backgroundImage = ''; // Clear image if none
+                document.getElementById('avatar-initial').textContent = initial;
+            }
+
+            // Form fields
+            document.getElementById('input-fullName').value = data.fullName || '';
+            document.getElementById('input-displayName').value = data.displayName || '';
+            document.getElementById('input-jobTitle').value = data.jobTitle || '';
+            document.getElementById('input-dob').value = data.dateOfBirth || '';
+            document.getElementById('input-bio').value = data.bio || '';
+            document.getElementById('bio-count').textContent = (data.bio || '').length;
+            document.getElementById('input-email').value = email;
+            document.getElementById('input-phone').value = data.phone || '';
+            document.getElementById('input-country').value = data.country || '';
+            document.getElementById('input-city').value = data.city || '';
+            document.getElementById('input-timezone').value = data.timezone || '';
+
+            // Notifications
+            document.getElementById('notif-email').checked = data.notifications?.email !== false;
+            document.getElementById('notif-security').checked = data.notifications?.security !== false;
+            document.getElementById('notif-marketing').checked = data.notifications?.marketing === true;
+
+            // Security tab info
+            const createdAt = data.createdAt?.toDate?.();
+            const lastLogin = data.lastLoginAt?.toDate?.();
+            document.getElementById('account-created').textContent = createdAt ? new Date(createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '-';
+            document.getElementById('last-login').textContent = lastLogin ? new Date(lastLogin).toLocaleString() : '-';
+            // Login provider is tricky for other users without auth object, so we might skip or genericize
+            document.getElementById('login-provider').textContent = data.provider || 'email';
+
+            // Load role
+            loadUserRole(data.role || (data.roles && data.roles[0]));
+
+            // Employee ID Handling
+            const empIdEl = document.getElementById('display-employee-id');
+            const genBtn = document.getElementById('generate-id-btn');
+
+            if (data.customId) {
+                empIdEl.textContent = `ID: ${data.customId}`;
+                genBtn.classList.add('hidden');
+            } else {
+                empIdEl.textContent = 'ID: Not Assigned';
+                // Show generate button only if current user is admin
+                checkIfAdmin().then(isAdmin => {
+                    if (isAdmin) {
+                        genBtn.classList.remove('hidden');
+                        genBtn.onclick = generateEmployeeId;
+                    }
+                });
+            }
+        }
+
+        // Helper to check admin status specifically for UI elements
+        async function checkIfAdmin() {
+            if (!currentUser) return false;
+            const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+            if (userDoc.exists()) {
+                const roles = userDoc.data().roles || [];
+                return roles.includes('admin');
+            }
+            return false;
+        }
+
+        // Generate Employee ID
+        async function generateEmployeeId() {
+            if (!confirm('Generate a new Employee ID for this user?')) return;
+
+            const btn = document.getElementById('generate-id-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Generating...';
+            btn.disabled = true;
+
+            try {
+                // Use shared helper
+                const result = await generateNextEmployeeId();
+                if (!result.success) throw new Error(result.error);
+
+                const newId = result.id;
+
+                // Update specific user doc
+                await updateDoc(doc(db, 'users', targetUserId), {
+                    customId: newId,
+                    updatedAt: serverTimestamp()
+                });
+
+                // Update local state
+                userData.customId = newId;
+                document.getElementById('display-employee-id').textContent = `ID: ${newId}`;
+                btn.classList.add('hidden');
+
+                showToast(`Employee ID Generated: ${newId}`, 'success');
+
+            } catch (error) {
+                console.error('Error generating ID:', error);
+                showToast('Failed to generate ID', 'error');
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+        async function loadTargetProfile(userId) {
+            targetUserId = userId; // Set global target
+            try {
+                const docRef = doc(db, 'users', userId);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    userData = docSnap.data();
+                    originalData = { ...userData };
+                    populateForm(userData, userData.email);
+                } else {
+                    showToast('User not found', 'error');
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+                showToast("Failed to load profile", "error");
+            }
+        }
+
+        // Load initial user data (self or queried user)
+        async function loadUserData(user) {
+            currentUser = user;
+
+            // Check for userId in URL query params
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryUserId = urlParams.get('userId');
+
+            if (queryUserId) {
+                // If ID present, view that user
+                targetUserId = queryUserId;
+            } else {
+                // Otherwise view self
+                targetUserId = user.uid;
+            }
+
+            try {
+                // Load initial profile
+                await loadTargetProfile(targetUserId);
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showToast('Error loading profile data', 'error');
+            }
+        }
+
+        async function loadUserRole(roleId) {
+            if (!roleId) {
+                document.getElementById('display-role').textContent = 'Guest';
+                document.getElementById('user-role').textContent = 'Guest';
+                return;
+            }
+
+            const result = await getRole(roleId);
+            if (result.success) {
+                document.getElementById('display-role').textContent = result.role.name;
+                document.getElementById('user-role').textContent = result.role.name;
+            }
+        }
+
+        // Bio character counter
+        function initBioCounter() {
+            const bioInput = document.getElementById('input-bio');
+            const counter = document.getElementById('bio-count');
+
+            bioInput.addEventListener('input', () => {
+                counter.textContent = bioInput.value.length;
+            });
+        }
+
+        // Profile form submission
+        function initProfileForm() {
+            const form = document.getElementById('profile-form');
+            const saveBtn = document.getElementById('save-btn');
+            const spinner = document.getElementById('save-spinner');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                saveBtn.disabled = true;
+                spinner.classList.remove('hidden');
+                spinner.classList.add('animate-spin');
+
+                try {
+                    const updateData = {
+                        fullName: document.getElementById('input-fullName').value.trim(),
+                        displayName: document.getElementById('input-displayName').value.trim(),
+                        jobTitle: document.getElementById('input-jobTitle').value.trim(),
+                        dateOfBirth: document.getElementById('input-dob').value,
+                        bio: document.getElementById('input-bio').value.trim(),
+                        phone: document.getElementById('input-phone').value.trim(),
+                        country: document.getElementById('input-country').value,
+                        city: document.getElementById('input-city').value.trim(),
+                        timezone: document.getElementById('input-timezone').value,
+                        updatedAt: serverTimestamp()
+                    };
+
+                    await updateDoc(doc(db, 'users', targetUserId), updateData);
+
+                    // Update display
+                    document.getElementById('display-name').textContent = updateData.fullName || 'User';
+                    originalData = { ...userData, ...updateData };
+
+                    showToast('Profile updated successfully!', 'success');
+
+                    // If we updated ourselves, might want to refresh sidebar info if applicable
+                    if (targetUserId === currentUser.uid) {
+                        // Optional: refresh global UI
+                    }
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                    showToast('Error updating profile: ' + error.message, 'error');
+                } finally {
+                    saveBtn.disabled = false;
+                    spinner.classList.add('hidden');
+                    spinner.classList.remove('animate-spin');
+                }
+            });
+
+            // Cancel button
+            document.getElementById('cancel-btn').addEventListener('click', () => {
+                populateForm(originalData, document.getElementById('input-email').value);
+                showToast('Changes discarded', 'info');
+            });
+        }
+
+        // Password form
+        function initPasswordForm() {
+            const form = document.getElementById('password-form');
+            const newPasswordInput = document.getElementById('new-password');
+
+            // Password validation
+            newPasswordInput.addEventListener('input', () => {
+                const password = newPasswordInput.value;
+
+                const updateReq = (id, valid) => {
+                    const el = document.getElementById(id);
+                    const icon = el.querySelector('.material-symbols-outlined');
+                    if (valid) {
+                        icon.textContent = 'check_circle';
+                        icon.classList.remove('text-slate-400');
+                        icon.classList.add('text-emerald-500');
+                    } else {
+                        icon.textContent = 'radio_button_unchecked';
+                        icon.classList.add('text-slate-400');
+                        icon.classList.remove('text-emerald-500');
+                    }
+                };
+
+                updateReq('req-length', password.length >= 8);
+                updateReq('req-upper', /[A-Z]/.test(password));
+                updateReq('req-lower', /[a-z]/.test(password));
+                updateReq('req-number', /[0-9]/.test(password));
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const currentPassword = document.getElementById('current-password').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    showToast('Please fill in all password fields', 'error');
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    showToast('New passwords do not match', 'error');
+                    return;
+                }
+
+                if (newPassword.length < 8) {
+                    showToast('Password must be at least 8 characters', 'error');
+                    return;
+                }
+
+                try {
+                    // Re-authenticate user
+                    const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+                    await reauthenticateWithCredential(currentUser, credential);
+
+                    // Update password
+                    await updatePassword(currentUser, newPassword);
+
+                    // Clear form
+                    form.reset();
+
+                    showToast('Password updated successfully!', 'success');
+                } catch (error) {
+                    console.error('Error updating password:', error);
+                    if (error.code === 'auth/wrong-password') {
+                        showToast('Current password is incorrect', 'error');
+                    } else {
+                        showToast('Error updating password: ' + error.message, 'error');
+                    }
+                }
+            });
+        }
+
+        // Notifications form
+        function initNotificationsForm() {
+            const form = document.getElementById('notifications-form');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                try {
+                    await updateDoc(doc(db, 'users', targetUserId), {
+                        notifications: {
+                            email: document.getElementById('notif-email').checked,
+                            security: document.getElementById('notif-security').checked,
+                            marketing: document.getElementById('notif-marketing').checked
+                        },
+                        updatedAt: serverTimestamp()
+                    });
+
+                    showToast('Notification preferences saved!', 'success');
+                } catch (error) {
+                    console.error('Error saving notifications:', error);
+                    showToast('Error saving preferences', 'error');
+                }
+            });
+        }
+
+        // Photo upload
+        function initPhotoUpload() {
+            const photoInput = document.getElementById('photo-input');
+            const avatarContainer = document.getElementById('avatar-container');
+            const changePhotoBtn = document.getElementById('change-photo-btn');
+            const removePhotoBtn = document.getElementById('remove-photo-btn');
+
+            avatarContainer.addEventListener('click', () => photoInput.click());
+            changePhotoBtn.addEventListener('click', () => photoInput.click());
+
+            photoInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // validate file type and size
+                if (!file.type.match('image.*')) {
+                    showToast('Please select an image file', 'error');
+                    return;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('File size must be less than 5MB', 'error');
+                    return;
+                }
+
+                showToast('Uploading photo...', 'info');
+
+                try {
+                    const result = await uploadProfilePhoto(file);
+
+                    if (result.success) {
+                        const avatarEl = document.getElementById('user-avatar');
+                        avatarEl.style.backgroundImage = `url('${result.photoURL}')`;
+                        avatarEl.innerHTML = ''; // Remove initial
+                        showToast('Profile photo updated', 'success');
+                    } else {
+                        showToast('Error uploading photo: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    showToast('Error uploading photo', 'error');
+                }
+            });
+
+            removePhotoBtn.addEventListener('click', async () => {
+                try {
+                    await updateDoc(doc(db, 'users', targetUserId), {
+                        photoURL: null,
+                        updatedAt: serverTimestamp()
+                    });
+
+                    const avatarEl = document.getElementById('user-avatar');
+                    avatarEl.style.backgroundImage = '';
+                    const initial = (userData.fullName || userData.email || '?').charAt(0).toUpperCase();
+                    avatarEl.innerHTML = `<span id="avatar-initial">${initial}</span>`;
+
+                    showToast('Photo removed', 'success');
+                } catch (error) {
+                    showToast('Error removing photo', 'error');
+                }
+            });
+        }
+
+        // Delete account
+        function initDeleteAccount() {
+            document.getElementById('delete-account-btn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                    showToast('Account deletion requires additional confirmation via email', 'info');
+                }
+            });
+        }
+
+        // Initialize
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            loadUserData(user);
+            initTabs();
+            initBioCounter();
+            initProfileForm();
+            initPasswordForm();
+            initNotificationsForm();
+            initPhotoUpload();
+            initDeleteAccount();
+        });
+    </script>
+</body>
+
+</html>

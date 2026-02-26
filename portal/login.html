@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Adhirat Portal Login</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <!-- Material Icons -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Global Assets -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+        /* Portal-specific glass effects */
+        .portal-glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+        }
+
+        .dark .portal-glass-card {
+            background: rgba(26, 26, 62, 0.85);
+            border: 1px solid rgba(0, 245, 255, 0.15);
+        }
+
+        /* Floating Icons Styles */
+        #floating-icons-container {
+            z-index: 0;
+        }
+
+        .float-icon {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease-out;
+            color: rgba(100, 116, 139, 0.15);
+            /* slate-500/15 */
+            user-select: none;
+        }
+
+        .dark .float-icon {
+            color: rgba(148, 163, 184, 0.1);
+            /* slate-400/10 */
+        }
+
+        .float-icon:hover {
+            color: rgba(124, 58, 237, 0.8);
+            /* violet-600 */
+            z-index: 10;
+            filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.4));
+            transform: scale(1.2) !important;
+            /* Override parallax scale if needed */
+        }
+
+        .dark .float-icon:hover {
+            color: rgba(34, 211, 238, 0.8);
+            /* cyan-400 */
+            filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.4));
+        }
+
+
+
+        .float-caption {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 8px;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .dark .float-caption {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .float-icon:hover .float-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes floatY {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+
+</head>
+
+<body
+    class="pt-0 font-display antialiased bg-slate-50 dark:bg-dark-bg text-slate-900 dark:text-white transition-colors duration-300 min-h-screen flex flex-col relative overflow-x-hidden selection:bg-primary/30 selection:text-primary">
+    <!-- Background Decoration -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden mesh-background" id="floating-icons-container">
+        <!-- Floating Orbs -->
+        <div class="floating-orb orb-cyan w-[500px] h-[500px] top-[-10%] left-[-10%] opacity-30 dark:opacity-40">
+        </div>
+        <div class="floating-orb orb-violet w-[400px] h-[400px] bottom-[-10%] right-[-10%] opacity-25 dark:opacity-35"
+            style="animation-delay: -5s;"></div>
+        <div class="floating-orb orb-magenta w-[300px] h-[300px] top-[50%] right-[20%] opacity-20 dark:opacity-25"
+            style="animation-delay: -8s;"></div>
+    </div>
+    <!-- Grid Pattern -->
+    <div class="fixed inset-0 bg-grid-pattern opacity-30 pointer-events-none z-0"></div>
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center relative z-10 px-4 py-12 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md space-y-6">
+            <!-- Login Card -->
+            <div
+                class="portal-glass-card rounded-2xl shadow-neon-lg p-8 sm:p-10 transition-all duration-300 reveal reveal-up gradient-border-animated">
+                <!-- Logo -->
+                <div class="flex justify-center mb-6"><a href="../index.html" class="group hover-tilt">
+                        <div class="size-12 text-primary"><img src="../assets/images/logo.svg" alt="Logo"
+                                class="w-full h-full transform rotate-180 dark:brightness-0 dark:invert transition-all duration-300">
+                        </div>
+                    </a></div>
+                <!-- Heading -->
+                <div class="text-center mb-8 relative z-10">
+                    <h1 class="text-3xl font-display font-bold tracking-tight text-slate-900 dark:text-white mb-2">
+                        Welcome <span class="text-gradient-animated">Back</span></h1>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-body">Sign in to
+                        access your profile.</p>
+                </div>
+                <form id="login-form" class="space-y-6 relative z-10">
+                    <!-- Email Field -->
+                    <div><label class="block text-sm font-display font-bold text-slate-700 dark:text-slate-200 mb-2"
+                            for="email">Email address</label>
+                        <div class="relative rounded-xl shadow-sm">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span
+                                    class="material-symbols-outlined text-neon-violet dark:text-neon-cyan text-[20px]">mail</span>
+                            </div><input
+                                class="block w-full rounded-xl border-0 py-3 pl-10 text-slate-900 dark:text-white ring-1 ring-inset ring-neon-violet/20 dark:ring-neon-cyan/20 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-neon-violet dark:focus:ring-neon-cyan sm:text-sm sm:leading-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm transition-all"
+                                id="email" name="email" placeholder="name@company.com" type="email"
+                                autocomplete="username" required />
+                        </div>
+                    </div>
+                    <!-- Password Field -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2"><label
+                                class="block text-sm font-display font-bold text-slate-700 dark:text-slate-200"
+                                for="password">Password</label><a
+                                class="text-xs font-semibold text-neon-violet dark:text-neon-cyan hover:text-neon-magenta transition-all duration-300 hover:underline underline-offset-4 hover:scale-105 inline-block cursor-pointer"
+                                href="forgot_password.html">Forgot password?</a></div>
+                        <div class="relative rounded-xl shadow-sm">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span
+                                    class="material-symbols-outlined text-neon-violet dark:text-neon-cyan text-[20px]">lock</span>
+                            </div><input
+                                class="block w-full rounded-xl border-0 py-3 pl-10 pr-10 text-slate-900 dark:text-white ring-1 ring-inset ring-neon-violet/20 dark:ring-neon-cyan/20 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-neon-violet dark:focus:ring-neon-cyan sm:text-sm sm:leading-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm transition-all"
+                                id="password" name="password" placeholder="Enter your password" type="password"
+                                autocomplete="current-password" required /><button
+                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-neon-violet dark:hover:text-neon-cyan cursor-pointer focus:outline-none transition-colors"
+                                type="button" id="toggle-password"><span class="material-symbols-outlined text-[20px]"
+                                    id="eye-icon">visibility</span></button>
+                        </div>
+                    </div>
+                    <!-- Remember Me -->
+                    <div class="flex items-center group cursor-pointer select-none">
+                        <input
+                            class="h-4 w-4 rounded border-neon-violet/30 dark:border-neon-cyan/30 text-neon-violet dark:text-neon-cyan focus:ring-neon-violet dark:focus:ring-neon-cyan bg-transparent dark:bg-slate-800/50 cursor-pointer transition-all duration-300 hover:border-neon-violet dark:hover:border-neon-cyan hover:scale-110"
+                            id="remember-me" name="remember-me" type="checkbox" /><label
+                            class="ml-2 block text-sm text-slate-600 dark:text-slate-400 font-body cursor-pointer transition-colors duration-300 group-hover:text-neon-violet dark:group-hover:text-neon-cyan"
+                            for="remember-me">Remember me</label>
+                    </div>
+                    <!-- Submit Button -->
+                    <div><button
+                            class="flex w-full justify-center rounded-xl btn-futuristic px-3 py-3.5 text-sm font-display font-bold leading-6 text-white shadow-neon-lg transition-all transform active:scale-[0.98] items-center gap-2"
+                            type="submit" id="login-btn"><span>Sign In to
+                                Portal</span><span class="material-symbols-outlined text-[20px]">login</span></button>
+                    </div>
+                </form>
+                <!-- Divider -->
+                <div class="relative mt-8 z-10">
+                    <div aria-hidden="true" class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-neon-violet/10 dark:border-neon-cyan/20">
+                        </div>
+                    </div>
+                    <div class="relative flex justify-center text-sm font-medium leading-6">
+                        <span class="portal-glass-card px-4 text-slate-500 dark:text-slate-400 rounded-full">Or
+                            continue with</span>
+                    </div>
+                </div>
+                <!-- Social Auth -->
+                <div class="mt-6 grid grid-cols-2 gap-4 reveal reveal-up delay-300 relative z-10">
+                    <button id="google-signin-btn" type="button" disabled
+                        class="flex w-full items-center justify-center gap-3 rounded-xl glass-card px-3 py-2.5 text-sm font-semibold text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed relative group"
+                        title="Coming Soon"><svg aria-hidden="true" class="h-5 w-5 grayscale" viewBox="0 0 24 24">
+                            <path
+                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                fill="#9CA3AF" />
+                            <path
+                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                fill="#9CA3AF" />
+                            <path
+                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                fill="#9CA3AF" />
+                            <path
+                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                fill="#9CA3AF" />
+                        </svg><span class="text-sm">Google</span><span
+                            class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-800 dark:bg-slate-700 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Coming
+                            Soon</span></button><button id="apple-signin-btn" type="button" disabled
+                        class="flex w-full items-center justify-center gap-3 rounded-xl glass-card px-3 py-2.5 text-sm font-semibold text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed relative group"
+                        title="Coming Soon"><svg aria-hidden="true" class="h-5 w-5" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+                        </svg><span class="text-sm">Apple</span><span
+                            class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-800 dark:bg-slate-700 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Coming
+                            Soon</span></button>
+                </div>
+                <p class="mt-6 text-center text-sm text-slate-500 dark:text-slate-400 font-body relative z-10">
+                    Don't have an account?
+                    <a href="invite.html"
+                        class="font-bold text-neon-violet dark:text-neon-cyan hover:text-neon-magenta transition-all duration-300 hover:underline underline-offset-4 hover:scale-105 inline-block cursor-pointer ml-1">Request
+                        Access</a>
+                </p>
+            </div>
+            <!-- Theme Toggle (Centered Below) -->
+            <div class="flex justify-center"><button onclick="toggleTheme()"
+                    class="flex items-center justify-center gap-2 px-4 py-2 rounded-full glass-card border border-neon-violet/10 dark:border-neon-cyan/20 hover:shadow-neon text-slate-500 dark:text-slate-400 transition-all text-sm font-medium"><span
+                        class="material-symbols-outlined dark:hidden text-[18px]">dark_mode</span><span
+                        class="material-symbols-outlined hidden dark:block text-neon-cyan text-[18px]">light_mode</span><span
+                        class="dark:hidden">Dark Mode</span><span class="hidden dark:block">Light
+                        Mode</span></button></div>
+            <!-- Footer Links -->
+            <p class="text-center text-xs leading-5 text-slate-500 dark:text-slate-400 font-body">
+                © 2024 Adhirat Technologies. <a
+                    class="font-medium text-slate-600 dark:text-slate-300 hover:text-neon-violet dark:hover:text-neon-cyan underline-offset-2 hover:underline ml-1"
+                    href="../contact.html">Help Center</a>· <a
+                    class="font-medium text-slate-600 dark:text-slate-300 hover:text-neon-violet dark:hover:text-neon-cyan underline-offset-2 hover:underline ml-1"
+                    href="../index.html">Back to Website</a></p>
+        </div>
+    </main>
+    <script type="module">import {
+            loginUser,
+            signInWithGoogle,
+            signInWithApple,
+            initAuthObserver
+        }
+
+            from '../assets/js/firebase-modules.js';
+
+        // Initialize auth observer (will redirect to dashboard if already logged in)
+        initAuthObserver(false);
+
+        // Password Visibility Toggle
+        const togglePassword = document.getElementById('toggle-password');
+        const password = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+
+        togglePassword.addEventListener('click', function () {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            eyeIcon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+        });
+
+        // Login Handler
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const passwordVal = document.getElementById('password').value;
+            const btn = document.getElementById('login-btn');
+
+            // Loading State
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="animate-spin material-symbols-outlined text-sm">progress_activity</span> Signing In...';
+
+            const result = await loginUser(email, passwordVal);
+
+            if (result.success) {
+                // Show success toast
+                showToast('Login successful! Redirecting...', 'success');
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }
+
+                    , 1000);
+            }
+
+            else {
+                showToast(result.error || 'Login failed', 'error');
+                // Reset button
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        });
+
+        // Toast function
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'from-green-500/20 to-emerald-500/20 border-green-500/50' : 'from-red-500/20 to-rose-500/20 border-red-500/50';
+            const textColor = type === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+            const icon = type === 'success' ? 'check_circle' : 'error';
+
+            toast.className = `fixed bottom-4 right-4 glass-card bg-gradient-to-r $ {
+                bgColor
+            }
+
+            p-4 rounded-xl border flex items-center gap-3 animate-fade-in-up z-50 shadow-neon`;
+
+            toast.innerHTML = `<span class="material-symbols-outlined ${textColor}">$ {
+                icon
+            }
+
+            </span><span class="${textColor} font-medium">$ {
+                message
+            }
+
+            </span>`;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(20px)';
+                setTimeout(() => toast.remove(), 300);
+            }
+
+                , 4000);
+        }
+
+    </script>
+    <script>
+        // Floating Icons Logic
+        const icons = [
+            { icon: 'dashboard', caption: 'Dashboard' },
+            { icon: 'group', caption: 'Users' },
+            { icon: 'domain', caption: 'Organization' },
+            { icon: 'shield', caption: 'Roles' },
+            { icon: 'mail', caption: 'Subscriptions' },
+            { icon: 'inbox', caption: 'Submissions' },
+            { icon: 'campaign', caption: 'Newsletter' },
+            { icon: 'article', caption: 'Blog' },
+            { icon: 'business_center', caption: 'Clients' },
+            { icon: 'rocket_launch', caption: 'Projects' },
+            { icon: 'draw', caption: 'Contracts' },
+            { icon: 'receipt_long', caption: 'Invoices' },
+            { icon: 'payments', caption: 'Receipts' },
+            { icon: 'work', caption: 'Careers' },
+            { icon: 'assignment_ind', caption: 'Applications' },
+            { icon: 'description', caption: 'Documents' },
+            { icon: 'account_tree', caption: 'Hierarchy' },
+            { icon: 'calendar_month', caption: 'Calendar' },
+            { icon: 'event_busy', caption: 'Leaves' },
+            { icon: 'schedule', caption: 'Timesheets' }
+        ];
+
+        const container = document.getElementById('floating-icons-container');
+
+        // Mouse tracking for magnetic effect
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let isMouseActive = false;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            isMouseActive = true;
+        });
+
+        class Floater {
+            constructor(item) {
+                this.element = document.createElement('div');
+                this.element.className = 'float-icon pointer-events-auto';
+
+                // Random Size
+                const scale = 0.8 + Math.random() * 0.6;
+                this.element.style.fontSize = `${1.8 * scale}rem`;
+
+                // Content
+                this.element.innerHTML = `
+                    <span class="material-symbols-outlined">${item.icon}</span>
+                    <span class="float-caption">${item.caption}</span>
+                `;
+
+                container.appendChild(this.element);
+
+                // Initial Position (Random)
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+
+                // Velocity (Random direction and speed)
+                this.speed = 0.3 + Math.random() * 0.5;
+                const angle = Math.random() * Math.PI * 2;
+                this.vx = Math.cos(angle) * this.speed;
+                this.vy = Math.sin(angle) * this.speed;
+
+                // Rotation
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.2; // Slow rotation
+
+                // Bobbing offset
+                this.bobOffset = Math.random() * 100;
+                this.bobSpeed = 0.02 + Math.random() * 0.03;
+
+                this.updatePosition();
+            }
+
+            update() {
+                // Magnetic Effect
+                if (isMouseActive) {
+                    const dx = mouseX - this.x;
+                    const dy = mouseY - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const minDist = 300; // Attraction range (px)
+
+                    if (dist < minDist) {
+                        const force = (minDist - dist) / minDist; // 0 to 1
+                        const attractionStrength = 0.2; // Multiplier
+
+                        this.vx += (dx / dist) * force * attractionStrength;
+                        this.vy += (dy / dist) * force * attractionStrength;
+                    }
+                }
+
+                // Limit speed (Prevent them from flying too fast due to magnets)
+                const currentSpeed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                const maxSpeed = 4;
+                if (currentSpeed > maxSpeed) {
+                    this.vx = (this.vx / currentSpeed) * maxSpeed;
+                    this.vy = (this.vy / currentSpeed) * maxSpeed;
+                }
+
+                // Friction (Return naturally to base speed if not attracted)
+                if (currentSpeed > this.speed) {
+                    this.vx *= 0.98;
+                    this.vy *= 0.98;
+                }
+
+                // Update position
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Update rotation
+                this.rotation += this.rotationSpeed;
+
+                // Bounce off edges
+                const pad = 50;
+                if (this.x < -pad || this.x > window.innerWidth + pad) this.vx *= -1;
+                if (this.y < -pad || this.y > window.innerHeight + pad) this.vy *= -1;
+
+                // Hard bounds
+                if (this.x < -pad) this.x = -pad;
+                if (this.x > window.innerWidth + pad) this.x = window.innerWidth + pad;
+                if (this.y < -pad) this.y = -pad;
+                if (this.y > window.innerHeight + pad) this.y = window.innerHeight + pad;
+
+                this.updatePosition();
+            }
+
+            updatePosition() {
+                // Add bobbing effect to Y
+                const bobY = Math.sin(Date.now() * 0.001 * this.bobSpeed + this.bobOffset) * 10;
+                this.element.style.transform = `translate(${this.x}px, ${this.y + bobY}px) rotate(${this.rotation}deg)`;
+            }
+        }
+
+        const floaters = [];
+
+        function initFloatingIcons() {
+            // Increase density (4x)
+            [...icons, ...icons, ...icons, ...icons].forEach(item => {
+                floaters.push(new Floater(item));
+            });
+            animate();
+        }
+
+        function animate() {
+            floaters.forEach(f => f.update());
+            requestAnimationFrame(animate);
+        }
+
+        // Prevent auto-scroll on load
+        if (history.scrollRestoration) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            // Optional: Reset positions if needed
+        });
+
+        // Initialize
+        if (container) initFloatingIcons();
+        else console.warn('Floating icons container not found');
+    </script>
+</body>
+
+</html>

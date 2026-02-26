@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Invoice Management - Adhirat Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        .invoice-preview {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+
+        .dark .invoice-preview {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+    </style>
+</head>
+
+<body
+    class="pt-0 bg-background-light dark:bg-dark-bg text-[#111418] dark:text-white font-display transition-colors duration-200">
+    <div class="flex min-h-screen w-full">
+        <div id="portal-sidebar" class="contents"></div>
+        <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+            <div id="portal-header" class="contents"></div>
+            <div class="flex-1 p-4 lg:p-8 max-w-[1600px] mx-auto w-full">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight">Invoice Management</h1>
+                        <p class="text-slate-500 dark:text-slate-400 mt-1">Create, manage, and send invoices to clients.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="new-invoice-btn"
+                            class="flex items-center gap-2 px-5 h-11 rounded-xl bg-primary hover:bg-blue-600 text-white font-bold text-sm shadow-lg transition-all">
+                            <span class="material-symbols-outlined text-[20px]">add</span>
+                            New Invoice
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div
+                        class="p-4 rounded-xl bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700">
+                        <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Total Invoices</p>
+                        <p class="text-2xl font-bold" id="stat-total">0</p>
+                    </div>
+                    <div
+                        class="p-4 rounded-xl bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700">
+                        <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Paid</p>
+                        <p class="text-2xl font-bold text-emerald-600" id="stat-paid">0</p>
+                    </div>
+                    <div
+                        class="p-4 rounded-xl bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700">
+                        <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Pending</p>
+                        <p class="text-2xl font-bold text-amber-600" id="stat-pending">0</p>
+                    </div>
+                    <div
+                        class="p-4 rounded-xl bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700">
+                        <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Total Revenue</p>
+                        <p class="text-2xl font-bold text-primary" id="stat-revenue">$0</p>
+                    </div>
+                </div>
+
+                <!-- Invoice List -->
+                <div
+                    class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                    <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                        <h2 class="font-bold">All Invoices</h2>
+                        <input type="text" placeholder="Search invoices..."
+                            class="w-64 h-9 rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm px-3"
+                            id="search-input" oninput="filterInvoices()">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 dark:bg-slate-800">
+                                <tr>
+                                    <th class="px-4 py-3 font-semibold">Invoice #</th>
+                                    <th class="px-4 py-3 font-semibold">Client</th>
+                                    <th class="px-4 py-3 font-semibold">Date</th>
+                                    <th class="px-4 py-3 font-semibold">Due Date</th>
+                                    <th class="px-4 py-3 font-semibold text-right">Amount</th>
+                                    <th class="px-4 py-3 font-semibold">Status</th>
+                                    <th class="px-4 py-3 font-semibold text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoice-list"></tbody>
+                        </table>
+                    </div>
+                    <div id="empty-state" class="hidden p-12 text-center">
+                        <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">receipt_long</span>
+                        <p class="text-slate-500">No invoices yet. Create your first invoice!</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Invoice Composer Modal -->
+    <div id="composer-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeComposer()"></div>
+        <div
+            class="absolute inset-4 lg:inset-8 bg-white dark:bg-dark-bg rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                <h2 class="text-xl font-bold" id="composer-title">New Invoice</h2>
+                <button onclick="closeComposer()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <!-- Modal Content: Split Layout -->
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Left: Form Fields -->
+                <div class="w-full lg:w-1/2 overflow-y-auto p-6 border-r border-slate-200 dark:border-slate-700">
+                    <!-- Tabs -->
+                    <div class="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-6">
+                        <button onclick="switchTab('general')" id="tab-general"
+                            class="flex-1 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white">General</button>
+                        <button onclick="switchTab('advanced')" id="tab-advanced"
+                            class="flex-1 px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700">Advanced</button>
+                    </div>
+
+                    <!-- General Tab -->
+                    <div id="panel-general" class="space-y-5">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Header</div>
+
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <!-- Logo Upload (Left) -->
+                            <div class="w-full md:w-1/3">
+                                <label
+                                    class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Logo</label>
+                                <div id="logo-dropzone"
+                                    class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-4 h-40 flex flex-col items-center justify-center text-center hover:border-primary transition-colors cursor-pointer relative bg-slate-50 dark:bg-slate-800/50">
+                                    <input type="file" id="logo-input" accept="image/*"
+                                        class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                                    <div id="logo-placeholder"
+                                        class="flex flex-col items-center gap-2 pointer-events-none">
+                                        <span
+                                            class="material-symbols-outlined text-3xl text-slate-400">add_photo_alternate</span>
+                                        <p class="text-[10px] text-slate-500">Drag or click to upload</p>
+                                    </div>
+                                    <img id="logo-preview"
+                                        class="hidden h-full max-h-32 object-contain mx-auto pointer-events-none"
+                                        alt="Logo">
+                                </div>
+                            </div>
+
+                            <!-- Title/Intro (Right) -->
+                            <div class="w-full md:w-2/3 space-y-4">
+                                <div>
+                                    <label
+                                        class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">Title
+                                        *</label>
+                                    <input type="text" id="inv-title"
+                                        class="w-full h-10 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-3 focus:ring-2 focus:ring-primary/20"
+                                        placeholder="Invoice" value="Invoice" oninput="updatePreview()">
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">Subheading</label>
+                                    <input type="text" id="inv-subheading"
+                                        class="w-full h-10 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-3 focus:ring-2 focus:ring-primary/20"
+                                        placeholder="Tax Invoice" oninput="updatePreview()">
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 block">Intro
+                                        Text</label>
+                                    <textarea id="inv-intro" rows="2"
+                                        class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm p-3 resize-none focus:ring-2 focus:ring-primary/20"
+                                        placeholder="Thank you for your business..."
+                                        oninput="updatePreview()"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 mt-6">Client Details
+                        </div>
+
+                        <!-- Client/Project Selection -->
+                        <div
+                            class="grid grid-cols-2 gap-4 mb-4 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 mb-1 block uppercase">Select
+                                    Client</label>
+                                <select id="select-client" onchange="onClientSelect(this.value)"
+                                    class="w-full h-10 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-3">
+                                    <option value="">-- Choose Client --</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 mb-1 block uppercase">Select
+                                    Project</label>
+                                <select id="select-project" onchange="onProjectSelect(this.value)" disabled
+                                    class="w-full h-10 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <option value="">-- Choose Project --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Client
+                                    Name *</label>
+                                <input type="text" id="inv-client-name"
+                                    class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                    placeholder="John Doe" oninput="updatePreview()">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Client
+                                    Email</label>
+                                <input type="email" id="inv-client-email"
+                                    class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                    placeholder="john@example.com" oninput="updatePreview()">
+                            </div>
+                            <div class="col-span-2">
+                                <label
+                                    class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Client
+                                    Tax ID / ABN</label>
+                                <input type="text" id="inv-client-tax-id"
+                                    class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                    placeholder="Tax ID / ABN" oninput="updatePreview()">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Invoice
+                                    Number *</label>
+                                <input type="text" id="inv-number"
+                                    class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                    placeholder="#INV-001" oninput="updatePreview()">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Receipt
+                                    No.</label>
+                                <input type="text" id="inv-receipt"
+                                    class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                    placeholder="R-001" oninput="updatePreview()">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Invoice
+                                    Date</label>
+                                <input type="date" id="inv-date"
+                                    class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                    oninput="updatePreview()">
+                            </div>
+                            <div>
+                                <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Due
+                                    Date</label>
+                                <input type="date" id="inv-due-date"
+                                    class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                    oninput="updatePreview()">
+                            </div>
+                        </div>
+
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 mt-6">Line Items
+                        </div>
+                        <div id="line-items-container" class="space-y-3"></div>
+                        <button onclick="addLineItem()"
+                            class="flex items-center gap-2 text-sm font-bold text-primary hover:text-blue-600 mt-3">
+                            <span class="material-symbols-outlined text-lg">add</span> Add Item
+                        </button>
+
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 mt-6">Organisation
+                        </div>
+                        <div>
+                            <label
+                                class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Organisation
+                                Name *</label>
+                            <input type="text" id="org-name"
+                                class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                placeholder="Your Company" oninput="updatePreview()">
+                        </div>
+                        <div>
+                            <label
+                                class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Organisation
+                                Address</label>
+                            <textarea id="org-address" rows="2"
+                                class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm p-4 resize-none"
+                                placeholder="123 Business St" oninput="updatePreview()"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Phone</label>
+                                <input type="text" id="org-phone"
+                                    class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                    placeholder="+1 234 567 890" oninput="updatePreview()">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">ABN/Tax
+                                    ID</label>
+                                <input type="text" id="org-abn"
+                                    class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                    placeholder="12 345 678 901" oninput="updatePreview()">
+                            </div>
+                        </div>
+                        <div>
+                            <label
+                                class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Website</label>
+                            <input type="text" id="org-website"
+                                class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                placeholder="www.example.com" oninput="updatePreview()">
+                        </div>
+                        <div>
+                            <label
+                                class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Email</label>
+                            <input type="email" id="org-email"
+                                class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                placeholder="info@example.com" oninput="updatePreview()">
+                        </div>
+                    </div>
+
+                    <!-- Advanced Tab -->
+                    <div id="panel-advanced" class="space-y-5 hidden">
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Tax Rate
+                                (%)</label>
+                            <input type="number" id="inv-tax-rate"
+                                class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                value="10" oninput="updatePreview()">
+                        </div>
+                        <div>
+                            <label
+                                class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Currency</label>
+                            <select id="inv-currency"
+                                class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                onchange="updatePreview()">
+                                <option value="AUD">AUD - Australian Dollar</option>
+                                <option value="USD">USD - US Dollar</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="GBP">GBP - British Pound</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Notes /
+                                Terms</label>
+                            <textarea id="inv-notes" rows="4"
+                                class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm p-4 resize-none"
+                                placeholder="Payment terms, bank details, etc." oninput="updatePreview()"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Footer
+                                Text</label>
+                            <textarea id="inv-footer-text" rows="2"
+                                class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm p-4 resize-none"
+                                placeholder="Center aligned footer text (e.g. Thank you)"
+                                oninput="updatePreview()"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Bank
+                                Account for Payment</label>
+                            <select id="inv-bank-select"
+                                class="w-full h-11 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-4"
+                                onchange="updatePreview()">
+                                <option value="">-- No bank details --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Live Preview -->
+                <div class="hidden lg:flex flex-1 invoice-preview p-8 overflow-y-auto items-start justify-center">
+                    <div id="invoice-preview"
+                        class="bg-white dark:bg-slate-900 shadow-xl w-full max-w-lg p-8 border border-slate-200 dark:border-slate-700">
+                    </div>
+                </div>
+            </div>
+            <!-- Modal Footer -->
+            <div
+                class="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                <button onclick="closeComposer()"
+                    class="px-5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold">Cancel</button>
+                <div class="flex gap-2">
+                    <button onclick="saveInvoice('draft')"
+                        class="px-5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold">Save
+                        Draft</button>
+                    <button onclick="saveInvoice('sent')"
+                        class="px-6 py-2.5 rounded-lg bg-primary hover:bg-blue-600 text-white font-bold">Save &
+                        Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initAuthObserver, getOrganizationProfile, getCurrentOrgId } from "../assets/js/firebase-modules.js";
+        import { db, auth, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, where } from '../assets/js/firebase-config.js';
+
+        initAuthObserver(true);
+
+        let invoices = [];
+        let editingId = null;
+        let lineItems = [];
+        let logoDataUrl = null;
+        let allClients = [];
+        let allProjects = [];
+        let bankAccounts = [];
+
+        // Loading Functions
+        async function loadClients() {
+            try {
+                const q = query(collection(db, 'clients'), where('orgId', '==', getCurrentOrgId()), orderBy('name', 'asc'));
+                const snapshot = await getDocs(q);
+                allClients = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                const select = document.getElementById('select-client');
+                select.innerHTML = '<option value="">-- Choose Client --</option>' +
+                    allClients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            } catch (e) { console.error('Error loading clients:', e); }
+        }
+
+        async function loadProjects() {
+            try {
+                const q = query(collection(db, 'projects'), where('orgId', '==', getCurrentOrgId()), orderBy('name', 'asc'));
+                const snapshot = await getDocs(q);
+                allProjects = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                // Project select is populated based on client selection
+            } catch (e) { console.error('Error loading projects:', e); }
+        }
+
+        window.onClientSelect = function (clientId) {
+            const client = allClients.find(c => c.id === clientId);
+            if (client) {
+                document.getElementById('inv-client-name').value = client.name || '';
+                document.getElementById('inv-client-email').value = client.email || '';
+                document.getElementById('inv-client-tax-id').value = client.taxId || '';
+
+                // Filter projects
+                const clientProjects = allProjects.filter(p => p.clientId === clientId);
+                const projectSelect = document.getElementById('select-project');
+                projectSelect.innerHTML = '<option value="">-- Choose Project --</option>' +
+                    clientProjects.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+                projectSelect.disabled = false;
+            } else {
+                document.getElementById('select-project').innerHTML = '<option value="">-- Choose Project --</option>';
+                document.getElementById('select-project').disabled = true;
+            }
+            updatePreview();
+        };
+
+        window.onProjectSelect = function (projectId) {
+            // Optional: You could auto-fill project specific details here if needed
+            // For now, just logging or maybe adding project name to notes?
+            const project = allProjects.find(p => p.id === projectId);
+            if (project) {
+                // Maybe append project name to title/notes? 
+                // Keeping it simple as requested: "populate client details" was the main requirement
+            }
+        };
+
+        async function loadOrgDetails() {
+            const org = await getOrganizationProfile();
+            if (org) {
+                document.getElementById('org-name').value = org.companyName || '';
+                document.getElementById('org-address').value = org.address || '';
+                document.getElementById('org-phone').value = org.phone || '';
+                document.getElementById('org-email').value = org.email || '';
+                document.getElementById('org-website').value = org.website || '';
+                document.getElementById('org-abn').value = org.taxId || '';
+
+                if (org.logoURL && !logoDataUrl) {
+                    logoDataUrl = org.logoURL;
+                    document.getElementById('logo-preview').src = logoDataUrl;
+                    document.getElementById('logo-preview').classList.remove('hidden');
+                    document.getElementById('logo-placeholder').classList.add('hidden');
+                }
+
+                // Populate Bank Accounts
+                bankAccounts = org.bankAccounts || [];
+                const bankSelect = document.getElementById('inv-bank-select');
+                bankSelect.innerHTML = '<option value="">-- No bank details --</option>' +
+                    bankAccounts.map((acc, idx) => `<option value="${idx}">${acc.bankName} (${acc.accountNumber})</option>`).join('');
+
+                updatePreview();
+            }
+        }
+
+        async function loadInvoices() {
+            try {
+                const q = query(collection(db, 'invoices'), where('orgId', '==', getCurrentOrgId()), orderBy('createdAt', 'desc'));
+                const snapshot = await getDocs(q);
+                invoices = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderInvoices();
+                updateStats();
+            } catch (e) { console.error(e); }
+        }
+
+        function renderInvoices() {
+            const list = document.getElementById('invoice-list');
+            const empty = document.getElementById('empty-state');
+
+            if (invoices.length === 0) {
+                list.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            list.innerHTML = invoices.map(inv => {
+                const statusColors = {
+                    draft: 'bg-slate-100 text-slate-600',
+                    sent: 'bg-amber-100 text-amber-700',
+                    paid: 'bg-emerald-100 text-emerald-700',
+                    overdue: 'bg-red-100 text-red-700'
+                };
+                return `
+                <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td class="px-4 py-3 font-mono font-bold">${inv.invoiceNumber || '-'}</td>
+                    <td class="px-4 py-3">${inv.clientName || '-'}</td>
+                    <td class="px-4 py-3">${inv.invoiceDate || '-'}</td>
+                    <td class="px-4 py-3">${inv.dueDate || '-'}</td>
+                    <td class="px-4 py-3 text-right font-bold">${inv.currency || 'AUD'} $${(inv.total || 0).toFixed(2)}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs font-bold ${statusColors[inv.status] || statusColors.draft}">${inv.status || 'draft'}</span></td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <button onclick="editInvoice('${inv.id}')" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg" title="Edit"><span class="material-symbols-outlined text-lg">edit</span></button>
+                            <button onclick="emailInvoice('${inv.id}')" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg" title="Email"><span class="material-symbols-outlined text-lg">mail</span></button>
+                            <button onclick="downloadInvoice('${inv.id}')" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg" title="Download"><span class="material-symbols-outlined text-lg">download</span></button>
+                            <button onclick="deleteInvoice('${inv.id}')" class="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-red-500" title="Delete"><span class="material-symbols-outlined text-lg">delete</span></button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').textContent = invoices.length;
+            document.getElementById('stat-paid').textContent = invoices.filter(i => i.status === 'paid').length;
+            document.getElementById('stat-pending').textContent = invoices.filter(i => i.status === 'sent').length;
+            const revenue = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total || 0), 0);
+            document.getElementById('stat-revenue').textContent = '$' + revenue.toFixed(2);
+        }
+
+        window.openComposer = function (id = null) {
+            editingId = id;
+            document.getElementById('composer-title').textContent = id ? 'Edit Invoice' : 'New Invoice';
+            document.getElementById('composer-modal').classList.remove('hidden');
+
+            if (id) {
+                const inv = invoices.find(i => i.id === id);
+                if (inv) populateForm(inv);
+            } else {
+                resetForm();
+                generateInvoiceNumber();
+            }
+            addLineItem();
+            updatePreview();
+        };
+
+        window.closeComposer = function () {
+            document.getElementById('composer-modal').classList.add('hidden');
+            editingId = null;
+            lineItems = [];
+            logoDataUrl = null;
+        };
+
+        window.switchTab = function (tab) {
+            document.getElementById('tab-general').className = tab === 'general' ? 'flex-1 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white' : 'flex-1 px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700';
+            document.getElementById('tab-advanced').className = tab === 'advanced' ? 'flex-1 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white' : 'flex-1 px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700';
+            document.getElementById('panel-general').classList.toggle('hidden', tab !== 'general');
+            document.getElementById('panel-advanced').classList.toggle('hidden', tab !== 'advanced');
+        };
+
+        function setDefaultDates() {
+            const today = new Date().toISOString().split('T')[0];
+            const due = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            document.getElementById('inv-date').value = today;
+            document.getElementById('inv-due-date').value = due;
+        }
+
+        function generateInvoiceNumber() {
+            const num = String(invoices.length + 1).padStart(4, '0');
+            document.getElementById('inv-number').value = `INV-${new Date().getFullYear()}-${num}`;
+        }
+
+        window.addLineItem = function () {
+            const id = Date.now();
+            lineItems.push({ id, description: '', amount: 0 });
+            renderLineItems();
+        };
+
+        window.removeLineItem = function (id) {
+            lineItems = lineItems.filter(i => i.id !== id);
+            renderLineItems();
+            updatePreview();
+        };
+
+        window.updateLineItem = function (id, field, value) {
+            const item = lineItems.find(i => i.id === id);
+            if (item) item[field] = field === 'amount' ? parseFloat(value) || 0 : value;
+            updatePreview();
+        };
+
+        function renderLineItems() {
+            document.getElementById('line-items-container').innerHTML = lineItems.map(item => `
+                <div class="flex gap-2 items-start">
+                    <input type="text" placeholder="Description" value="${item.description}" onchange="updateLineItem(${item.id}, 'description', this.value)" class="flex-1 h-10 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-3">
+                    <input type="number" placeholder="0.00" value="${item.amount || ''}" onchange="updateLineItem(${item.id}, 'amount', this.value)" class="w-28 h-10 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm px-3 text-right">
+                    <button onclick="removeLineItem(${item.id})" class="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-red-500"><span class="material-symbols-outlined text-lg">close</span></button>
+                </div>
+            `).join('');
+        }
+
+        window.updatePreview = function () {
+            const title = document.getElementById('inv-title').value || 'Invoice';
+            const subheading = document.getElementById('inv-subheading').value;
+            const clientName = document.getElementById('inv-client-name').value || 'Client Name';
+            const clientEmail = document.getElementById('inv-client-email').value;
+            const invNumber = document.getElementById('inv-number').value;
+            const receiptNo = document.getElementById('inv-receipt').value;
+            const invDate = document.getElementById('inv-date').value;
+            const dueDate = document.getElementById('inv-due-date').value;
+            const orgName = document.getElementById('org-name').value || 'Your Organisation';
+            const orgAddress = document.getElementById('org-address').value;
+            const orgPhone = document.getElementById('org-phone').value;
+            const orgAbn = document.getElementById('org-abn').value;
+            const orgWebsite = document.getElementById('org-website').value;
+            const orgEmail = document.getElementById('org-email').value;
+            const taxRate = parseFloat(document.getElementById('inv-tax-rate').value) || 0;
+            const currency = document.getElementById('inv-currency').value;
+            const clientTaxId = document.getElementById('inv-client-tax-id').value;
+            const notes = document.getElementById('inv-notes').value;
+            const footerText = document.getElementById('inv-footer-text').value;
+
+            const subtotal = lineItems.reduce((sum, i) => sum + (i.amount || 0), 0);
+            const tax = subtotal * (taxRate / 100);
+            const total = subtotal + tax;
+
+            const selectedBankIdx = document.getElementById('inv-bank-select').value;
+            const bank = selectedBankIdx !== "" ? bankAccounts[selectedBankIdx] : null;
+
+            const formatDate = (d) => d ? new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+
+            document.getElementById('invoice-preview').innerHTML = `
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex-shrink-0">
+                        ${logoDataUrl ? `<img src="${logoDataUrl}" class="h-12" alt="Logo">` : '<div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center"><span class="material-symbols-outlined text-slate-400">image</span></div>'}
+                    </div>
+                    <div class="text-right">
+                        <h1 class="text-2xl font-bold">${title}</h1>
+                        ${subheading ? `<p class="text-sm text-primary">${subheading}</p>` : ''}
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+                    <div class="space-y-1">
+                        <div class="flex"><span class="text-slate-500 w-16">Name</span><span class="font-medium">${clientName}</span></div>
+                        ${clientEmail ? `<div class="flex"><span class="text-slate-500 w-16">Email</span><span>${clientEmail}</span></div>` : ''}
+                        ${clientTaxId ? `<div class="flex"><span class="text-slate-500 w-16">Tax ID</span><span class="font-mono text-xs pt-0.5">${clientTaxId}</span></div>` : ''}
+                    </div>
+                    <div class="space-y-1 text-right">
+                        <div><span class="text-slate-500">Invoice ID</span> <span class="font-medium ml-2">${invNumber || '-'}</span></div>
+                        ${receiptNo ? `<div><span class="text-slate-500">Receipt No.</span> <span class="font-medium ml-2">${receiptNo}</span></div>` : ''}
+                        <div><span class="text-slate-500">Date</span> <span class="font-medium ml-2">${formatDate(invDate)}</span></div>
+                        <div><span class="text-slate-500">Due</span> <span class="font-medium ml-2">${formatDate(dueDate)}</span></div>
+                    </div>
+                </div>
+                <table class="w-full text-sm mb-6 border-collapse">
+                    <thead>
+                        <tr class="border-y border-slate-200 dark:border-slate-700">
+                            <th class="text-left py-2 font-semibold">Description</th>
+                            <th class="text-right py-2 font-semibold">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${lineItems.filter(i => i.description).map(i => `<tr class="border-b border-slate-100 dark:border-slate-800"><td class="py-2">${i.description}</td><td class="py-2 text-right">$${(i.amount || 0).toFixed(2)}</td></tr>`).join('')}
+                    </tbody>
+                </table>
+                <div class="border-t border-slate-200 dark:border-slate-700 pt-4 space-y-1 text-sm">
+                    <div class="flex justify-between"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+                    <div class="flex justify-between"><span>Tax (${taxRate}%)</span><span>$${tax.toFixed(2)}</span></div>
+                    <div class="flex justify-between font-bold text-lg pt-2 border-t border-slate-200 dark:border-slate-700"><span>Total</span><span>${currency} $${total.toFixed(2)}</span></div>
+                </div>
+                ${notes ? `
+                <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Notes / Terms</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-line">${notes}</p>
+                </div>
+                ` : ''}
+                ${bank ? `
+                <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Payment Details</p>
+                    <div class="text-sm space-y-1">
+                        <div class="flex"><span class="text-slate-500 w-24">Bank</span><span>${bank.bankName}</span></div>
+                        <div class="flex"><span class="text-slate-500 w-24">Account Name</span><span>${bank.accountName}</span></div>
+                        <div class="flex"><span class="text-slate-500 w-24">BSB</span><span class="font-mono">${bank.bsb}</span></div>
+                        <div class="flex"><span class="text-slate-500 w-24">Account No.</span><span class="font-mono">${bank.accountNumber}</span></div>
+                        ${bank.swift ? `<div class="flex"><span class="text-slate-500 w-24">SWIFT/BIC</span><span class="font-mono">${bank.swift}</span></div>` : ''}
+                    </div>
+                </div>
+                ` : ''}
+                <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 space-y-1">
+                    <p class="font-bold text-slate-700 dark:text-slate-300">${orgName}</p>
+                    ${orgEmail ? `<p><span class="material-symbols-outlined text-xs align-middle">mail</span> ${orgEmail}</p>` : ''}
+                    ${orgAddress ? `<p><span class="material-symbols-outlined text-xs align-middle">home</span> ${orgAddress}</p>` : ''}
+                    ${orgPhone ? `<p><span class="material-symbols-outlined text-xs align-middle">call</span> ${orgPhone}</p>` : ''}
+                    ${orgAbn ? `<p><span class="material-symbols-outlined text-xs align-middle">badge</span> ABN: ${orgAbn}</p>` : ''}
+                    ${orgWebsite ? `<p><span class="material-symbols-outlined text-xs align-middle">language</span> ${orgWebsite}</p>` : ''}
+                </div>
+                ${footerText ? `
+                <div class="mt-8 pt-4 border-t border-slate-200 dark:border-slate-700 text-center">
+                    <p class="text-sm text-slate-500 font-medium">${footerText}</p>
+                </div>
+                ` : ''}
+            `;
+        };
+
+        window.saveInvoice = async function (status) {
+            // Check if user is authenticated
+            const user = auth.currentUser;
+            if (!user) {
+                showToast('Please log in to save invoices', 'error');
+                return;
+            }
+
+            const data = {
+                title: document.getElementById('inv-title').value,
+                subheading: document.getElementById('inv-subheading').value,
+                intro: document.getElementById('inv-intro').value,
+                clientName: document.getElementById('inv-client-name').value,
+                clientEmail: document.getElementById('inv-client-email').value,
+                invoiceNumber: document.getElementById('inv-number').value,
+                receiptNo: document.getElementById('inv-receipt').value,
+                invoiceDate: document.getElementById('inv-date').value,
+                dueDate: document.getElementById('inv-due-date').value,
+                orgName: document.getElementById('org-name').value,
+                orgAddress: document.getElementById('org-address').value,
+                orgPhone: document.getElementById('org-phone').value,
+                orgAbn: document.getElementById('org-abn').value,
+                orgWebsite: document.getElementById('org-website').value,
+                orgEmail: document.getElementById('org-email').value,
+                taxRate: parseFloat(document.getElementById('inv-tax-rate').value) || 0,
+                currency: document.getElementById('inv-currency').value,
+                notes: document.getElementById('inv-notes').value,
+                footerText: document.getElementById('inv-footer-text').value,
+                clientTaxId: document.getElementById('inv-client-tax-id').value,
+                bankAccount: document.getElementById('inv-bank-select').value !== "" ? bankAccounts[document.getElementById('inv-bank-select').value] : null,
+                lineItems: lineItems.filter(i => i.description),
+                subtotal: lineItems.reduce((s, i) => s + (i.amount || 0), 0),
+                total: lineItems.reduce((s, i) => s + (i.amount || 0), 0) * (1 + (parseFloat(document.getElementById('inv-tax-rate').value) || 0) / 100),
+                status,
+                logoUrl: logoDataUrl,
+                userId: user.uid,
+                userEmail: user.email,
+                orgId: getCurrentOrgId(),
+                updatedAt: serverTimestamp()
+            };
+
+            try {
+                if (editingId) {
+                    await updateDoc(doc(db, 'invoices', editingId), data);
+                } else {
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, 'invoices'), data);
+                }
+                closeComposer();
+                loadInvoices();
+                showToast('Invoice saved!', 'success');
+            } catch (e) {
+                console.error('Save invoice error:', e);
+                showToast('Error saving invoice: ' + e.message, 'error');
+            }
+        };
+
+        window.editInvoice = function (id) {
+            openComposer(id);
+        };
+
+        function populateForm(inv) {
+            document.getElementById('inv-title').value = inv.title || 'Invoice';
+            document.getElementById('inv-subheading').value = inv.subheading || '';
+            document.getElementById('inv-intro').value = inv.intro || '';
+            document.getElementById('inv-client-name').value = inv.clientName || '';
+            document.getElementById('inv-client-email').value = inv.clientEmail || '';
+            document.getElementById('inv-client-tax-id').value = inv.clientTaxId || '';
+            document.getElementById('inv-number').value = inv.invoiceNumber || '';
+            document.getElementById('inv-receipt').value = inv.receiptNo || '';
+            document.getElementById('inv-date').value = inv.invoiceDate || '';
+            document.getElementById('inv-due-date').value = inv.dueDate || '';
+            document.getElementById('org-name').value = inv.orgName || '';
+            document.getElementById('org-address').value = inv.orgAddress || '';
+            document.getElementById('org-phone').value = inv.orgPhone || '';
+            document.getElementById('org-abn').value = inv.orgAbn || '';
+            document.getElementById('org-website').value = inv.orgWebsite || '';
+            document.getElementById('org-email').value = inv.orgEmail || '';
+            document.getElementById('inv-tax-rate').value = inv.taxRate || 10;
+            document.getElementById('inv-currency').value = inv.currency || 'AUD';
+            document.getElementById('inv-notes').value = inv.notes || '';
+            document.getElementById('inv-footer-text').value = inv.footerText || '';
+            if (inv.bankAccount) {
+                // Try to find the bank account in current list or just set it
+                const idx = bankAccounts.findIndex(a => a.accountNumber === inv.bankAccount.accountNumber);
+                if (idx !== -1) document.getElementById('inv-bank-select').value = idx;
+            }
+            lineItems = inv.lineItems || [];
+            logoDataUrl = inv.logoUrl || null;
+            if (logoDataUrl) {
+                document.getElementById('logo-preview').src = logoDataUrl;
+                document.getElementById('logo-preview').classList.remove('hidden');
+                document.getElementById('logo-placeholder').classList.add('hidden');
+            }
+            renderLineItems();
+        }
+
+        function resetForm() {
+            ['inv-title', 'inv-subheading', 'inv-intro', 'inv-client-name', 'inv-client-email', 'inv-client-tax-id', 'inv-receipt', 'org-name', 'org-address', 'org-phone', 'org-abn', 'org-website', 'org-email', 'inv-notes', 'inv-footer-text'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('inv-title').value = 'Invoice';
+            document.getElementById('inv-tax-rate').value = '10';
+            document.getElementById('inv-currency').value = 'AUD';
+            lineItems = [];
+            logoDataUrl = null;
+            document.getElementById('logo-preview').classList.add('hidden');
+            document.getElementById('logo-placeholder').classList.remove('hidden');
+            setDefaultDates();
+            renderLineItems();
+            loadOrgDetails();
+        }
+
+        window.deleteInvoice = async function (id) {
+            if (!confirm('Delete this invoice?')) return;
+            try {
+                await deleteDoc(doc(db, 'invoices', id));
+                loadInvoices();
+                showToast('Invoice deleted', 'success');
+            } catch (e) { showToast('Error deleting', 'error'); }
+        };
+
+        window.emailInvoice = function (id) {
+            const inv = invoices.find(i => i.id === id);
+            if (inv?.clientEmail) {
+                window.open(`mailto:${inv.clientEmail}?subject=Invoice ${inv.invoiceNumber}&body=Please find attached invoice ${inv.invoiceNumber}.`);
+            } else {
+                showToast('No client email set', 'error');
+            }
+        };
+
+        window.downloadInvoice = function (id) {
+            showToast('PDF download coming soon', 'info');
+        };
+
+        window.filterInvoices = function () {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const filtered = invoices.filter(i =>
+                (i.invoiceNumber || '').toLowerCase().includes(search) ||
+                (i.clientName || '').toLowerCase().includes(search)
+            );
+            // Re-render with filtered
+            const list = document.getElementById('invoice-list');
+            list.innerHTML = filtered.map(inv => {
+                const statusColors = { draft: 'bg-slate-100 text-slate-600', sent: 'bg-amber-100 text-amber-700', paid: 'bg-emerald-100 text-emerald-700' };
+                return `<tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td class="px-4 py-3 font-mono font-bold">${inv.invoiceNumber || '-'}</td>
+                    <td class="px-4 py-3">${inv.clientName || '-'}</td>
+                    <td class="px-4 py-3">${inv.invoiceDate || '-'}</td>
+                    <td class="px-4 py-3">${inv.dueDate || '-'}</td>
+                    <td class="px-4 py-3 text-right font-bold">${inv.currency || 'AUD'} $${(inv.total || 0).toFixed(2)}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs font-bold ${statusColors[inv.status] || statusColors.draft}">${inv.status || 'draft'}</span></td>
+                    <td class="px-4 py-3 text-center"><div class="flex items-center justify-center gap-1">
+                        <button onclick="editInvoice('${inv.id}')" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"><span class="material-symbols-outlined text-lg">edit</span></button>
+                        <button onclick="emailInvoice('${inv.id}')" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"><span class="material-symbols-outlined text-lg">mail</span></button>
+                        <button onclick="deleteInvoice('${inv.id}')" class="p-1.5 hover:bg-red-50 rounded-lg text-red-500"><span class="material-symbols-outlined text-lg">delete</span></button>
+                    </div></td></tr>`;
+            }).join('');
+        };
+
+        // Logo upload
+        document.getElementById('logo-input')?.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    logoDataUrl = ev.target.result;
+                    document.getElementById('logo-preview').src = logoDataUrl;
+                    document.getElementById('logo-preview').classList.remove('hidden');
+                    document.getElementById('logo-placeholder').classList.add('hidden');
+                    updatePreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function showToast(msg, type) {
+            const t = document.createElement('div');
+            t.className = `fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 ${type === 'success' ? 'bg-emerald-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'} text-white font-medium`;
+            t.innerHTML = `<span class="material-symbols-outlined text-lg">${type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info'}</span>${msg}`;
+            document.body.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+        }
+
+        // Initialize - runs when module loads (after DOM is ready for type=module)
+        // Wire up new invoice button - must be after openComposer is defined
+        document.getElementById('new-invoice-btn')?.addEventListener('click', () => openComposer());
+        loadInvoices();
+        loadClients();
+        loadProjects();
+        loadOrgDetails();
+        setDefaultDates();
+    </script>
+</body>
+
+</html>
