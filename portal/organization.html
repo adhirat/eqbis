@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Organisation Profile - Adhirat Portal</title>
+    <title>Organisation Profile - Eqbis Portal</title>
     <meta name="robots" content="noindex, nofollow">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect" />
@@ -344,7 +344,7 @@
                                                 Name *</span>
                                             <input id="input-companyName"
                                                 class="form-input w-full rounded-lg bg-slate-50 dark:bg-dark-bg border-slate-200 dark:border-transparent text-slate-900 dark:text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-slate-400"
-                                                placeholder="Adhirat Technologies" required />
+                                                placeholder="Eqbis Technologies" required />
                                         </label>
                                         <label class="flex flex-col gap-2">
                                             <span
@@ -657,7 +657,7 @@
         // Populate form
         function populateForm(data) {
             // Header display
-            document.getElementById('display-name').textContent = data.companyName || 'Adhirat Technologies';
+            document.getElementById('display-name').textContent = data.companyName || 'Eqbis Technologies';
             document.getElementById('display-tagline').textContent = data.tagline || 'Manage your company identity';
 
             // Logo
@@ -807,12 +807,12 @@
 
         function getDefaultPolicyText(type) {
             const defaults = {
-                privacy: '# Privacy Policy\n\nLast updated: [Date]\n\nAt Adhirat Technologies, we are committed to protecting your privacy...',
-                terms: '# Terms and Conditions\n\nWelcome to Adhirat Technologies...',
+                privacy: '# Privacy Policy\n\nLast updated: [Date]\n\nAt Eqbis Technologies, we are committed to protecting your privacy...',
+                terms: '# Terms and Conditions\n\nWelcome to Eqbis Technologies...',
                 security: '# Security Policy\n\nWe take security seriously...',
                 cookies: '# Cookie Policy\n\nThis policy explains how we use cookies...',
-                employment: '# Employment Policy\n\nAdhirat Technologies is an equal opportunity employer...',
-                copyrights: '# Copyright Notice\n\nAll content on this website is © Adhirat Technologies...'
+                employment: '# Employment Policy\n\nEqbis Technologies is an equal opportunity employer...',
+                copyrights: '# Copyright Notice\n\nAll content on this website is © Eqbis Technologies...'
             };
             return defaults[type] || '';
         }
@@ -841,7 +841,7 @@
                         </label>
                         <label class="flex flex-col gap-1">
                             <span class="text-xs font-bold text-slate-500 uppercase">Account Name</span>
-                            <input type="text" value="${acc.accountName || ''}" onchange="updateBankAccount(${index}, 'accountName', this.value)" class="form-input w-full rounded-lg bg-white dark:bg-dark-bg border-slate-200 dark:border-transparent text-sm" placeholder="e.g. Adhirat Technologies Pty Ltd">
+                            <input type="text" value="${acc.accountName || ''}" onchange="updateBankAccount(${index}, 'accountName', this.value)" class="form-input w-full rounded-lg bg-white dark:bg-dark-bg border-slate-200 dark:border-transparent text-sm" placeholder="e.g. Eqbis Technologies Pty Ltd">
                         </label>
                         <label class="flex flex-col gap-1">
                             <span class="text-xs font-bold text-slate-500 uppercase">BSB</span>

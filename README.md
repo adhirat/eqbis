@@ -1,10 +1,11 @@
-# Adhirat Technologies - Corporate Website & Portal
+# Eqbis Technologies - Corporate Website & Portal
 
-A comprehensive, modern web presence for Adhirat Technologies featuring a sophisticated corporate website with an integrated client portal. This project showcases advanced web development with Firebase backend, stunning glassmorphic design, and enterprise-grade functionality.
+A comprehensive, modern web presence for Eqbis Technologies featuring a sophisticated corporate website with an integrated client portal. This project showcases advanced web development with Firebase backend, stunning glassmorphic design, and enterprise-grade functionality. Eqbis is an all-in-one platform to equip businesses with all the necessary tools and templates.
 
 ## 🌟 Key Features
 
 ### Corporate Website
+
 - **Futuristic Design**: Glassmorphic UI with animated gradients, floating orbs, and neon accent colors
 - **Dark/Light Mode**: Seamless theme switching with persistent preferences
 - **Responsive Layout**: Mobile-first design that adapts perfectly to all screen sizes
@@ -12,6 +13,7 @@ A comprehensive, modern web presence for Adhirat Technologies featuring a sophis
 - **Performance**: Optimized loading with lazy images and modular JavaScript
 
 ### Client Portal (`/portal/`)
+
 - **User Authentication**: Firebase-based login/signup with role-based access control (RBAC)
 - **Dashboard**: Comprehensive admin interface with analytics and management tools
 - **Project Management**: Track projects, contracts, invoices, and client communications
@@ -21,20 +23,23 @@ A comprehensive, modern web presence for Adhirat Technologies featuring a sophis
 ## 🛠 Technology Stack
 
 ### Frontend
+
 - **HTML5**: Semantic markup with accessibility features
 - **Tailwind CSS**: Utility-first framework with custom glassmorphic components
 - **Vanilla JavaScript**: Modular ES6+ architecture with no framework dependencies
 - **Google Fonts**: Futuristic multi-font system (Orbitron, Rajdhani, Exo 2, Space Grotesk)
 
 ### Backend & Services
+
 - **Firebase**: Authentication, Firestore database, Cloud Storage
 - **Google Apps Script**: Email notifications and workflow automation
 - **Google Analytics**: Advanced tracking and insights
 - **Gmail API**: Transactional email delivery
 
 ### Infrastructure
+
 - **Firebase Hosting**: CDN-enabled, SSL-secured hosting
-- **GitHub Pages**: Primary deployment with custom domain (adhirat.com)
+- **GitHub Pages**: Primary deployment with custom domain (eqbis.com)
 - **Cloudflare**: DNS management and performance optimization
 
 ## 📁 Project Structure
@@ -42,11 +47,9 @@ A comprehensive, modern web presence for Adhirat Technologies featuring a sophis
 ```
 ├── 📄 index.html                 # Corporate homepage
 ├── 📄 about.html                 # About us page
-├── 📄 services.html              # Services overview
 ├── 📄 contact.html               # Contact form
 ├── 📄 legal.html                 # Legal & privacy
-├── 📄 *.html                     # Additional service pages
-├── 
+├──
 ├── 📂 portal/                    # Client portal directory
 │   ├── 📄 index.html            # Portal dashboard
 │   ├── 📄 login.html            # Authentication
@@ -94,6 +97,7 @@ A comprehensive, modern web presence for Adhirat Technologies featuring a sophis
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Node.js 16+** (recommended for modern development)
 - **Python 3.x** (alternative local server)
 - **Firebase Project** (for portal functionality)
@@ -102,19 +106,22 @@ A comprehensive, modern web presence for Adhirat Technologies featuring a sophis
 ### Local Development
 
 1. **Clone Repository**
+
    ```bash
    git clone https://github.com/adhirat/adhirat.github.io.git
    cd adhirat.github.io
    ```
 
 2. **Start Local Server**
-   
+
    **Option A: Using Python (Recommended)**
+
    ```bash
    python3 -m http.server 8000
    ```
-   
+
    **Option B: Using Node.js**
+
    ```bash
    npx http-server -p 8000 -c-1
    ```
@@ -135,6 +142,7 @@ A comprehensive, modern web presence for Adhirat Technologies featuring a sophis
    - Cloud Storage
 
 3. **Configure Security Rules**
+
    ```bash
    # Apply existing rules
    firebase deploy --only firestore:rules,storage:rules
@@ -147,7 +155,9 @@ A comprehensive, modern web presence for Adhirat Technologies featuring a sophis
 ## 🎨 Customization Guide
 
 ### Branding & Colors
+
 Update the futuristic color palette in `/assets/js/app.js`:
+
 ```javascript
 colors: {
     "neon-cyan": "#00f5ff",      // Primary accent
@@ -158,12 +168,15 @@ colors: {
 ```
 
 ### Typography
+
 The project uses a multi-font system for a futuristic look:
+
 - **Display**: Orbitron (headings)
 - **Body**: Inter (content)
 - **Accent**: Space Grotesk (highlights)
 
 ### Portal Customization
+
 - **User Roles**: Modify `/assets/js/rbac.js` for permission levels
 - **Email Templates**: Update `/docs/google-apps-script.gs`
 - **Dashboard Widgets**: Edit `/portal/index.html`
@@ -171,12 +184,15 @@ The project uses a multi-font system for a futuristic look:
 ## 🔧 Configuration
 
 ### Email Notifications
+
 Follow the comprehensive setup guide in `/docs/email-notification-setup.md` to enable:
+
 - Contact form notifications
 - Newsletter subscription alerts
 - System notifications
 
 ### Analytics & Tracking
+
 - **Google Analytics**: Track page views and user behavior
 - **Custom Events**: Monitor portal interactions
 - **Performance**: Core Web Vitals monitoring
@@ -184,11 +200,13 @@ Follow the comprehensive setup guide in `/docs/email-notification-setup.md` to e
 ## 🌐 Deployment
 
 ### GitHub Pages (Production)
+
 1. Push to `main` branch
 2. Automatic deployment via GitHub Actions
-3. Custom domain: `adhirat.com`
+3. Custom domain: `eqbis.com`
 
 ### Firebase Hosting (Alternative)
+
 ```bash
 firebase init hosting
 firebase deploy
@@ -219,7 +237,7 @@ firebase deploy
 
 ## 📝 License
 
-© 2024 Adhirat Technologies. All rights reserved.
+© 2024 Eqbis Technologies. All rights reserved.
 
 ---
 

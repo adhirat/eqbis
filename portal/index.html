@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Welcome - Adhirat Portal</title>
+    <title>Welcome - Eqbis Portal</title>
     <meta name="robots" content="noindex, nofollow">
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect" />
@@ -321,7 +321,7 @@
                         </div>
 
                         <footer class="text-center text-sm text-slate-500 py-6">
-                            © 2024 Adhirat Technologies. All rights reserved.
+                            © 2024 Eqbis Technologies. All rights reserved.
                         </footer>
                     </div>
                 </div>
@@ -353,15 +353,15 @@
         }
         setGreeting();
 
-        // Setup admin role for admin@adhirat.com
+        // Setup admin role for admin@eqbis.com
         async function setupAdminRole() {
             try {
                 // First ensure default roles exist
                 await initializeDefaultRoles();
 
-                // Find admin@adhirat.com user and assign admin role
+                // Find admin@eqbis.com user and assign admin role
                 const usersRef = collection(db, 'users');
-                const q = query(usersRef, where('email', '==', 'admin@adhirat.com'));
+                const q = query(usersRef, where('email', '==', 'admin@eqbis.com'));
                 const snapshot = await getDocs(q);
 
                 if (!snapshot.empty) {
@@ -370,7 +370,7 @@
 
                     if (userData.role !== 'admin') {
                         await assignRoleToUser(userDoc.id, 'admin');
-                        console.log('Admin role assigned to admin@adhirat.com');
+                        console.log('Admin role assigned to admin@eqbis.com');
                     }
                 }
             } catch (error) {
@@ -395,8 +395,8 @@
                 document.getElementById('user-first-name').textContent = firstName;
             }
 
-            // Setup admin if this is admin@adhirat.com
-            if (user.email === 'admin@adhirat.com') {
+            // Setup admin if this is admin@eqbis.com
+            if (user.email === 'admin@eqbis.com') {
                 await setupAdminRole();
             }
 

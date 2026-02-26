@@ -1,10 +1,10 @@
 # Email Notification Setup Guide
 
-This guide explains how to set up email notifications for contact form submissions and newsletter subscriptions on the Adhirat Technologies website.
+This guide explains how to set up email notifications for contact form submissions and newsletter subscriptions on the Eqbis Technologies website.
 
 ## Overview
 
-When users submit the contact form or subscribe to the newsletter, an email notification is automatically sent to `admin@adhirat.com` with a beautiful, glassmorphism-styled layout that matches the website's design.
+When users submit the contact form or subscribe to the newsletter, an email notification is automatically sent to `admin@eqbis.com` with a beautiful, glassmorphism-styled layout that matches the website's design.
 
 ## Architecture
 
@@ -17,7 +17,7 @@ Google Apps Script API (Email Trigger)
        ↓
 Gmail API (Send Email)
        ↓
-admin@adhirat.com Inbox
+admin@eqbis.com Inbox
 ```
 
 ## Setup Instructions
@@ -25,9 +25,9 @@ admin@adhirat.com Inbox
 ### Step 1: Create Google Apps Script Project
 
 1. Go to [Google Apps Script](https://script.google.com)
-2. Sign in with the Google account that has access to send emails from `admin@adhirat.com` (or the account you want to send from)
+2. Sign in with the Google account that has access to send emails from `admin@eqbis.com` (or the account you want to send from)
 3. Click **"New Project"**
-4. Name the project: `Adhirat Email Notifications`
+4. Name the project: `Eqbis Email Notifications`
 
 ### Step 2: Add the Script Code
 
@@ -43,7 +43,7 @@ admin@adhirat.com Inbox
 3. If prompted, authorize the application:
    - Click "Review Permissions"
    - Select your Google account
-   - Click "Advanced" → "Go to Adhirat Email Notifications (unsafe)"
+   - Click "Advanced" → "Go to Eqbis Email Notifications (unsafe)"
    - Click "Allow"
 4. Check your inbox for the test email
 5. Repeat with `testNewsletterEmail` to test newsletter formatting
