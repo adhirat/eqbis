@@ -63,8 +63,11 @@ npm run dev
 
 # Build all applications and packages
 npm run build
+```
 
 # Manage Database (Shared Package)
+
+```bash
 npm run db:generate
 npm run db:migrate
 ```
