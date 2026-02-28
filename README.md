@@ -281,6 +281,7 @@ Use Turborepo to run the applications. The root scripts are pre-configured to fi
 
 ```bash
 # Run the Web App (Development)
+# Run the Web App (Development)
 npm run dev
 
 # Build all applications

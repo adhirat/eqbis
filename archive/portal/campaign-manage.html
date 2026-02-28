@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Manage Campaign - Eqbis Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
+    <style>
+        .settings-nav-item.active {
+            background-color: rgb(139 92 246 / 0.1);
+            /* neon-violet/10 */
+            color: #8b5cf6;
+            /* neon-violet */
+            border-right: 2px solid #8b5cf6;
+        }
+
+        .dark .settings-nav-item.active {
+            background-color: rgb(6 182 212 / 0.1);
+            /* neon-cyan/10 */
+            color: #06b6d4;
+            /* neon-cyan */
+            border-right: 2px solid #06b6d4;
+        }
+    </style>
+    <!-- Global Assets -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+</head>
+
+<body
+    class="pt-0 font-display bg-slate-50 dark:bg-dark-bg text-slate-900 dark:text-white antialiased overflow-hidden h-screen flex">
+
+    <!-- Global Sidebar -->
+    <div id="portal-sidebar" class="contents"></div>
+
+    <!-- Main Wrapper -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Global Header -->
+        <div id="portal-header" class="contents"></div>
+
+        <!-- Management Interface -->
+        <div class="flex-1 flex overflow-hidden">
+
+            <!-- Campaign Sidebar -->
+            <aside
+                class="w-64 bg-white dark:bg-dark-card border-r border-slate-200 dark:border-slate-700 flex flex-col h-full overflow-y-auto shrink-0 z-20">
+                <div class="p-4 border-b border-slate-200 dark:border-slate-700">
+                    <button
+                        class="flex items-center gap-2 text-slate-500 hover:text-neon-violet text-sm font-medium mb-3 transition-colors"
+                        onclick="window.history.back()">
+                        <span class="material-symbols-outlined text-lg">arrow_back</span>
+                        Back to Campaigns
+                    </button>
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="size-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-indigo-600 dark:text-indigo-400">school</span>
+                        </div>
+                        <div class="min-w-0">
+                            <h2 class="text-sm font-bold text-slate-900 dark:text-white truncate">Global Edu Fund</h2>
+                            <p class="text-xs text-slate-500 truncate">active checkouts: 4</p>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="flex-1 p-2 space-y-0.5">
+                    <p class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider mt-2">Campaign</p>
+
+                    <a href="#"
+                        class="settings-nav-item flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="#"
+                        class="settings-nav-item flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">web</span>
+                        Pages & Design
+                    </a>
+
+                    <p class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider mt-4">Donations</p>
+
+                    <a href="#"
+                        class="settings-nav-item active flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">volunteer_activism</span>
+                        Donation Form
+                    </a>
+                    <a href="#"
+                        class="settings-nav-item flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">payments</span>
+                        Payment Gateways
+                    </a>
+                    <a href="#"
+                        class="settings-nav-item flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">receipt</span>
+                        Receipts & Invoices
+                    </a>
+
+                    <p class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider mt-4">Communication
+                    </p>
+
+                    <a href="#"
+                        class="settings-nav-item flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">mail</span>
+                        Automated Emails
+                    </a>
+
+                    <p class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider mt-4">Configuration
+                    </p>
+
+                    <a href="#"
+                        class="settings-nav-item flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">settings</span>
+                        Settings
+                    </a>
+                    <a href="#"
+                        class="settings-nav-item flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">globe</span>
+                        Domains
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Main Settings Content -->
+            <div class="flex-1 overflow-y-auto bg-slate-50 dark:bg-dark-surface/50 p-6 lg:p-10 animate-fade-in-up">
+                <div class="max-w-4xl mx-auto">
+
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h1 class="text-2xl font-black text-slate-900 dark:text-white">Donation Form</h1>
+                            <p class="text-slate-500 dark:text-slate-400 mt-1">Customize your donation form amounts,
+                                fields, and appearance.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <a href="#"
+                                class="btn-secondary px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 font-bold text-sm bg-white dark:bg-dark-card hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                View Page
+                            </a>
+                            <button
+                                class="btn-primary px-6 py-2 rounded-lg bg-neon-violet text-white font-bold text-sm shadow-lg shadow-neon-violet/20 hover:scale-105 transition-transform">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Layout: Settings + Preview -->
+                    <div class="flex flex-col xl:flex-row gap-8">
+
+                        <!-- Settings Column -->
+                        <div class="flex-1 space-y-6">
+
+                            <!-- Tabs -->
+                            <div
+                                class="bg-white dark:bg-dark-card rounded-xl p-1 border border-slate-200 dark:border-slate-700 flex">
+                                <button
+                                    class="flex-1 py-1.5 px-3 rounded-lg bg-neon-violet text-white text-sm font-bold shadow-sm">Amounts</button>
+                                <button
+                                    class="flex-1 py-1.5 px-3 rounded-lg text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800">Fields</button>
+                                <button
+                                    class="flex-1 py-1.5 px-3 rounded-lg text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800">Settings</button>
+                                <button
+                                    class="flex-1 py-1.5 px-3 rounded-lg text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">Frequencies</button>
+                            </div>
+
+                            <!-- Intelligent Amounts -->
+                            <div
+                                class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-4 flex items-start gap-4">
+                                <div
+                                    class="p-2 bg-indigo-100 dark:bg-indigo-800 rounded-lg text-indigo-600 dark:text-indigo-300">
+                                    <span class="material-symbols-outlined">auto_awesome</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <h3 class="font-bold text-slate-900 dark:text-white text-sm">Intelligent
+                                            donation amounts</h3>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" value="" class="sr-only peer" checked>
+                                            <div
+                                                class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-neon-violet">
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">Our AI analyzes donor behavior
+                                        to automatically suggest optimal donation amounts for each visitor.</p>
+                                </div>
+                            </div>
+
+                            <!-- Frequency Toggle -->
+                            <div class="flex justify-center my-2">
+                                <div class="inline-flex rounded-full bg-slate-100 dark:bg-slate-800 p-1">
+                                    <button
+                                        class="px-4 py-1 rounded-full bg-white dark:bg-neon-violet text-slate-900 dark:text-white text-xs font-bold shadow-sm">One-time</button>
+                                    <button
+                                        class="px-4 py-1 rounded-full text-slate-500 dark:text-slate-400 text-xs font-bold hover:text-neon-violet">Monthly</button>
+                                </div>
+                            </div>
+
+                            <!-- Amount Cards -->
+                            <div class="space-y-3">
+                                <!-- Amount 1 -->
+                                <div
+                                    class="bg-white dark:bg-dark-card border border-neon-violet/40 dark:border-neon-cyan/40 rounded-xl p-4 transition-all relative ring-1 ring-neon-violet/20 dark:ring-neon-cyan/20">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex items-center gap-2">
+                                            <span
+                                                class="material-symbols-outlined text-slate-400 text-lg">drag_indicator</span>
+                                            <h3 class="font-bold text-lg text-slate-900 dark:text-white">$20</h3>
+                                        </div>
+                                        <button class="text-xs text-red-500 hover:underline">Remove</button>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label
+                                                class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Label</label>
+                                            <input type="text"
+                                                class="w-full text-sm rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2"
+                                                placeholder="e.g. Supporter">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Description</label>
+                                            <input type="text"
+                                                class="w-full text-sm rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2"
+                                                placeholder="Helps buy books...">
+                                        </div>
+                                    </div>
+                                    <!-- Image Upload Area -->
+                                    <div
+                                        class="mt-3 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-4 flex flex-col items-center justify-center text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer">
+                                        <span class="material-symbols-outlined text-slate-400 mb-1">image</span>
+                                        <span class="text-xs text-slate-500">Add an image for this amount</span>
+                                    </div>
+                                </div>
+
+                                <!-- Amount 2 (Collapsed) -->
+                                <div
+                                    class="bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex items-center justify-between hover:border-neon-violet/50 transition-colors group cursor-pointer">
+                                    <div class="flex items-center gap-3">
+                                        <span
+                                            class="material-symbols-outlined text-slate-400 text-lg group-hover:text-neon-violet">drag_indicator</span>
+                                        <span class="font-bold text-slate-900 dark:text-white">$50</span>
+                                        <span class="text-sm text-slate-400">- High impact</span>
+                                    </div>
+                                    <span class="material-symbols-outlined text-slate-400">edit</span>
+                                </div>
+
+                                <!-- Amount 3 (Collapsed) -->
+                                <div
+                                    class="bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex items-center justify-between hover:border-neon-violet/50 transition-colors group cursor-pointer">
+                                    <div class="flex items-center gap-3">
+                                        <span
+                                            class="material-symbols-outlined text-slate-400 text-lg group-hover:text-neon-violet">drag_indicator</span>
+                                        <span class="font-bold text-slate-900 dark:text-white">$100</span>
+                                    </div>
+                                    <span class="material-symbols-outlined text-slate-400">edit</span>
+                                </div>
+
+                                <button
+                                    class="w-full py-3 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-slate-500 dark:text-slate-400 font-bold text-sm hover:border-neon-violet hover:text-neon-violet transition-colors flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined">add</span>
+                                    Add Amount
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Preview Column -->
+                        <div class="hidden xl:block w-[400px] shrink-0">
+                            <div class="sticky top-0">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Live Preview
+                                    </h3>
+                                    <span class="text-xs text-slate-400">Updates automatically</span>
+                                </div>
+
+                                <!-- Preview Device/Card -->
+                                <div
+                                    class="bg-white dark:bg-slate-900 rounded-[2rem] border-8 border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden min-h-[600px] relative">
+                                    <!-- Fake Campaign Content -->
+                                    <div
+                                        class="absolute inset-0 overflow-y-auto custom-scrollbar bg-white dark:bg-dark-bg">
+                                        <div class="h-40 bg-cover bg-center relative"
+                                            style="background-image: url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1000&auto=format&fit=crop');">
+                                            <div class="absolute inset-0 bg-black/40"></div>
+                                            <div class="absolute bottom-4 left-4 text-white">
+                                                <h2 class="font-bold text-lg leading-tight">Global Edu Fund</h2>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-4">
+                                            <div class="flex justify-center mb-6">
+                                                <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-full">
+                                                    <button
+                                                        class="px-4 py-1 bg-neon-violet text-white text-xs font-bold rounded-full shadow-sm">Give
+                                                        Once</button>
+                                                    <button
+                                                        class="px-4 py-1 text-slate-500 dark:text-slate-400 text-xs font-bold">Monthly</button>
+                                                </div>
+                                            </div>
+
+                                            <p
+                                                class="text-center text-sm text-slate-600 dark:text-slate-300 mb-4 font-medium">
+                                                Choose an amount to give</p>
+
+                                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                                <button
+                                                    class="p-3 rounded-xl border-2 border-neon-violet bg-neon-violet/5 dark:bg-neon-violet/10 text-center relative overflow-hidden">
+                                                    <div class="font-bold text-lg text-neon-violet">$20</div>
+                                                </button>
+                                                <button
+                                                    class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-center hover:border-neon-violet transition-colors">
+                                                    <div class="font-bold text-slate-800 dark:text-white">$50</div>
+                                                </button>
+                                                <button
+                                                    class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-center hover:border-neon-violet transition-colors">
+                                                    <div class="font-bold text-slate-800 dark:text-white">$100</div>
+                                                </button>
+                                                <button
+                                                    class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-center hover:border-neon-violet transition-colors">
+                                                    <div class="font-bold text-slate-800 dark:text-white">$250</div>
+                                                </button>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <input type="number" placeholder="Other Amount"
+                                                    class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-center font-bold px-4 py-3">
+                                            </div>
+
+                                            <button
+                                                class="w-full py-3.5 rounded-xl bg-neon-violet text-white font-bold shadow-lg shadow-neon-violet/25 hover:bg-neon-violet/90 transition-all active:scale-95">
+                                                Donate $20
+                                            </button>
+
+                                            <div
+                                                class="mt-4 flex items-center justify-center gap-2 text-xs text-slate-400">
+                                                <span class="material-symbols-outlined text-sm">lock</span>
+                                                Secure payment by Stripe
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+
+</html>

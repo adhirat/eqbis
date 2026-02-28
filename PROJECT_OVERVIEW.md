@@ -1,6 +1,5 @@
 # Eqbis Project Overview
 
-<<<<<<< Updated upstream
 This document provides a comprehensive overview of the **Eqbis** application ecosystem, including the public-facing corporate website and the internal administration portal. It details the features, technical architecture, and functionality implemented to date.
 
 ## 1. Project Scope
@@ -116,8 +115,7 @@ A visual tool to define and view the company's reporting structure.
 3.  **Breadcrumbs**: Implemented universal breadcrumb navigation in the header.
 4.  **Hierarchy**: Full implementation of the Org Chart with Firebase storage and User Database integration.
 5.  **User IDs**: Implemented auto-incrementing `ADH-XXXX` custom IDs for better user tracking.
-=======
-This document provides a comprehensive overview of the **Eqbis** modern application ecosystem, managed through a high-performance monorepo architecture.
+    This document provides a comprehensive overview of the **Eqbis** modern application ecosystem, managed through a high-performance monorepo architecture.
 
 ## 1. Project Architecture (Monorepo)
 
@@ -188,4 +186,3 @@ A secure, unified management interface featuring:
 ---
 
 _Last Updated: February 2026_
->>>>>>> Stashed changes

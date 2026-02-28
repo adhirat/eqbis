@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Newsletter Management - Eqbis Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+    <!-- Quill.js WYSIWYG Editor -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <style>
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Quill Editor Custom Styling */
+        .ql-toolbar.ql-snow {
+            border: none !important;
+            background: rgba(148, 163, 184, 0.1);
+            border-radius: 12px 12px 0 0;
+            padding: 12px !important;
+        }
+
+        .dark .ql-toolbar.ql-snow {
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .ql-container.ql-snow {
+            border: none !important;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+        }
+
+        .ql-editor {
+            min-height: 300px;
+            padding: 20px !important;
+            color: #1e293b;
+        }
+
+        .dark .ql-editor {
+            color: #e2e8f0;
+        }
+
+        .ql-editor.ql-blank::before {
+            color: #94a3b8;
+            font-style: normal !important;
+        }
+
+        .ql-toolbar .ql-stroke {
+            stroke: #64748b !important;
+        }
+
+        .dark .ql-toolbar .ql-stroke {
+            stroke: #94a3b8 !important;
+        }
+
+        .ql-toolbar .ql-fill {
+            fill: #64748b !important;
+        }
+
+        .dark .ql-toolbar .ql-fill {
+            fill: #94a3b8 !important;
+        }
+
+        .ql-toolbar .ql-picker-label {
+            color: #64748b !important;
+        }
+
+        .dark .ql-toolbar .ql-picker-label {
+            color: #94a3b8 !important;
+        }
+
+        .ql-toolbar button:hover .ql-stroke,
+        .ql-toolbar button.ql-active .ql-stroke {
+            stroke: var(--primary) !important;
+        }
+
+        .ql-toolbar button:hover .ql-fill,
+        .ql-toolbar button.ql-active .ql-fill {
+            fill: var(--primary) !important;
+        }
+
+        .ql-picker-options {
+            background: white !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .dark .ql-picker-options {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+
+        .campaign-row {
+            transition: all 0.2s ease;
+        }
+
+        .campaign-row:hover {
+            transform: translateX(4px);
+        }
+
+        .preview-frame {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .dark .preview-frame {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .dark .stats-card {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(0, 245, 255, 0.2);
+        }
+
+        /* Template Selection Styles */
+        .template-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .template-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .template-card.selected {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+            border-color: var(--primary);
+        }
+
+        .template-preview {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            overflow: hidden;
+        }
+
+        .dark .template-preview {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        .template-preview-content {
+            font-size: 6px;
+            line-height: 1.4;
+            transform: scale(0.5);
+            transform-origin: top left;
+            width: 200%;
+            height: 200%;
+        }
+    </style>
+</head>
+
+<body
+    class="pt-0 bg-background-light dark:bg-dark-bg text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full overflow-hidden">
+        <div id="portal-sidebar" class="contents"></div>
+        <main class="flex-1 flex flex-col min-w-0">
+            <div id="portal-header" class="contents"></div>
+            <div class="flex-1 overflow-y-auto p-4 sm:p-8 animate-fade-in-up">
+                <div class="max-w-[1400px] mx-auto flex flex-col gap-8">
+                    <!-- Page Header -->
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                        <div class="flex flex-col gap-1">
+                            <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Newsletter
+                                Management</h1>
+                            <p class="text-slate-500 dark:text-slate-400">Create, schedule, and send beautiful
+                                newsletters to your subscribers.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="openTemplateModal()"
+                                class="px-6 py-3 rounded-xl bg-primary text-white font-bold flex items-center gap-2 hover:bg-blue-600 transition-all shadow-lg shadow-primary/25 whitespace-nowrap group">
+                                <span
+                                    class="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">edit_note</span>
+                                Quick Compose
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="stats-card rounded-xl p-5 transition-all hover:scale-[1.02]">
+                            <div class="flex items-center gap-4">
+                                <div class="size-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-2xl text-primary">mail</span>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="stats-total">0</p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Total Campaigns</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats-card rounded-xl p-5 transition-all hover:scale-[1.02]">
+                            <div class="flex items-center gap-4">
+                                <div class="size-12 rounded-xl bg-green-500/20 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-2xl text-green-500">send</span>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="stats-sent">0</p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Sent</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats-card rounded-xl p-5 transition-all hover:scale-[1.02]">
+                            <div class="flex items-center gap-4">
+                                <div class="size-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-2xl text-amber-500">schedule</span>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="stats-scheduled">0
+                                    </p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Scheduled</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats-card rounded-xl p-5 transition-all hover:scale-[1.02]">
+                            <div class="flex items-center gap-4">
+                                <div class="size-12 rounded-xl bg-slate-500/20 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-2xl text-slate-500">edit</span>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="stats-drafts">0</p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Drafts</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campaigns Table -->
+                    <div
+                        class="bg-white dark:bg-dark-card rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                        <div
+                            class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50 dark:bg-dark-card">
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">All Campaigns</h3>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <div class="relative">
+                                    <input type="text" id="search-input" placeholder="Search campaigns..."
+                                        onkeyup="searchCampaigns()"
+                                        class="pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary focus:border-transparent w-48 sm:w-64 transition-all">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+                                </div>
+                                <select id="status-filter" onchange="filterCampaigns()"
+                                    class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="all">All Status</option>
+                                    <option value="draft">Drafts</option>
+                                    <option value="scheduled">Scheduled</option>
+                                    <option value="sent">Sent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-slate-500 dark:text-slate-400">
+                                <thead
+                                    class="bg-slate-50 dark:bg-[#1a202c] text-xs uppercase font-semibold text-slate-500 dark:text-slate-400">
+                                    <tr>
+                                        <th class="px-6 py-4">Subject</th>
+                                        <th class="px-6 py-4">Status</th>
+                                        <th class="px-6 py-4">Recipients</th>
+                                        <th class="px-6 py-4">Created</th>
+                                        <th class="px-6 py-4">Scheduled For</th>
+                                        <th class="px-6 py-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="campaigns-table" class="divide-y divide-slate-200 dark:divide-border-dark">
+                                    <!-- Loading state -->
+                                    <tr id="loading-row">
+                                        <td colspan="6" class="px-6 py-12 text-center">
+                                            <div class="flex flex-col items-center gap-3">
+                                                <div
+                                                    class="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin">
+                                                </div>
+                                                <p class="text-slate-500">Loading campaigns...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Empty State -->
+                        <div id="empty-state" class="hidden px-6 py-16 text-center">
+                            <div
+                                class="size-20 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-4xl text-slate-400">mail</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No newsletters yet
+                            </h3>
+                            <p class="text-slate-500 dark:text-slate-400 mb-6">Create your first newsletter campaign to
+                                engage with your subscribers.</p>
+                            <button onclick="openTemplateModal()"
+                                class="px-6 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-blue-600 transition-colors">
+                                Create Newsletter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Compose/Edit Modal -->
+    <div id="compose-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeComposeModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl w-full max-w-5xl border border-slate-200 dark:border-slate-700 animate-fade-in-up flex flex-col max-h-[95vh]">
+            <!-- Modal Header -->
+            <div
+                class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center flex-shrink-0">
+                <div>
+                    <h2 id="modal-title" class="text-xl font-bold text-slate-900 dark:text-white">Compose Newsletter
+                    </h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Create a beautiful newsletter with the
+                        rich text editor</p>
+                </div>
+                <button onclick="closeComposeModal()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <form id="newsletter-form" class="space-y-6">
+                    <input type="hidden" id="campaign-id" value="">
+
+                    <!-- Subject Line -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Subject
+                            Line</label>
+                        <input type="text" id="newsletter-subject" required
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-lg font-medium focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                            placeholder="Enter an engaging subject line...">
+                    </div>
+
+                    <!-- Preview Text -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Preview Text
+                            <span class="font-normal text-slate-400">(appears in inbox preview)</span>
+                        </label>
+                        <input type="text" id="newsletter-preview"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                            placeholder="A brief preview of what's inside...">
+                    </div>
+
+                    <!-- WYSIWYG Editor -->
+                    <div>
+                        <label
+                            class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Content</label>
+                        <div
+                            class="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                            <div id="editor-toolbar"></div>
+                            <div id="editor-container" class="bg-white dark:bg-slate-900"></div>
+                        </div>
+                    </div>
+
+                    <!-- Audience & Scheduling -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Target
+                                Audience</label>
+                            <select id="newsletter-audience"
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                                <option value="all">All Subscribers</option>
+                                <option value="active">Active Subscribers</option>
+                                <option value="new">New Subscribers (30 days)</option>
+                                <option value="engaged">Highly Engaged</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Schedule
+                                Date & Time</label>
+                            <input type="datetime-local" id="newsletter-schedule"
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div
+                class="p-6 border-t border-slate-200 dark:border-slate-700 flex flex-wrap justify-between items-center gap-4 flex-shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
+                <button onclick="previewNewsletter()"
+                    class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">visibility</span>
+                    Preview
+                </button>
+                <div class="flex items-center gap-3">
+                    <button onclick="closeComposeModal()"
+                        class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        Cancel
+                    </button>
+                    <button onclick="saveDraft()"
+                        class="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors font-medium">
+                        Save Draft
+                    </button>
+                    <button onclick="scheduleNewsletter()"
+                        class="px-6 py-2.5 rounded-xl bg-primary text-white hover:bg-blue-600 shadow-lg shadow-primary/25 transition-all font-semibold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">send</span>
+                        <span id="send-btn-text">Schedule / Send</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="preview-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closePreviewModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl w-full max-w-3xl border border-slate-200 dark:border-slate-700 animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div
+                class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center flex-shrink-0">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Preview Newsletter</h2>
+                <button onclick="closePreviewModal()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6">
+                <div class="preview-frame rounded-xl p-8 border border-slate-200 dark:border-slate-700">
+                    <div class="max-w-xl mx-auto">
+                        <div class="text-center mb-8">
+                            <img src="../assets/images/logo.svg" alt="Logo" class="h-10 mx-auto dark:invert">
+                        </div>
+                        <h1 id="preview-subject" class="text-2xl font-bold text-slate-900 dark:text-white mb-4"></h1>
+                        <div id="preview-content" class="prose dark:prose-invert max-w-none"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeDeleteModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-700 animate-fade-in-up p-6">
+            <div class="text-center">
+                <div
+                    class="size-16 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-3xl text-red-500">delete</span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Delete Campaign?</h3>
+                <p class="text-slate-500 dark:text-slate-400 mb-6">This action cannot be undone. The newsletter campaign
+                    will be permanently deleted.</p>
+                <div class="flex justify-center gap-3">
+                    <button onclick="closeDeleteModal()"
+                        class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        Cancel
+                    </button>
+                    <button onclick="confirmDelete()"
+                        class="px-5 py-2.5 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors font-medium">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Selection Modal -->
+    <div id="template-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeTemplateModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl w-full max-w-5xl border border-slate-200 dark:border-slate-700 animate-fade-in-up flex flex-col max-h-[90vh]">
+            <!-- Modal Header -->
+            <div
+                class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center flex-shrink-0">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Choose a Template</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Start with a professionally designed
+                        template or create from scratch</p>
+                </div>
+                <button onclick="closeTemplateModal()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Template Grid -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="template-grid">
+                    <!-- Templates will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div
+                class="p-6 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center flex-shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
+                <button onclick="previewSelectedTemplate()"
+                    class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+                    id="preview-template-btn" disabled>
+                    <span class="material-symbols-outlined text-lg">visibility</span>
+                    Preview Template
+                </button>
+                <div class="flex items-center gap-3">
+                    <button onclick="closeTemplateModal()"
+                        class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        Cancel
+                    </button>
+                    <button onclick="useSelectedTemplate()"
+                        class="px-6 py-2.5 rounded-xl bg-primary text-white hover:bg-blue-600 shadow-lg shadow-primary/25 transition-all font-semibold flex items-center gap-2"
+                        id="use-template-btn" disabled>
+                        <span class="material-symbols-outlined text-lg">check</span>
+                        Use Template
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Preview Modal -->
+    <div id="template-preview-modal" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeTemplatePreview()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl w-full max-w-3xl border border-slate-200 dark:border-slate-700 animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div
+                class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center flex-shrink-0">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white" id="template-preview-title">Template
+                    Preview</h2>
+                <button onclick="closeTemplatePreview()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6">
+                <div class="preview-frame rounded-xl p-8 border border-slate-200 dark:border-slate-700">
+                    <div class="max-w-xl mx-auto" id="template-preview-content">
+                        <!-- Preview content will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div
+                class="p-6 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 flex-shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
+                <button onclick="closeTemplatePreview()"
+                    class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    Back to Templates
+                </button>
+                <button onclick="useTemplateFromPreview()"
+                    class="px-6 py-2.5 rounded-xl bg-primary text-white hover:bg-blue-600 shadow-lg shadow-primary/25 transition-all font-semibold">
+                    Use This Template
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-8 right-8 transform translate-y-20 opacity-0 transition-all duration-300 z-[100]">
+        <div
+            class="flex items-center gap-3 px-5 py-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl">
+            <span id="toast-icon" class="material-symbols-outlined"></span>
+            <span id="toast-message" class="font-medium"></span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initAuthObserver, getCurrentOrgId } from '../assets/js/firebase-modules.js';
+
+        // Add specific where import if missing in overall import, but it seems missing in the main import list, so let's check
+        // Wait, line 573 imports are split. Let's fix that.
+        import {
+            db,
+            auth,
+            collection,
+            addDoc,
+            doc,
+            getDoc,
+            getDocs,
+            deleteDoc,
+            updateDoc,
+            query,
+            where,
+            orderBy,
+            serverTimestamp
+        } from '../assets/js/firebase-config.js';
+
+        initAuthObserver(true);
+
+        let quill;
+        let campaigns = [];
+        let deleteId = null;
+
+        // Initialize Quill Editor
+        function initEditor() {
+            const toolbarOptions = [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'align': [] }],
+                ['link', 'image'],
+                ['blockquote', 'code-block'],
+                ['clean']
+            ];
+
+            quill = new Quill('#editor-container', {
+                theme: 'snow',
+                modules: {
+                    toolbar: toolbarOptions
+                },
+                placeholder: 'Write your newsletter content here...'
+            });
+        }
+
+        // Load campaigns from Firebase
+        async function loadCampaigns() {
+            try {
+                const q = query(collection(db, "newsletters"), where('orgId', '==', getCurrentOrgId()), orderBy("createdAt", "desc"));
+                const snapshot = await getDocs(q);
+                campaigns = [];
+
+                snapshot.forEach(doc => {
+                    campaigns.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderCampaigns(campaigns);
+                updateStats();
+            } catch (error) {
+                console.error("Error loading campaigns:", error);
+                showToast('Error loading campaigns', 'error');
+            }
+        }
+
+        // Render campaigns table
+        function renderCampaigns(data) {
+            const table = document.getElementById('campaigns-table');
+            const emptyState = document.getElementById('empty-state');
+            const loadingRow = document.getElementById('loading-row');
+
+            if (loadingRow) loadingRow.remove();
+
+            if (data.length === 0) {
+                table.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            table.innerHTML = data.map(campaign => {
+                const statusColors = {
+                    draft: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+                    scheduled: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+                    sent: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                };
+
+                const createdDate = campaign.createdAt?.toDate ?
+                    new Date(campaign.createdAt.toDate()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '-';
+
+                const scheduledDate = campaign.scheduledFor?.toDate ?
+                    new Date(campaign.scheduledFor.toDate()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+
+                const isSent = campaign.status === 'sent';
+
+                return `
+                    <tr class="campaign-row hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors" data-id="${campaign.id}">
+                        <td class="px-6 py-4">
+                            <div class="font-semibold text-slate-900 dark:text-white">${campaign.subject || 'Untitled'}</div>
+                            <div class="text-xs text-slate-500 mt-0.5 line-clamp-1">${campaign.previewText || ''}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusColors[campaign.status] || statusColors.draft}">
+                                ${(campaign.status || 'draft').charAt(0).toUpperCase() + (campaign.status || 'draft').slice(1)}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-slate-700 dark:text-slate-300">${campaign.audience === 'all' ? 'All Subscribers' : campaign.audience || 'All'}</span>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">${createdDate}</td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">${scheduledDate}</td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button onclick="viewCampaign('${campaign.id}')"
+                                    class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 hover:text-primary"
+                                    title="View">
+                                    <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                </button>
+                                ${!isSent ? `
+                                    <button onclick="editCampaign('${campaign.id}')"
+                                        class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 hover:text-primary"
+                                        title="Edit">
+                                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                                    </button>
+                                ` : ''}
+                                <button onclick="openDeleteModal('${campaign.id}')"
+                                    class="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-slate-500 hover:text-red-500"
+                                    title="Delete">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = campaigns.length;
+            const sent = campaigns.filter(c => c.status === 'sent').length;
+            const scheduled = campaigns.filter(c => c.status === 'scheduled').length;
+            const drafts = campaigns.filter(c => c.status === 'draft').length;
+
+            document.getElementById('stats-total').textContent = total;
+            document.getElementById('stats-sent').textContent = sent;
+            document.getElementById('stats-scheduled').textContent = scheduled;
+            document.getElementById('stats-drafts').textContent = drafts;
+        }
+
+        // Save draft
+        window.saveDraft = async function () {
+            const subject = document.getElementById('newsletter-subject').value;
+            const previewText = document.getElementById('newsletter-preview').value;
+            const content = quill.root.innerHTML;
+            const audience = document.getElementById('newsletter-audience').value;
+            const schedule = document.getElementById('newsletter-schedule').value;
+            const campaignId = document.getElementById('campaign-id').value;
+
+            if (!subject.trim()) {
+                showToast('Please enter a subject line', 'error');
+                return;
+            }
+
+            const data = {
+                subject,
+                previewText,
+                content,
+                audience,
+                scheduledFor: schedule ? new Date(schedule) : null,
+                status: 'draft',
+                updatedAt: serverTimestamp(),
+                orgId: getCurrentOrgId()
+            };
+
+            try {
+                if (campaignId) {
+                    await updateDoc(doc(db, "newsletters", campaignId), data);
+                    showToast('Draft updated successfully', 'success');
+                } else {
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "newsletters"), data);
+                    showToast('Draft saved successfully', 'success');
+                }
+
+                closeComposeModal();
+                loadCampaigns();
+            } catch (error) {
+                console.error("Error saving draft:", error);
+                showToast('Error saving draft', 'error');
+            }
+        };
+
+        // Schedule/Send newsletter
+        window.scheduleNewsletter = async function () {
+            const subject = document.getElementById('newsletter-subject').value;
+            const previewText = document.getElementById('newsletter-preview').value;
+            const content = quill.root.innerHTML;
+            const audience = document.getElementById('newsletter-audience').value;
+            const schedule = document.getElementById('newsletter-schedule').value;
+            const campaignId = document.getElementById('campaign-id').value;
+
+            if (!subject.trim()) {
+                showToast('Please enter a subject line', 'error');
+                return;
+            }
+
+            if (!content || content === '<p><br></p>') {
+                showToast('Please add some content', 'error');
+                return;
+            }
+
+            const scheduledDate = schedule ? new Date(schedule) : new Date();
+            const status = schedule && new Date(schedule) > new Date() ? 'scheduled' : 'sent';
+
+            const data = {
+                subject,
+                previewText,
+                content,
+                audience,
+                scheduledFor: scheduledDate,
+                status,
+                updatedAt: serverTimestamp(),
+                orgId: getCurrentOrgId()
+            };
+
+            try {
+                if (campaignId) {
+                    await updateDoc(doc(db, "newsletters", campaignId), data);
+                } else {
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "newsletters"), data);
+                }
+
+                showToast(status === 'scheduled' ? 'Newsletter scheduled!' : 'Newsletter sent!', 'success');
+                closeComposeModal();
+                loadCampaigns();
+            } catch (error) {
+                console.error("Error scheduling newsletter:", error);
+                showToast('Error scheduling newsletter', 'error');
+            }
+        };
+
+        // Edit campaign
+        window.editCampaign = async function (id) {
+            try {
+                const docSnap = await getDoc(doc(db, "newsletters", id));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+
+                    document.getElementById('campaign-id').value = id;
+                    document.getElementById('newsletter-subject').value = data.subject || '';
+                    document.getElementById('newsletter-preview').value = data.previewText || '';
+                    document.getElementById('newsletter-audience').value = data.audience || 'all';
+
+                    if (data.scheduledFor) {
+                        const date = data.scheduledFor.toDate ? data.scheduledFor.toDate() : new Date(data.scheduledFor);
+                        document.getElementById('newsletter-schedule').value = date.toISOString().slice(0, 16);
+                    }
+
+                    quill.root.innerHTML = data.content || '';
+
+                    document.getElementById('modal-title').textContent = 'Edit Newsletter';
+                    openComposeModal(true);
+                }
+            } catch (error) {
+                console.error("Error loading campaign:", error);
+                showToast('Error loading campaign', 'error');
+            }
+        };
+
+        // View campaign
+        window.viewCampaign = async function (id) {
+            try {
+                const docSnap = await getDoc(doc(db, "newsletters", id));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('preview-subject').textContent = data.subject || 'Untitled';
+                    document.getElementById('preview-content').innerHTML = data.content || '';
+                    document.getElementById('preview-modal').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Error viewing campaign:", error);
+                showToast('Error loading preview', 'error');
+            }
+        };
+
+        // Delete functions
+        window.openDeleteModal = function (id) {
+            deleteId = id;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        };
+
+        window.closeDeleteModal = function () {
+            deleteId = null;
+            document.getElementById('delete-modal').classList.add('hidden');
+        };
+
+        window.confirmDelete = async function () {
+            if (!deleteId) return;
+
+            try {
+                await deleteDoc(doc(db, "newsletters", deleteId));
+                showToast('Campaign deleted', 'success');
+                closeDeleteModal();
+                loadCampaigns();
+            } catch (error) {
+                console.error("Error deleting campaign:", error);
+                showToast('Error deleting campaign', 'error');
+            }
+        };
+
+        // Modal functions
+        window.openComposeModal = function (isEdit = false) {
+            if (!isEdit) {
+                document.getElementById('newsletter-form').reset();
+                document.getElementById('campaign-id').value = '';
+                document.getElementById('modal-title').textContent = 'Compose Newsletter';
+                quill.root.innerHTML = '';
+            }
+            document.getElementById('compose-modal').classList.remove('hidden');
+        };
+
+        window.closeComposeModal = function () {
+            document.getElementById('compose-modal').classList.add('hidden');
+        };
+
+        window.closePreviewModal = function () {
+            document.getElementById('preview-modal').classList.add('hidden');
+        };
+
+        window.previewNewsletter = function () {
+            const subject = document.getElementById('newsletter-subject').value || 'Untitled Newsletter';
+            const content = quill.root.innerHTML;
+
+            document.getElementById('preview-subject').textContent = subject;
+            document.getElementById('preview-content').innerHTML = content;
+            document.getElementById('preview-modal').classList.remove('hidden');
+        };
+
+        // Search and filter
+        window.searchCampaigns = function () {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = campaigns.filter(c =>
+                (c.subject || '').toLowerCase().includes(query) ||
+                (c.previewText || '').toLowerCase().includes(query)
+            );
+            renderCampaigns(filtered);
+        };
+
+        window.filterCampaigns = function () {
+            const status = document.getElementById('status-filter').value;
+            const filtered = status === 'all' ? campaigns : campaigns.filter(c => c.status === status);
+            renderCampaigns(filtered);
+        };
+
+        // Newsletter Templates
+        const newsletterTemplates = [
+            {
+                id: 'blank',
+                name: 'Blank Template',
+                description: 'Start from scratch with a clean slate',
+                icon: 'add',
+                iconBg: 'bg-slate-500/20',
+                iconColor: 'text-slate-500',
+                subject: '',
+                previewText: '',
+                content: ''
+            },
+            {
+                id: 'product-launch',
+                name: 'Product Launch',
+                description: 'Announce new products or features',
+                icon: 'rocket_launch',
+                iconBg: 'bg-indigo-500/20',
+                iconColor: 'text-indigo-500',
+                subject: '🚀 Introducing Our Latest Innovation',
+                previewText: 'Be the first to experience something amazing',
+                content: `
+                    <h2 style="color: #4f46e5; margin-bottom: 20px; font-size: 28px;">Something Exciting Is Here!</h2>
+                    <p style="font-size: 16px; line-height: 1.8; color: #475569;">
+                        We're thrilled to announce the launch of our newest product that's going to revolutionize how you work. After months of development and listening to your feedback, we've created something truly special.
+                    </p>
+                    <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); padding: 30px; border-radius: 16px; margin: 24px 0; text-align: center;">
+                        <h3 style="color: white; margin: 0 0 12px 0; font-size: 22px;">✨ Key Features</h3>
+                        <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 15px;">Lightning-fast performance • Intuitive design • Powerful integrations</p>
+                    </div>
+                    <p style="font-size: 16px; line-height: 1.8; color: #475569;">
+                        Ready to take your productivity to the next level? Get early access today and join thousands of satisfied users who are already loving it.
+                    </p>
+                    <div style="text-align: center; margin: 32px 0;">
+                        <a href="#" style="display: inline-block; background: #4f46e5; color: white; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 16px;">Get Started Now →</a>
+                    </div>
+                    <p style="font-size: 14px; color: #94a3b8; text-align: center;">
+                        Questions? Reply to this email and we'll help you out!
+                    </p>
+                `
+            },
+            {
+                id: 'weekly-digest',
+                name: 'Weekly Digest',
+                description: 'Curated updates and news roundup',
+                icon: 'newspaper',
+                iconBg: 'bg-emerald-500/20',
+                iconColor: 'text-emerald-500',
+                subject: '📰 Your Weekly Digest - Top Stories This Week',
+                previewText: 'The latest updates, tips, and insights delivered to your inbox',
+                content: `
+                    <h2 style="color: #059669; margin-bottom: 8px; font-size: 24px;">Weekly Digest</h2>
+                    <p style="font-size: 14px; color: #94a3b8; margin-bottom: 24px;">Week of [Date] • 5 min read</p>
+                    
+                    <div style="background: #f0fdf4; border-left: 4px solid #059669; padding: 16px 20px; border-radius: 0 12px 12px 0; margin-bottom: 24px;">
+                        <h3 style="color: #047857; margin: 0 0 8px 0; font-size: 18px;">🎯 Highlight of the Week</h3>
+                        <p style="color: #065f46; margin: 0; font-size: 15px;">Brief summary of the most important news or update that happened this week.</p>
+                    </div>
+
+                    <h3 style="color: #1e293b; margin: 24px 0 16px 0; font-size: 18px;">📌 In This Issue</h3>
+                    <ul style="color: #475569; font-size: 15px; line-height: 2; padding-left: 20px;">
+                        <li>Feature update: What's new in version 2.0</li>
+                        <li>Industry insights: Trends shaping our future</li>
+                        <li>Tips & tricks: Boost your productivity</li>
+                        <li>Community spotlight: Member stories</li>
+                    </ul>
+
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 28px 0;">
+
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 18px;">💡 Quick Tip</h3>
+                    <p style="font-size: 15px; line-height: 1.8; color: #475569; background: #f8fafc; padding: 16px; border-radius: 12px;">
+                        <strong>Pro tip:</strong> Share a valuable insight or actionable advice that readers can use immediately.
+                    </p>
+
+                    <div style="text-align: center; margin: 32px 0;">
+                        <a href="#" style="display: inline-block; background: #059669; color: white; padding: 12px 28px; border-radius: 10px; text-decoration: none; font-weight: 600;">Read Full Articles →</a>
+                    </div>
+                `
+            },
+            {
+                id: 'event-invite',
+                name: 'Event Invitation',
+                description: 'Invite subscribers to webinars or events',
+                icon: 'event',
+                iconBg: 'bg-purple-500/20',
+                iconColor: 'text-purple-500',
+                subject: '🎉 You\'re Invited! Exclusive Event Coming Up',
+                previewText: 'Save your spot for our upcoming event',
+                content: `
+                    <div style="text-align: center; margin-bottom: 24px;">
+                        <span style="background: linear-gradient(135deg, #9333ea 0%, #db2777 100%); color: white; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Exclusive Invitation</span>
+                    </div>
+                    
+                    <h2 style="color: #7c3aed; margin-bottom: 16px; font-size: 28px; text-align: center; line-height: 1.3;">Join Us for an Unforgettable Experience</h2>
+                    
+                    <p style="font-size: 16px; line-height: 1.8; color: #475569; text-align: center;">
+                        We're hosting an exclusive event that you won't want to miss. Connect with industry leaders, gain valuable insights, and be part of something special.
+                    </p>
+
+                    <div style="background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 100%); border: 1px solid #e9d5ff; padding: 28px; border-radius: 16px; margin: 28px 0; text-align: center;">
+                        <p style="margin: 0 0 8px 0; font-size: 14px; color: #7c3aed; font-weight: 600;">📅 WHEN</p>
+                        <p style="margin: 0 0 20px 0; font-size: 18px; color: #1e293b; font-weight: 600;">[Date] at [Time] • [Timezone]</p>
+                        <p style="margin: 0 0 8px 0; font-size: 14px; color: #7c3aed; font-weight: 600;">📍 WHERE</p>
+                        <p style="margin: 0; font-size: 18px; color: #1e293b; font-weight: 600;">Online / [Venue Name]</p>
+                    </div>
+
+                    <h3 style="color: #1e293b; margin: 24px 0 16px 0; font-size: 18px;">What You'll Experience:</h3>
+                    <ul style="color: #475569; font-size: 15px; line-height: 2; padding-left: 20px;">
+                        <li>Keynote presentations from industry experts</li>
+                        <li>Interactive Q&A sessions</li>
+                        <li>Networking opportunities</li>
+                        <li>Exclusive resources and takeaways</li>
+                    </ul>
+
+                    <div style="text-align: center; margin: 32px 0;">
+                        <a href="#" style="display: inline-block; background: linear-gradient(135deg, #9333ea 0%, #db2777 100%); color: white; padding: 16px 40px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 17px; box-shadow: 0 8px 24px rgba(147, 51, 234, 0.35);">Reserve My Spot 🎟️</a>
+                    </div>
+
+                    <p style="font-size: 14px; color: #94a3b8; text-align: center;">
+                        Limited spots available • Free to attend
+                    </p>
+                `
+            },
+            {
+                id: 'welcome-series',
+                name: 'Welcome Series',
+                description: 'Onboard new subscribers warmly',
+                icon: 'waving_hand',
+                iconBg: 'bg-amber-500/20',
+                iconColor: 'text-amber-500',
+                subject: '👋 Welcome to the Family! Here\'s What\'s Next',
+                previewText: 'Thank you for joining us - let\'s get you started',
+                content: `
+                    <h2 style="color: #f59e0b; margin-bottom: 20px; font-size: 28px;">Welcome Aboard! 🎊</h2>
+                    
+                    <p style="font-size: 16px; line-height: 1.8; color: #475569;">
+                        We're so excited to have you join our community! You've just taken the first step toward [benefit/goal]. Here's everything you need to get started on the right foot.
+                    </p>
+
+                    <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a; padding: 24px; border-radius: 16px; margin: 24px 0;">
+                        <h3 style="color: #b45309; margin: 0 0 12px 0; font-size: 18px;">🚀 Quick Start Guide</h3>
+                        <ol style="color: #92400e; font-size: 15px; line-height: 2; padding-left: 20px; margin: 0;">
+                            <li><strong>Complete your profile</strong> - Personalize your experience</li>
+                            <li><strong>Explore the dashboard</strong> - Get familiar with key features</li>
+                            <li><strong>Connect with others</strong> - Join our community channels</li>
+                        </ol>
+                    </div>
+
+                    <h3 style="color: #1e293b; margin: 24px 0 16px 0; font-size: 18px;">🎁 Your Welcome Gift</h3>
+                    <p style="font-size: 15px; line-height: 1.8; color: #475569;">
+                        As a thank you for joining, here's an exclusive [discount/resource/bonus] just for you:
+                    </p>
+                    
+                    <div style="background: #1e293b; color: white; padding: 20px 28px; border-radius: 12px; margin: 20px 0; text-align: center;">
+                        <p style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 2px;">WELCOME20</p>
+                        <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.8;">Use this code for 20% off your first purchase</p>
+                    </div>
+
+                    <div style="text-align: center; margin: 32px 0;">
+                        <a href="#" style="display: inline-block; background: #f59e0b; color: white; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 16px;">Start Exploring →</a>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 28px 0;">
+
+                    <p style="font-size: 14px; color: #94a3b8; text-align: center;">
+                        Need help? Just reply to this email or visit our <a href="#" style="color: #f59e0b;">Help Center</a>.<br>
+                        We're always here to help! 💛
+                    </p>
+                `
+            }
+        ];
+
+        let selectedTemplate = null;
+
+        // Render template cards
+        function renderTemplates() {
+            const grid = document.getElementById('template-grid');
+            grid.innerHTML = newsletterTemplates.map(template => `
+                <div class="template-card bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden ${selectedTemplate?.id === template.id ? 'selected' : ''}"
+                    onclick="selectTemplate('${template.id}')">
+                    <div class="template-preview h-36 relative ${template.id === 'blank' ? 'flex items-center justify-center' : ''}">
+                        ${template.id === 'blank' ? `
+                            <div class="flex flex-col items-center text-slate-400">
+                                <span class="material-symbols-outlined text-4xl mb-2">add</span>
+                                <span class="text-sm font-medium">Start Fresh</span>
+                            </div>
+                        ` : `
+                            <div class="p-3 overflow-hidden h-full">
+                                <div class="template-preview-content text-slate-700 dark:text-slate-300">${template.content}</div>
+                            </div>
+                        `}
+                    </div>
+                    <div class="p-4 border-t border-slate-100 dark:border-slate-700">
+                        <div class="flex items-center gap-3">
+                            <div class="size-10 rounded-lg ${template.iconBg} flex items-center justify-center flex-shrink-0">
+                                <span class="material-symbols-outlined ${template.iconColor}">${template.icon}</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-slate-900 dark:text-white text-sm">${template.name}</h4>
+                                <p class="text-xs text-slate-500 truncate">${template.description}</p>
+                            </div>
+                            ${selectedTemplate?.id === template.id ? `
+                                <span class="material-symbols-outlined text-primary">check_circle</span>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Template functions
+        window.selectTemplate = function (templateId) {
+            selectedTemplate = newsletterTemplates.find(t => t.id === templateId);
+            renderTemplates();
+            document.getElementById('preview-template-btn').disabled = !selectedTemplate;
+            document.getElementById('use-template-btn').disabled = !selectedTemplate;
+        };
+
+        window.openTemplateModal = function () {
+            selectedTemplate = null;
+            renderTemplates();
+            document.getElementById('preview-template-btn').disabled = true;
+            document.getElementById('use-template-btn').disabled = true;
+            document.getElementById('template-modal').classList.remove('hidden');
+        };
+
+        window.closeTemplateModal = function () {
+            document.getElementById('template-modal').classList.add('hidden');
+        };
+
+        window.previewSelectedTemplate = function () {
+            if (!selectedTemplate) return;
+            document.getElementById('template-preview-title').textContent = selectedTemplate.name + ' Preview';
+            document.getElementById('template-preview-content').innerHTML = `
+                <div class="text-center mb-6">
+                    <img src="../assets/images/logo.svg" alt="Logo" class="h-8 mx-auto dark:invert">
+                </div>
+                <h1 class="text-xl font-bold text-slate-900 dark:text-white mb-4">${selectedTemplate.subject || 'Your Subject Line'}</h1>
+                <div class="prose dark:prose-invert max-w-none">${selectedTemplate.content || '<p class="text-slate-400 italic">Empty template - start with your own content!</p>'}</div>
+            `;
+            document.getElementById('template-preview-modal').classList.remove('hidden');
+        };
+
+        window.closeTemplatePreview = function () {
+            document.getElementById('template-preview-modal').classList.add('hidden');
+        };
+
+        window.useSelectedTemplate = function () {
+            if (!selectedTemplate) return;
+            closeTemplateModal();
+            document.getElementById('newsletter-form').reset();
+            document.getElementById('campaign-id').value = '';
+            document.getElementById('modal-title').textContent = 'Compose Newsletter';
+            document.getElementById('newsletter-subject').value = selectedTemplate.subject || '';
+            document.getElementById('newsletter-preview').value = selectedTemplate.previewText || '';
+            quill.root.innerHTML = selectedTemplate.content || '';
+            document.getElementById('compose-modal').classList.remove('hidden');
+        };
+
+        window.useTemplateFromPreview = function () {
+            closeTemplatePreview();
+            useSelectedTemplate();
+        };
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const msg = document.getElementById('toast-message');
+
+            icon.textContent = type === 'success' ? 'check_circle' : 'error';
+            msg.textContent = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initEditor();
+            loadCampaigns();
+        });
+    </script>
+</body>
+
+</html>

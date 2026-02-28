@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Timesheets - Eqbis Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+    <style>
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+
+<body
+    class="pt-0 bg-background-light dark:bg-dark-bg text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full overflow-hidden">
+        <div id="portal-sidebar" class="contents"></div>
+        <main class="flex-1 flex flex-col min-w-0">
+            <div id="portal-header" class="contents"></div>
+            <div class="flex-1 overflow-y-auto p-4 sm:p-8 animate-fade-in-up">
+                <div class="max-w-[1280px] mx-auto flex flex-col gap-8">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Timesheets
+                                </h1>
+                                <p class="text-slate-500 dark:text-slate-400">Submit your weekly hours against assigned
+                                    projects.</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="changeWeek(-1)"
+                                    class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
+                                    <span class="material-symbols-outlined">chevron_left</span>
+                                </button>
+                                <div
+                                    class="flex items-center px-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium">
+                                    <span class="material-symbols-outlined mr-2 text-primary">date_range</span>
+                                    <span id="current-week-label">Loading...</span>
+                                </div>
+                                <button onclick="changeWeek(1)"
+                                    class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
+                                    <span class="material-symbols-outlined">chevron_right</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col h-full min-h-[500px]">
+
+                        <!-- Toolbar -->
+                        <div
+                            class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                            <h2 class="font-semibold text-lg flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">schedule</span>
+                                Entry Details
+                            </h2>
+                            <button onclick="addTimesheetRow()"
+                                class="btn-primary-sm flex items-center gap-1 text-sm px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                                <span class="material-symbols-outlined text-sm">add</span>
+                                Add Row
+                            </button>
+                        </div>
+
+                        <!-- Timesheet Grid -->
+                        <div class="flex-1 overflow-x-auto">
+                            <table class="w-full text-left text-sm text-slate-500 dark:text-slate-400">
+                                <thead
+                                    class="bg-slate-50 dark:bg-[#1a202c] text-xs uppercase font-semibold text-slate-500 dark:text-slate-400">
+                                    <tr>
+                                        <th class="px-4 py-3 min-w-[200px]">Project</th>
+                                        <th class="px-4 py-3 min-w-[200px]">Task / Description</th>
+                                        <th class="px-2 py-3 text-center w-16">Mon</th>
+                                        <th class="px-2 py-3 text-center w-16">Tue</th>
+                                        <th class="px-2 py-3 text-center w-16">Wed</th>
+                                        <th class="px-2 py-3 text-center w-16">Thu</th>
+                                        <th class="px-2 py-3 text-center w-16">Fri</th>
+                                        <th class="px-2 py-3 text-center w-16 text-slate-400">Sat</th>
+                                        <th class="px-2 py-3 text-center w-16 text-slate-400">Sun</th>
+                                        <th
+                                            class="px-4 py-3 text-center w-20 font-bold text-slate-700 dark:text-slate-300">
+                                            Total</th>
+                                        <th class="px-4 py-3 text-center w-10"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="timesheet-body" class="divide-y divide-slate-200 dark:divide-border-dark">
+                                    <!-- Rows added via JS -->
+                                </tbody>
+                                <tfoot class="bg-slate-50 dark:bg-[#1a202c] font-semibold">
+                                    <tr>
+                                        <td colspan="2" class="px-4 py-3 text-right">Daily Totals:</td>
+                                        <td id="total-mon" class="px-2 py-3 text-center">0</td>
+                                        <td id="total-tue" class="px-2 py-3 text-center">0</td>
+                                        <td id="total-wed" class="px-2 py-3 text-center">0</td>
+                                        <td id="total-thu" class="px-2 py-3 text-center">0</td>
+                                        <td id="total-fri" class="px-2 py-3 text-center">0</td>
+                                        <td id="total-sat" class="px-2 py-3 text-center text-slate-400">0</td>
+                                        <td id="total-sun" class="px-2 py-3 text-center text-slate-400">0</td>
+                                        <td id="grand-total" class="px-4 py-3 text-center text-primary text-base">0</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <!-- Actions -->
+                        <div
+                            class="p-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 bg-slate-50 dark:bg-[#1a202c]/50">
+                            <button onclick="saveTimesheet('Draft')"
+                                class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Save
+                                Draft</button>
+                            <button onclick="saveTimesheet('Submitted')"
+                                class="btn-futuristic h-10 px-6 rounded-lg text-white font-medium flex items-center gap-2 hover-tilt">
+                                <span>Submit for Approval</span>
+                                <span class="material-symbols-outlined text-sm">send</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <script type="module">
+        import { db, collection, getDocs, doc, addDoc, setDoc, serverTimestamp, query, where, orderBy, onSnapshot, auth, onAuthStateChanged, limit } from '../assets/js/firebase-config.js';
+        import { initAuthObserver } from '../assets/js/firebase-modules.js';
+
+        initAuthObserver(true);
+
+        const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+        let currentWeekStart = getMonday(new Date());
+        let currentTimesheetId = null;
+        let projects = []; // Will be fetched/mocked
+
+        // Initialize
+        async function init() {
+            updateWeekLabel();
+            await loadProjects();
+
+            // Wait for auth to be ready before loading data
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    loadTimesheetData();
+                }
+            });
+        }
+
+        function getMonday(d) {
+            d = new Date(d);
+            var day = d.getDay(),
+                diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+            return new Date(d.setDate(diff));
+        }
+
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        window.changeWeek = function (offset) {
+            currentWeekStart.setDate(currentWeekStart.getDate() + (offset * 7));
+            updateWeekLabel();
+            loadTimesheetData();
+        }
+
+        function updateWeekLabel() {
+            const end = new Date(currentWeekStart);
+            end.setDate(end.getDate() + 6);
+
+            const options = { month: 'short', day: 'numeric' };
+            document.getElementById('current-week-label').textContent =
+                `${currentWeekStart.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}`;
+        }
+
+        async function loadProjects() {
+            // In a real app, query 'projects' collection where 'assignedTo' contains current user
+            // For now, mock it
+            projects = [
+                { id: 'p1', name: 'Website Redesign' },
+                { id: 'p2', name: 'Mobile App Dev' },
+                { id: 'p3', name: 'Internal Tools' },
+                { id: 'p4', name: 'Client Support' }
+            ];
+        }
+
+        window.loadTimesheetData = async function() {
+            currentTimesheetId = null;
+            const tbody = document.getElementById('timesheet-body');
+            tbody.innerHTML = '<tr><td colspan="11" class="text-center py-4">Loading...</td></tr>';
+
+            const user = auth.currentUser;
+            if (!user) {
+                tbody.innerHTML = '';
+                addTimesheetRow();
+                recalcTotals();
+                return;
+            }
+
+            const weekStartStr = formatDate(currentWeekStart);
+
+            try {
+                const q = query(
+                    collection(db, 'timesheets'),
+                    where('userId', '==', user.uid),
+                    where('weekStart', '==', weekStartStr),
+                    limit(1)
+                );
+
+                const querySnapshot = await getDocs(q);
+                tbody.innerHTML = '';
+
+                if (!querySnapshot.empty) {
+                    const docSnap = querySnapshot.docs[0];
+                    currentTimesheetId = docSnap.id;
+                    const data = docSnap.data();
+
+                    if (data.entries && data.entries.length > 0) {
+                        data.entries.forEach(entry => addTimesheetRow(entry));
+                    } else {
+                        addTimesheetRow();
+                    }
+                } else {
+                    currentTimesheetId = null;
+                    addTimesheetRow();
+                }
+            } catch (error) {
+                console.error("Error loading timesheet:", error);
+                showToast("Error loading timesheet data", "error");
+                tbody.innerHTML = '';
+                addTimesheetRow();
+            }
+            recalcTotals();
+        }
+
+        window.addTimesheetRow = function (data = null) {
+            const tbody = document.getElementById('timesheet-body');
+            const rowId = 'row-' + Date.now() + Math.random().toString(36).substring(7);
+
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group";
+            tr.id = rowId;
+
+            // Prepare values if data provided
+            const selectedProject = data ? data.projectId : '';
+            const task = data ? (data.task || '').replace(/"/g, '&quot;') : '';
+
+            const projectOptions = projects.map(p =>
+                `<option value="${p.id}" ${p.id === selectedProject ? 'selected' : ''}>${p.name}</option>`
+            ).join('');
+
+            tr.innerHTML = `
+                <td class="px-4 py-3">
+                    <select class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-primary">
+                        <option value="">Select Project...</option>
+                        ${projectOptions}
+                    </select>
+                </td>
+                <td class="px-4 py-3">
+                    <input type="text" placeholder="What did you work on?" value="${task}"
+                        class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-primary">
+                </td>
+                ${days.map(d => {
+                    const hours = data && data.hours && data.hours[d] ? data.hours[d] : '';
+                    return `
+                    <td class="px-2 py-3">
+                        <input type="number" min="0" max="24" step="0.5" data-day="${d}" value="${hours}" onchange="recalcTotals()"
+                            class="w-full text-center rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-primary p-1 hours-input" placeholder="-">
+                    </td>
+                    `;
+                }).join('')}
+                <td class="px-4 py-3 text-center font-bold text-slate-700 dark:text-slate-300 row-total">0</td>
+                <td class="px-4 py-3 text-center">
+                    <button onclick="this.closest('tr').remove(); recalcTotals();" 
+                        class="text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined text-lg">close</span>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        window.recalcTotals = function () {
+            const rows = document.querySelectorAll('#timesheet-body tr');
+            const dayTotals = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0, sun: 0 };
+            let grandTotal = 0;
+
+            rows.forEach(row => {
+                let rowSum = 0;
+                days.forEach(d => {
+                    const val = parseFloat(row.querySelector(`input[data-day="${d}"]`).value) || 0;
+                    dayTotals[d] += val;
+                    rowSum += val;
+                });
+                row.querySelector('.row-total').textContent = rowSum > 0 ? rowSum : '0';
+                grandTotal += rowSum;
+            });
+
+            days.forEach(d => {
+                const el = document.getElementById(`total-${d}`);
+                el.textContent = dayTotals[d] > 0 ? dayTotals[d] : '0';
+                if (dayTotals[d] > 0) el.classList.add('text-slate-900', 'dark:text-white');
+            });
+
+            document.getElementById('grand-total').textContent = grandTotal;
+        }
+
+        window.saveTimesheet = async function (status) {
+            // Validate
+            const rows = document.querySelectorAll('#timesheet-body tr');
+            let hasData = false;
+            let isValid = true;
+
+            const entries = [];
+
+            rows.forEach(row => {
+                const project = row.querySelector('select').value;
+                const task = row.querySelector('input[type="text"]').value;
+                const hours = {};
+                let rowTotal = 0;
+
+                days.forEach(d => {
+                    const val = parseFloat(row.querySelector(`input[data-day="${d}"]`).value) || 0;
+                    hours[d] = val;
+                    rowTotal += val;
+                });
+
+                if (rowTotal > 0) {
+                    if (!project && status === 'Submitted') {
+                        isValid = false;
+                        row.querySelector('select').classList.add('border-red-500');
+                    } else {
+                        row.querySelector('select').classList.remove('border-red-500');
+                    }
+                    entries.push({ projectId: project, task, hours, total: rowTotal });
+                    hasData = true;
+                }
+            });
+
+            if (!hasData) {
+                showToast("Please enter some hours before saving.", "error");
+                return;
+            }
+
+            if (!isValid && status === 'Submitted') {
+                showToast("Please select a project for all entries.", "error");
+                return;
+            }
+
+            // Submit to Firestore
+            const btn = document.querySelector(`button[onclick="saveTimesheet('${status}')"]`);
+            const originalContent = btn ? btn.innerHTML : 'Save';
+            if (btn) {
+                btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Saving...';
+                btn.disabled = true;
+            }
+
+            try {
+                const user = auth.currentUser;
+                if (!user) throw new Error("User not authenticated");
+
+                const weekStartStr = formatDate(currentWeekStart);
+                const timesheetData = {
+                    userId: user.uid,
+                    weekStart: weekStartStr,
+                    entries: entries,
+                    status: status,
+                    updatedAt: serverTimestamp()
+                };
+
+                if (currentTimesheetId) {
+                    await setDoc(doc(db, 'timesheets', currentTimesheetId), timesheetData, { merge: true });
+                } else {
+                    timesheetData.createdAt = serverTimestamp();
+                    const docRef = await addDoc(collection(db, 'timesheets'), timesheetData);
+                    currentTimesheetId = docRef.id;
+                }
+
+                showToast(`Timesheet ${status === 'Draft' ? 'saved' : 'submitted'} successfully!`, "success");
+
+                if (btn) {
+                    btn.innerHTML = `<span class="material-symbols-outlined">check</span> ${status === 'Draft' ? 'Saved' : 'Submitted'}`;
+                    setTimeout(() => {
+                        btn.innerHTML = originalContent;
+                        btn.disabled = false;
+                    }, 2000);
+                }
+
+            } catch (error) {
+                console.error("Error saving timesheet:", error);
+                showToast("Error saving timesheet: " + error.message, "error");
+                if (btn) {
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                }
+            }
+        }
+
+        function showToast(msg, type) {
+            const t = document.createElement('div');
+            t.className = `fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white animate-fade-in-up`;
+            t.innerHTML = `<span>${msg}</span>`;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

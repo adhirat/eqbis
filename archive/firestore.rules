@@ -1,0 +1,187 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is admin
+    // Supports both single role (role field) and multiple roles (roles array)
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          ('roles' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data &&
+           'admin' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles)
+        );
+    }
+    
+    // Helper function to check if user is the admin email (for initial setup)
+    function isAdminEmail() {
+      return isAuthenticated() && request.auth.token.email == 'admin@eqbis.com';
+    }
+    
+    // Helper function to get user data
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Helper function to check if user belongs to an organization
+    function isMemberOfOrg(orgId) {
+      return isAuthenticated() && (
+        isAdminEmail() || 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         'orgIds' in getUserData() &&
+         orgId in getUserData().orgIds)
+      );
+    }
+
+    // Helper to check if the resource belongs to one of the user's organizations
+    function hasOrgAccess() {
+      return isMemberOfOrg(resource.data.orgId);
+    }
+    
+    // Helper to verify new resource is being created in user's org
+    function creatingInAllowedOrg() {
+      return isMemberOfOrg(request.resource.data.orgId);
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow create: if isAdminEmail();
+      allow create: if isAdmin();
+      allow update: if isAuthenticated() && request.auth.uid == userId && 
+        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'roles']));
+      allow read: if isAdmin() || isAdminEmail();
+      allow update: if isAdmin() || isAdminEmail();
+      allow delete: if isAdmin() || isAdminEmail();
+    }
+    
+    // Organizations collection
+    match /organizations/{orgId} {
+      allow create: if isAuthenticated();
+      allow read: if isAuthenticated() && (
+        isAdminEmail() || 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         'orgIds' in getUserData() &&
+         orgId in getUserData().orgIds)
+      );
+      allow update: if isAuthenticated() && (
+        isAdminEmail() || 
+        (resource.data.ownerId == request.auth.uid)
+      );
+      allow delete: if isAdminEmail();
+    }
+    
+    // Roles collection
+    match /roles/{roleId} {
+      allow read: if isAuthenticated();
+      allow create: if isAdminEmail();
+      allow update, delete: if isAdmin();
+    }
+    
+    // Messages collection (contact form submissions)
+    match /messages/{messageId} {
+      allow create: if true;
+      allow read: if hasOrgAccess();
+      allow update: if hasOrgAccess();
+      allow delete: if (isAdmin() || isAdminEmail()) && hasOrgAccess();
+    }
+    
+    // Newsletter subscriptions
+    match /newsletter/{subscriptionId} {
+      allow create: if true;
+      allow read: if hasOrgAccess();
+      allow update, delete: if (isAdmin() || isAdminEmail()) && hasOrgAccess();
+    }
+    
+    // Invoices collection
+    match /invoices/{invoiceId} {
+      allow create: if creatingInAllowedOrg() && request.resource.data.userId == request.auth.uid;
+      allow read: if hasOrgAccess() && (resource.data.userId == request.auth.uid || isAdmin() || isAdminEmail());
+      allow update: if hasOrgAccess() && (resource.data.userId == request.auth.uid || isAdmin() || isAdminEmail());
+      allow delete: if hasOrgAccess() && (resource.data.userId == request.auth.uid || isAdmin() || isAdminEmail());
+    }
+
+    // Clients collection
+    match /clients/{clientId} {
+      allow read: if hasOrgAccess();
+      allow create: if creatingInAllowedOrg();
+      allow update, delete: if (isAdmin() || isAdminEmail()) && hasOrgAccess();
+    }
+
+    // Projects collection
+    match /projects/{projectId} {
+      allow create: if creatingInAllowedOrg();
+      allow update, delete: if (isAdmin() || isAdminEmail()) && hasOrgAccess();
+      allow read: if hasOrgAccess();
+
+      match /milestones/{milestoneId} {
+        allow write: if (isAdmin() || isAdminEmail()) && isMemberOfOrg(get(/databases/$(database)/documents/projects/$(projectId)).data.orgId);
+        allow read: if isMemberOfOrg(get(/databases/$(database)/documents/projects/$(projectId)).data.orgId);
+      }
+
+      match /comments/{commentId} {
+        allow read: if isMemberOfOrg(get(/databases/$(database)/documents/projects/$(projectId)).data.orgId);
+        allow create: if isMemberOfOrg(get(/databases/$(database)/documents/projects/$(projectId)).data.orgId);
+        allow delete: if isMemberOfOrg(get(/databases/$(database)/documents/projects/$(projectId)).data.orgId) && (resource.data.userId == request.auth.uid || isAdmin() || isAdminEmail());
+      }
+    }
+    
+    // Settings collection
+    match /settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() || isAdminEmail();
+    }
+
+    // Careers collection
+    match /careers/{careerId} {
+      allow read: if true;
+      allow create: if creatingInAllowedOrg();
+      allow update, delete: if hasOrgAccess();
+    }
+
+    // Applications collection
+    match /applications/{applicationId} {
+      allow create: if true;
+      allow read, update, delete: if hasOrgAccess();
+    }
+
+    // HR Documents collection
+    match /hr_documents/{docId} {
+      allow read, write: if isAuthenticated() && hasOrgAccess();
+    }
+
+    // Receipts collection
+    match /receipts/{receiptId} {
+      allow read, write: if isAuthenticated() && hasOrgAccess();
+    }
+    
+    // Activity Logs
+    match /activity_logs/{logId} {
+        allow read: if hasOrgAccess();
+        allow create: if creatingInAllowedOrg(); // Authenticated users logging actions
+    }
+
+    // Tickets collection
+    match /tickets/{ticketId} {
+      allow create: if creatingInAllowedOrg();
+      allow read: if hasOrgAccess();
+      allow update: if hasOrgAccess();
+      allow delete: if (isAdmin() || isAdminEmail()) && hasOrgAccess();
+
+      match /logs/{logId} {
+        allow read, create: if isMemberOfOrg(get(/databases/$(database)/documents/tickets/$(ticketId)).data.orgId);
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
