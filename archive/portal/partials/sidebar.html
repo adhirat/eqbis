@@ -1,0 +1,415 @@
+<aside id="global-sidebar"
+    class="hidden lg:flex flex-col w-72 bg-white/80 dark:bg-dark-card/80 backdrop-blur-xl border-r border-neon-violet/10 dark:border-neon-cyan/20 h-full flex-shrink-0 transition-all duration-300 relative z-40">
+    <!-- Collapse Toggle Button (Floating) -->
+    <button id="sidebar-toggle-btn"
+        class="!hidden lg:!flex absolute -right-4 top-4 z-50 p-1 rounded-full bg-white dark:bg-dark-card border border-neon-violet/10 dark:border-neon-cyan/20 text-slate-400 hover:text-neon-violet dark:hover:text-neon-cyan shadow-lg transition-all items-center justify-center w-8 h-8 hover:scale-110">
+        <span class="material-symbols-outlined text-sm">chevron_left</span>
+    </button>
+    <!-- Header/Logo -->
+    <div
+        class="h-16 flex items-center justify-between px-4 border-b border-neon-violet/10 dark:border-neon-cyan/20 flex-shrink-0">
+        <!-- Org Switcher -->
+        <div class="relative w-full z-50">
+            <button onclick="toggleOrgDropdown()"
+                class="w-full flex items-center justify-between p-1 pr-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-left group focus:outline-none">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="size-10 relative flex-shrink-0 rounded-lg overflow-hidden bg-white dark:bg-slate-700 p-1 border border-slate-200 dark:border-slate-600 shadow-sm">
+                        <img id="current-org-logo" src="../assets/images/logo.svg" alt="Org Logo"
+                            class="w-full h-full object-contain">
+                    </div>
+                    <div class="flex flex-col sidebar-label min-w-0">
+                        <h1 id="current-org-name"
+                            class="text-sm font-display font-bold text-slate-900 dark:text-white truncate max-w-[120px]">
+                            Eqbis Inc.
+                        </h1>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-body flex items-center gap-1">
+                            Free Plan <span class="size-1 rounded-full bg-green-500"></span>
+                        </span>
+                    </div>
+                </div>
+
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="org-dropdown-menu"
+                class="absolute top-14 left-0 w-64 glass-card bg-white/95 dark:bg-dark-card/95 backdrop-blur-xl border border-neon-violet/10 dark:border-neon-cyan/20 rounded-2xl shadow-2xl origin-top-left transform scale-95 opacity-0 pointer-events-none transition-all duration-200 flex flex-col overflow-hidden">
+                <div
+                    class="p-3 border-b border-dashed border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1">Switch
+                        Organization</p>
+                </div>
+
+                <div id="org-list-container" class="max-h-60 overflow-y-auto p-1 space-y-0.5">
+                    <!-- Populated by JS -->
+                    <div class="animate-pulse px-3 py-2 space-y-2">
+                        <div class="h-8 bg-slate-100 dark:bg-slate-800 rounded mx-1"></div>
+                        <div class="h-8 bg-slate-100 dark:bg-slate-800 rounded mx-1"></div>
+                    </div>
+                </div>
+
+                <div class="p-2 border-t border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30">
+                    <button onclick="createNewOrg()"
+                        class="flex items-center gap-2 w-full px-3 py-2 text-xs font-semibold text-neon-violet hover:bg-neon-violet/10 rounded-xl transition-colors">
+                        <div class="size-6 rounded-lg bg-neon-violet/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                        </div>
+                        Create New Organization
+                    </button>
+                </div>
+            </div>
+        </div>
+        </a>
+    </div>
+
+    <!-- Sidebar Search & Expand Toggle -->
+    <div class="px-4 py-2 flex-shrink-0 sidebar-label">
+        <div class="relative group w-full">
+            <!-- Expand All Toggle (Prefix) -->
+            <button id="sidebar-expand-toggle"
+                class="absolute left-1 top-1 h-8 w-8 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800/50 text-slate-500 hover:text-neon-violet dark:hover:text-neon-cyan hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm transition-all duration-300 focus:outline-none z-10"
+                title="Keep sections expanded">
+                <span class="material-symbols-outlined text-[18px]">unfold_more</span>
+            </button>
+
+            <input type="text" id="sidebar-search-input" placeholder="Search Menu..."
+                class="w-full h-10 bg-slate-100 dark:bg-slate-800/50 border-none rounded-xl py-2 pl-12 pr-9 text-sm text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:ring-2 focus:ring-neon-violet/50 dark:focus:ring-neon-cyan/50 transition-all shadow-inner">
+
+            <span
+                class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 group-focus-within:text-neon-violet dark:group-focus-within:text-neon-cyan transition-colors z-10 pointer-events-none">
+                <span class="material-symbols-outlined text-[18px]">search</span>
+            </span>
+
+            <!-- Search Results Dropdown -->
+            <div id="sidebar-search-results"
+                class="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-dark-card border border-neon-violet/10 dark:border-neon-cyan/20 rounded-xl shadow-lg z-50 hidden max-h-60 overflow-y-auto">
+                <!-- Results will be injected here via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scrollable Nav Links -->
+    <nav class="flex-1 overflow-y-auto px-4 py-2 space-y-1 custom-scrollbar">
+        <!-- Home -->
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+            href="index.html">
+            <span
+                class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">home</span>
+            <span class="text-sm font-display font-medium sidebar-label">Home</span>
+        </a>
+
+        <!-- Administration -->
+        <div class="sidebar-section" data-permission="view_users">
+            <div class="h-px w-full bg-slate-200 dark:bg-slate-700 my-3 opacity-60 sidebar-divider"></div>
+            <button
+                class="sidebar-section-toggle w-full flex items-center justify-between px-3 py-2 group cursor-pointer focus:outline-none mb-1">
+                <span
+                    class="text-xs font-display font-bold text-neon-violet dark:text-neon-cyan uppercase tracking-wider sidebar-label">Administration</span>
+                <span
+                    class="material-symbols-outlined text-slate-400 group-hover:text-neon-violet dark:group-hover:text-neon-cyan text-lg transition-transform duration-300 sidebar-label">expand_less</span>
+            </button>
+            <div class="sidebar-section-content space-y-1 overflow-hidden transition-all duration-300">
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="organization.html" data-permission="manage_organization">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">domain</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Organisation</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="roles.html" data-permission="view_roles">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">shield</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Roles & Permissions</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="users.html" data-permission="view_users">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">group</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Portal Users</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="submissions.html" data-permission="view_submissions">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">inbox</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Contact Submissions</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="subscriptions.html" data-permission="view_subscriptions">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">mail</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Subscriptions</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="activity-log.html" data-permission="view_users">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">history</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Activity Log</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Communication -->
+        <div class="sidebar-section">
+            <div class="h-px w-full bg-slate-200 dark:bg-slate-700 my-3 opacity-60 sidebar-divider"></div>
+            <button
+                class="sidebar-section-toggle w-full flex items-center justify-between px-3 py-2 group cursor-pointer focus:outline-none mb-1">
+                <span
+                    class="text-xs font-display font-bold text-neon-violet dark:text-neon-cyan uppercase tracking-wider sidebar-label">Communication</span>
+                <span
+                    class="material-symbols-outlined text-slate-400 group-hover:text-neon-violet dark:group-hover:text-neon-cyan text-lg transition-transform duration-300 sidebar-label">expand_less</span>
+            </button>
+            <div class="sidebar-section-content space-y-1 overflow-hidden transition-all duration-300">
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="newsletter.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">campaign</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Newsletter</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="articles.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">article</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Blog Articles</span>
+                </a>
+            </div>
+        </div>
+
+        </div>
+
+
+
+        <!-- Management -->
+        <div class="sidebar-section">
+            <div class="h-px w-full bg-slate-200 dark:bg-slate-700 my-3 opacity-60 sidebar-divider"></div>
+            <button
+                class="sidebar-section-toggle w-full flex items-center justify-between px-3 py-2 group cursor-pointer focus:outline-none mb-1">
+                <span
+                    class="text-xs font-display font-bold text-neon-violet dark:text-neon-cyan uppercase tracking-wider sidebar-label">Management</span>
+                <span
+                    class="material-symbols-outlined text-slate-400 group-hover:text-neon-violet dark:group-hover:text-neon-cyan text-lg transition-transform duration-300 sidebar-label">expand_less</span>
+            </button>
+            <div class="sidebar-section-content space-y-1 overflow-hidden transition-all duration-300">
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="clients.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">business_center</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Clients</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="projects.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">rocket_launch</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Projects</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="contracts.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">draw</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Contracts</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Finance -->
+        <div class="sidebar-section">
+            <div class="h-px w-full bg-slate-200 dark:bg-slate-700 my-3 opacity-60 sidebar-divider"></div>
+            <button
+                class="sidebar-section-toggle w-full flex items-center justify-between px-3 py-2 group cursor-pointer focus:outline-none mb-1">
+                <span
+                    class="text-xs font-display font-bold text-neon-violet dark:text-neon-cyan uppercase tracking-wider sidebar-label">Finance</span>
+                <span
+                    class="material-symbols-outlined text-slate-400 group-hover:text-neon-violet dark:group-hover:text-neon-cyan text-lg transition-transform duration-300 sidebar-label">expand_less</span>
+            </button>
+            <div class="sidebar-section-content space-y-1 overflow-hidden transition-all duration-300">
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="invoice.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">receipt_long</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Invoices</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="payslip.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">payments</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Receipts</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Self Service -->
+        <div class="sidebar-section">
+            <div class="h-px w-full bg-slate-200 dark:bg-slate-700 my-3 opacity-60 sidebar-divider"></div>
+            <button
+                class="sidebar-section-toggle w-full flex items-center justify-between px-3 py-2 group cursor-pointer focus:outline-none mb-1">
+                <span
+                    class="text-xs font-display font-bold text-neon-violet dark:text-neon-cyan uppercase tracking-wider sidebar-label">Self
+                    Service</span>
+                <span
+                    class="material-symbols-outlined text-slate-400 group-hover:text-neon-violet dark:group-hover:text-neon-cyan text-lg transition-transform duration-300 sidebar-label">expand_less</span>
+            </button>
+            <div class="sidebar-section-content space-y-1 overflow-hidden transition-all duration-300">
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="timesheets.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">calendar_month</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Timesheets</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="leaves.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">event_busy</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Leaves</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="support.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">support_agent</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Support</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- HR -->
+        <div class="sidebar-section">
+            <div class="h-px w-full bg-slate-200 dark:bg-slate-700 my-3 opacity-60 sidebar-divider"></div>
+            <button
+                class="sidebar-section-toggle w-full flex items-center justify-between px-3 py-2 group cursor-pointer focus:outline-none mb-1">
+                <span
+                    class="text-xs font-display font-bold text-neon-violet dark:text-neon-cyan uppercase tracking-wider sidebar-label">HR</span>
+                <span
+                    class="material-symbols-outlined text-slate-400 group-hover:text-neon-violet dark:group-hover:text-neon-cyan text-lg transition-transform duration-300 sidebar-label">expand_less</span>
+            </button>
+            <div class="sidebar-section-content space-y-1 overflow-hidden transition-all duration-300">
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="careers.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">work</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Careers</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="applications.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">assignment_ind</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Applications</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="calendar.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">calendar_month</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Calendar</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="documents.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">description</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Documents</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="hierarchy.html" data-permission="manage_organization">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">account_tree</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Hierarchy</span>
+                </a>
+            </div>
+        </div>
+        </div>
+
+        <!-- Modules -->
+        <div class="sidebar-section">
+            <div class="h-px w-full bg-slate-200 dark:bg-slate-700 my-3 opacity-60 sidebar-divider"></div>
+            <button
+                class="sidebar-section-toggle w-full flex items-center justify-between px-3 py-2 group cursor-pointer focus:outline-none mb-1">
+                <span
+                    class="text-xs font-display font-bold text-neon-violet dark:text-neon-cyan uppercase tracking-wider sidebar-label">Modules</span>
+                <span
+                    class="material-symbols-outlined text-slate-400 group-hover:text-neon-violet dark:group-hover:text-neon-cyan text-lg transition-transform duration-300 sidebar-label">expand_less</span>
+            </button>
+            <div class="sidebar-section-content space-y-1 overflow-hidden transition-all duration-300">
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="websites.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">web</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Websites</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="campaigns.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">campaign</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Campaigns</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="courses.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">school</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Courses</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="store.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">storefront</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Online Store</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="real-estate.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">apartment</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Real Estate</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="forms.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">feed</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Forms</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="crm.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">group_add</span>
+                    <span class="text-sm font-display font-medium sidebar-label">CRM</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="workflows.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">account_tree</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Workflows</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="social-media.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">share</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Social Media</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="media.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">perm_media</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Media</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="reports.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">analytics</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Reports</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+                    href="integrations.html">
+                    <span
+                        class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">extension</span>
+                    <span class="text-sm font-display font-medium sidebar-label">Integrations</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Footer (Settings) -->
+    <div
+        class="p-4 border-t border-neon-violet/10 dark:border-neon-cyan/20 bg-white/50 dark:bg-dark-card/50 backdrop-blur-sm">
+        <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-neon-violet/10 dark:hover:bg-neon-cyan/10 hover:text-neon-violet dark:hover:text-neon-cyan transition-all group"
+            href="settings.html">
+            <span
+                class="material-symbols-outlined group-hover:text-neon-violet dark:group-hover:text-neon-cyan transition-colors">settings</span>
+            <span class="text-sm font-display font-medium sidebar-label">Settings</span>
+        </a>
+    </div>
+
+</aside>

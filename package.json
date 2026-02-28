@@ -1,0 +1,20 @@
+{
+  "name": "eqbis",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev --filter=@eqbis/web",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "db:generate": "npm run db:generate --workspace=packages/db",
+    "db:migrate": "npm run db:migrate --workspace=packages/db"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4"
+  },
+  "packageManager": "npm@10.9.2"
+}

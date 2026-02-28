@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 # Eqbis Technologies - Corporate Website & Portal
 
 A comprehensive, modern web presence for Eqbis Technologies featuring a sophisticated corporate website with an integrated client portal. This project showcases advanced web development with Firebase backend, stunning glassmorphic design, and enterprise-grade functionality. Eqbis is an all-in-one platform to equip businesses with all the necessary tools and templates.
@@ -242,3 +243,70 @@ firebase deploy
 ---
 
 **Note**: This is a production-ready enterprise application with advanced features. For simple website hosting, only the corporate pages (outside `/portal/`) are required. The portal requires proper Firebase configuration and authentication setup.
+=======
+# Eqbis Monorepo
+
+Welcome to the **Eqbis** monorepo. This project contains all the source code for the Eqbis ecosystem, including web, mobile, and shared packages.
+
+## 📁 Repository Structure
+
+```text
+.
+├── apps/
+│   ├── web/        # Next.js 16/15 Web Application (Portal + Marketing)
+│   └── mobile/     # Flutter Mobile Application
+├── packages/
+│   └── db/         # Shared Drizzle ORM & Database Logic
+├── archive/        # (Legacy) Static HTML site and older versions
+└── turbo.json      # Turborepo configuration
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (Latest LTS)
+- Flutter SDK (for mobile development)
+- Docker (for local database)
+
+### Installation
+
+```bash
+npm install
+```
+
+### Running Applications
+
+Use Turborepo to run the applications. The root scripts are pre-configured to filter for the relevant workspaces.
+
+```bash
+# Run the Web App (Development)
+npm run dev
+
+# Build all applications
+npm run build
+
+# Manage Database (Shared Package)
+npm run db:generate
+npm run db:migrate
+```
+
+## 🛠 Tech Stack
+
+- **Web**: Next.js, React, Tailwind CSS 4, Better-Auth, Lucide Icons.
+- **Mobile**: Flutter, Dart.
+- **Database**: Drizzle ORM, Neon/PostgreSQL.
+- **Orchestration**: Turborepo.
+
+## 📄 Documentation
+
+For a detailed walkthrough of the architecture and features, please refer to:
+
+- [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md)
+- [apps/web/README.md](./apps/web/README.md)
+- [apps/mobile/README.md](./apps/mobile/README.md)
+
+---
+
+_Created by the Eqbis Engineering Team._
+>>>>>>> Stashed changes

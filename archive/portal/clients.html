@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Client Management - Eqbis Portal</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/app.js"></script>
+    <style>
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+
+<body
+    class="pt-0 bg-background-light dark:bg-dark-bg text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full overflow-hidden">
+        <div id="portal-sidebar" class="contents"></div>
+        <main class="flex-1 flex flex-col min-w-0">
+            <div id="portal-header" class="contents"></div>
+            <div class="flex-1 overflow-y-auto p-4 sm:p-8 animate-fade-in-up">
+                <div class="max-w-[1280px] mx-auto flex flex-col gap-8">
+                    <div class="flex flex-col gap-1">
+                        <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Client Management
+                        </h1>
+                        <p class="text-slate-500 dark:text-slate-400">Manage client relationships and details.</p>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+                                    <span class="material-symbols-outlined text-2xl">business_center</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Clients</p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="total-clients">0
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-emerald-600 dark:text-emerald-400">
+                                    <span class="material-symbols-outlined text-2xl">check_circle</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Active</p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="active-clients">0
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-amber-600 dark:text-amber-400">
+                                    <span class="material-symbols-outlined text-2xl">pending</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Pending</p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="pending-clients">0
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-dark-card p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm card-hover">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="p-3 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400">
+                                    <span class="material-symbols-outlined text-2xl">pause_circle</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Inactive</p>
+                                    <p class="text-2xl font-bold text-slate-900 dark:text-white" id="inactive-clients">0
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                        <div
+                            class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50 dark:bg-dark-card">
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">All Clients</h3>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <div class="relative">
+                                    <input type="text" id="search-clients" placeholder="Search clients..."
+                                        class="pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary focus:border-transparent w-48 sm:w-56">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+                                </div>
+                                <select id="status-filter"
+                                    class="pl-3 pr-8 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm min-w-[130px]">
+                                    <option value="">All Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                                <button onclick="openClientModal()" id="add-client-btn"
+                                    class="px-4 py-2 rounded-lg bg-primary text-white font-semibold flex items-center gap-2 hover:bg-blue-600 transition-colors shadow-lg shadow-primary/25 whitespace-nowrap">
+                                    <span class="material-symbols-outlined text-lg">add</span>
+                                    Add Client
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-slate-500 dark:text-slate-400">
+                                <thead
+                                    class="bg-slate-50 dark:bg-[#1a202c] text-xs uppercase font-semibold text-slate-500 dark:text-slate-400">
+                                    <tr>
+                                        <th class="px-6 py-3">Client</th>
+                                        <th class="px-6 py-3">Company</th>
+                                        <th class="px-6 py-3">Email</th>
+                                        <th class="px-6 py-3">Phone</th>
+                                        <th class="px-6 py-3">Tax ID</th>
+                                        <th class="px-6 py-3">Status</th>
+                                        <th class="px-6 py-3">Projects</th>
+                                        <th class="px-6 py-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clients-table-body"
+                                    class="divide-y divide-slate-200 dark:divide-border-dark">
+                                    <tr>
+                                        <td colspan="7" class="px-6 py-12 text-center">
+                                            <span
+                                                class="material-symbols-outlined text-4xl text-slate-400 animate-spin mb-2">progress_activity</span>
+                                            <p>Loading clients...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Client Modal -->
+    <div id="client-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeClientModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl max-w-lg w-full border border-slate-200 dark:border-slate-700 animate-fade-in-up max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white" id="client-modal-title">Add New Client</h2>
+                <button onclick="closeClientModal()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"><span
+                        class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="client-form" class="p-6 space-y-4">
+                <input type="hidden" id="client-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <label class="block">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Full Name *</span>
+                        <input type="text" id="client-name" required
+                            class="form-input mt-1 block w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                    </label>
+                    <label class="block">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Company Name</span>
+                        <input type="text" id="client-company"
+                            class="form-input mt-1 block w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                    </label>
+                </div>
+                <label class="block">
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Tax ID / Registration No</span>
+                    <input type="text" id="client-tax-id"
+                        class="form-input mt-1 block w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                </label>
+                <label class="block">
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Company Logo (Optional)</span>
+                    <div class="mt-1">
+                        <input type="file" id="client-logo" accept="image/*" class="hidden">
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="document.getElementById('client-logo').click()"
+                                class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                <span class="material-symbols-outlined text-lg mr-2">upload</span>
+                                Choose Logo
+                            </button>
+                            <span id="logo-filename" class="text-sm text-slate-500">No file selected</span>
+                        </div>
+                        <div id="logo-preview" class="mt-3 hidden">
+                            <img id="logo-preview-img" src="" alt="Logo preview"
+                                class="h-16 w-auto rounded-lg border border-slate-200 dark:border-slate-700">
+                            <button type="button" onclick="removeLogo()"
+                                class="ml-3 text-sm text-red-500 hover:text-red-700">
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                </label>
+                <div class="grid grid-cols-2 gap-4">
+                    <label class="block">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Email *</span>
+                        <input type="email" id="client-email" required
+                            class="form-input mt-1 block w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                    </label>
+                    <label class="block">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Phone</span>
+                        <input type="tel" id="client-phone"
+                            class="form-input mt-1 block w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                    </label>
+                </div>
+                <label class="block">
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Address</span>
+                    <textarea id="client-address" rows="2"
+                        class="form-textarea mt-1 block w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900"></textarea>
+                </label>
+                <label class="block">
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Status</span>
+                    <select id="client-status"
+                        class="form-select mt-1 block w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                        <option value="pending">Pending</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </label>
+                <label class="block">
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Link to Portal User
+                        Account</span>
+                    <div class="flex gap-2">
+                        <select id="client-user-account"
+                            class="form-select mt-1 block w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                            <option value="">No linked user account</option>
+                            <!-- User accounts will be populated dynamically -->
+                        </select>
+                        <button type="button" onclick="createClientUser()" id="create-user-btn"
+                            class="mt-1 px-3 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-sm whitespace-nowrap flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]">person_add</span>
+                            Create New
+                        </button>
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500">Link this client to a portal user account for contract
+                        signing and project access.</p>
+                </label>
+                <label class="block">
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Notes</span>
+                    <textarea id="client-notes" rows="3"
+                        class="form-textarea mt-1 block w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900"
+                        placeholder="Additional notes about this client..."></textarea>
+                </label>
+            </form>
+            <div class="p-6 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+                <button onclick="closeClientModal()"
+                    class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
+                <button onclick="saveClient()" id="save-client-btn"
+                    class="px-6 py-2 rounded-lg bg-primary text-white hover:bg-blue-600 shadow-lg shadow-primary/25 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg hidden" id="save-client-spinner">sync</span>
+                    <span id="save-client-text">Save Client</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeDeleteModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl max-w-md w-full border border-red-200 dark:border-red-900/50 animate-fade-in-up">
+            <div class="p-6 text-center">
+                <div
+                    class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-3xl text-red-600 dark:text-red-400">warning</span>
+                </div>
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Delete Client</h2>
+                <p class="text-slate-600 dark:text-slate-400 mb-2">Are you sure you want to delete this client?</p>
+                <p class="font-semibold text-slate-900 dark:text-white" id="delete-client-name"></p>
+                <p class="text-red-500 text-sm mt-2">This will also affect linked projects and contracts.</p>
+                <input type="hidden" id="delete-client-id">
+            </div>
+            <div
+                class="p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-center gap-3">
+                <button type="button" onclick="closeDeleteModal()"
+                    class="px-6 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-semibold">
+                    Cancel
+                </button>
+                <button type="button" onclick="confirmDelete()"
+                    class="px-6 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors font-semibold">
+                    Delete Client
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Client Modal -->
+    <div id="view-client-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop absolute inset-0" onclick="closeViewClientModal()"></div>
+        <div
+            class="relative bg-white dark:bg-dark-card rounded-2xl shadow-2xl max-w-lg w-full border border-slate-200 dark:border-slate-700 animate-fade-in-up">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Client Details</h2>
+                <button onclick="closeViewClientModal()"
+                    class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"><span
+                        class="material-symbols-outlined">close</span></button>
+            </div>
+            <div class="p-6" id="view-client-content">
+                <!-- Content populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <script type="module">
+        import { db, auth, collection, doc, setDoc, getDoc, getDocs, deleteDoc, updateDoc, serverTimestamp, query, where, orderBy, storage, ref, uploadBytes, getDownloadURL, firebaseConfig } from '../assets/js/firebase-config.js';
+        import { initRBACGuard, isAdmin, PERMISSIONS } from '../assets/js/rbac.js';
+        import { initAuthObserver, getCurrentOrgId } from '../assets/js/firebase-modules.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { sendClientCredentials } from '../assets/js/email-notifications.js';
+
+        // Initialize auth and check permissions
+        initAuthObserver(true);
+
+        let allClients = [];
+        let currentUserIsAdmin = false;
+        let currentLogoFile = null;
+        let currentLogoUrl = null;
+
+        // Check admin status and load data
+        async function init() {
+            currentUserIsAdmin = await isAdmin();
+
+            // Only admins can add clients (clients are managed by admin)
+            if (!currentUserIsAdmin) {
+                document.getElementById('add-client-btn').classList.add('hidden');
+            }
+
+            await Promise.all([loadClients(), loadUserAccounts()]);
+        }
+
+        // Load user accounts for linking
+        let allUsers = [];
+        async function loadUserAccounts() {
+            try {
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('orgIds', 'array-contains', getCurrentOrgId()), orderBy('displayName', 'asc'));
+                const snapshot = await getDocs(q);
+
+                allUsers = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })).filter(u => {
+                    // Check for client role in both roles array and single role field
+                    if (Array.isArray(u.roles)) {
+                        return u.roles.includes('client');
+                    } else if (u.role) {
+                        return u.role === 'client';
+                    }
+                    return false;
+                });
+
+                // Populate user account dropdown
+                const select = document.getElementById('client-user-account');
+                select.innerHTML = '<option value="">No linked user account</option>';
+                allUsers.forEach(user => {
+                    const displayName = user.fullName || user.displayName || user.email;
+                    select.innerHTML += `<option value="${user.id}">${displayName} (${user.email})</option>`;
+                });
+
+                console.log('Found client role users:', allUsers.length);
+            } catch (error) {
+                console.error('Error loading user accounts:', error);
+            }
+        }
+
+        // Load all clients from Firestore
+        async function loadClients() {
+            try {
+                // Fetch Clients
+                const clientsRef = collection(db, 'clients');
+                const qClients = query(clientsRef, where('orgId', '==', getCurrentOrgId()), orderBy('createdAt', 'desc'));
+                const snapClients = await getDocs(qClients);
+
+                // Fetch Projects to calculate counts
+                const projectsRef = collection(db, 'projects');
+                const qProjects = query(projectsRef, where('orgId', '==', getCurrentOrgId()));
+                const snapProjects = await getDocs(qProjects);
+                const projects = snapProjects.docs.map(d => d.data());
+
+                allClients = snapClients.docs.map(doc => {
+                    const clientData = doc.data();
+                    // Count projects for this client
+                    const count = projects.filter(p => p.clientId === doc.id).length;
+
+                    return {
+                        id: doc.id,
+                        ...clientData,
+                        projectCount: count
+                    };
+                });
+
+                renderClients(allClients);
+                updateStats();
+            } catch (error) {
+                console.error('Error loading clients:', error);
+                showToast('Error loading clients', 'error');
+            }
+        }
+
+        // Render clients table
+        function renderClients(clients) {
+            const tbody = document.getElementById('clients-table-body');
+
+            if (clients.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center">
+                            <span class="material-symbols-outlined text-4xl text-slate-400 mb-2">business_center</span>
+                            <p class="text-slate-500">No clients found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = clients.map(client => {
+                const statusColors = {
+                    active: 'bg-green-100 text-green-600',
+                    pending: 'bg-amber-100 text-amber-600',
+                    inactive: 'bg-slate-100 text-slate-600'
+                };
+                const statusClass = statusColors[client.status] || statusColors.pending;
+                const initials = getInitials(client.name);
+
+                return `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                ${client.logoUrl ?
+                        `<img src="${client.logoUrl}" alt="${client.name} logo" class="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700">` :
+                        `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+                                        ${initials}
+                                    </div>`
+                    }
+                                <span class="font-medium text-slate-900 dark:text-white">${client.name}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">${client.company || '-'}</td>
+                        <td class="px-6 py-4">${client.email}</td>
+                        <td class="px-6 py-4">${client.phone || '-'}</td>
+                        <td class="px-6 py-4 font-mono text-xs">${client.taxId || '-'}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold ${statusClass} capitalize">${client.status}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-slate-600 dark:text-slate-400">${client.projectCount || 0}</span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="viewClient('${client.id}')"
+                                class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500"
+                                title="View"><span class="material-symbols-outlined">visibility</span></button>
+                            ${currentUserIsAdmin ? `
+                                <button onclick="editClient('${client.id}')"
+                                    class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-primary"
+                                    title="Edit"><span class="material-symbols-outlined">edit</span></button>
+                                <button onclick="openDeleteModal('${client.id}')"
+                                    class="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-red-500"
+                                    title="Delete"><span class="material-symbols-outlined">delete</span></button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('total-clients').textContent = allClients.length;
+            document.getElementById('active-clients').textContent = allClients.filter(c => c.status === 'active').length;
+            document.getElementById('pending-clients').textContent = allClients.filter(c => c.status === 'pending').length;
+            document.getElementById('inactive-clients').textContent = allClients.filter(c => c.status === 'inactive').length;
+        }
+
+        // Filter clients
+        function filterClients() {
+            const search = document.getElementById('search-clients').value.toLowerCase();
+            const status = document.getElementById('status-filter').value;
+
+            let filtered = allClients;
+
+            if (search) {
+                filtered = filtered.filter(c =>
+                    c.name?.toLowerCase().includes(search) ||
+                    c.company?.toLowerCase().includes(search) ||
+                    c.email?.toLowerCase().includes(search)
+                );
+            }
+
+            if (status) {
+                filtered = filtered.filter(c => c.status === status);
+            }
+
+            renderClients(filtered);
+        }
+
+        // Helper functions
+        function getInitials(name) {
+            if (!name) return '?';
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-emerald-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            toast.className = `${bgColor} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in-up z-50`;
+            toast.innerHTML = `
+                <span class="material-symbols-outlined">${type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info'}</span>
+                ${message}
+            `;
+            document.getElementById('toast-container').appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Logo handling functions
+        document.getElementById('client-logo').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                currentLogoFile = file;
+                document.getElementById('logo-filename').textContent = file.name;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('logo-preview-img').src = e.target.result;
+                    document.getElementById('logo-preview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        window.removeLogo = function () {
+            currentLogoFile = null;
+            currentLogoUrl = null;
+            document.getElementById('client-logo').value = '';
+            document.getElementById('logo-filename').textContent = 'No file selected';
+            document.getElementById('logo-preview').classList.add('hidden');
+        };
+
+        // Modal functions
+        window.openClientModal = function (clientId = null) {
+            document.getElementById('client-form').reset();
+            document.getElementById('client-id').value = '';
+            document.getElementById('client-modal-title').textContent = 'Add New Client';
+            document.getElementById('save-client-text').textContent = 'Save Client';
+
+            // Reset logo state
+            currentLogoFile = null;
+            currentLogoUrl = null;
+            removeLogo();
+
+            document.getElementById('client-modal').classList.remove('hidden');
+        };
+
+        window.closeClientModal = function () {
+            document.getElementById('client-modal').classList.add('hidden');
+        };
+
+        window.editClient = function (clientId) {
+            const client = allClients.find(c => c.id === clientId);
+            if (!client) return;
+
+            document.getElementById('client-id').value = clientId;
+            document.getElementById('client-name').value = client.name || '';
+            document.getElementById('client-company').value = client.company || '';
+            document.getElementById('client-email').value = client.email || '';
+            document.getElementById('client-phone').value = client.phone || '';
+            document.getElementById('client-address').value = client.address || '';
+            document.getElementById('client-tax-id').value = client.taxId || '';
+            document.getElementById('client-status').value = client.status || 'pending';
+            document.getElementById('client-user-account').value = client.linkedUserId || '';
+            document.getElementById('client-notes').value = client.notes || '';
+
+            // Handle existing logo
+            currentLogoFile = null;
+            currentLogoUrl = client.logoUrl || null;
+            if (client.logoUrl) {
+                document.getElementById('logo-preview-img').src = client.logoUrl;
+                document.getElementById('logo-preview').classList.remove('hidden');
+                document.getElementById('logo-filename').textContent = 'Current logo';
+            } else {
+                removeLogo();
+            }
+
+            document.getElementById('client-modal-title').textContent = 'Edit Client';
+            document.getElementById('save-client-text').textContent = 'Update Client';
+            document.getElementById('client-modal').classList.remove('hidden');
+        };
+
+        window.saveClient = async function () {
+            const clientId = document.getElementById('client-id').value;
+            const name = document.getElementById('client-name').value.trim();
+            const email = document.getElementById('client-email').value.trim();
+
+            if (!name || !email) {
+                showToast('Please fill in required fields', 'error');
+                return;
+            }
+
+            const spinner = document.getElementById('save-client-spinner');
+            spinner.classList.remove('hidden');
+            spinner.classList.add('animate-spin');
+
+            try {
+                let logoUrl = currentLogoUrl;
+
+                // Handle logo upload if new file is selected
+                if (currentLogoFile) {
+                    console.log('Uploading logo:', currentLogoFile.name);
+                    console.log('Storage available:', !!storage);
+
+                    const fileName = `client-logos/${Date.now()}_${currentLogoFile.name}`;
+                    console.log('File path:', fileName);
+
+                    const storageRef = ref(storage, fileName);
+                    console.log('Storage ref created:', !!storageRef);
+
+                    const snapshot = await uploadBytes(storageRef, currentLogoFile);
+                    console.log('Upload complete:', snapshot);
+
+                    logoUrl = await getDownloadURL(storageRef);
+                    console.log('Download URL:', logoUrl);
+                }
+
+                const clientData = {
+                    name,
+                    company: document.getElementById('client-company').value.trim(),
+                    email,
+                    phone: document.getElementById('client-phone').value.trim(),
+                    taxId: document.getElementById('client-tax-id').value.trim(),
+                    address: document.getElementById('client-address').value.trim(),
+                    status: document.getElementById('client-status').value,
+                    linkedUserId: document.getElementById('client-user-account').value || null,
+                    notes: document.getElementById('client-notes').value.trim(),
+                    logoUrl: logoUrl || null,
+                    updatedAt: serverTimestamp(),
+                    orgId: getCurrentOrgId()
+                };
+
+                if (clientId) {
+                    // Update existing
+                    await updateDoc(doc(db, 'clients', clientId), clientData);
+                    showToast('Client updated successfully', 'success');
+                } else {
+                    // Create new
+                    clientData.createdAt = serverTimestamp();
+                    clientData.projectCount = 0;
+                    const docRef = doc(collection(db, 'clients'));
+                    await setDoc(docRef, clientData);
+                    showToast('Client added successfully', 'success');
+                }
+
+                closeClientModal();
+                loadClients();
+            } catch (error) {
+                console.error('Error saving client:', error);
+                console.error('Error details:', {
+                    code: error.code,
+                    message: error.message,
+                    stack: error.stack
+                });
+                showToast('Error saving client: ' + error.message, 'error');
+            } finally {
+                spinner.classList.add('hidden');
+                spinner.classList.remove('animate-spin');
+            }
+        };
+
+        // Create Client User
+        window.createClientUser = async function () {
+            const email = document.getElementById('client-email').value.trim();
+            const name = document.getElementById('client-name').value.trim();
+
+            if (!email || !name) {
+                showToast('Please enter Name and Email first', 'error');
+                return;
+            }
+
+            if (!confirm(`Create a portal user for ${email}?\n\nThis will:\n1. Create a user account\n2. Set a temporary password\n3. Email credentials to the client`)) {
+                return;
+            }
+
+            const btn = document.getElementById('create-user-btn');
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> Creating...';
+
+            try {
+                // Initialize secondary app to avoid signing out admin
+                const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
+                const secondaryAuth = getAuth(secondaryApp);
+
+                const tempPassword = generateRandomPassword();
+
+                // Create user in secondary auth
+                const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, tempPassword);
+                const newUser = userCredential.user;
+
+                // Create user profile in Firestore
+                await setDoc(doc(db, "users", newUser.uid), {
+                    uid: newUser.uid,
+                    email: email,
+                    fullName: name,
+                    role: 'client',
+                    roles: ['client'],
+                    provider: 'email',
+                    createdAt: serverTimestamp(),
+                    createdAt: serverTimestamp(),
+                    createdBy: auth.currentUser?.uid || 'admin',
+                    orgIds: [getCurrentOrgId()]
+                });
+
+                // Send email
+                await sendClientCredentials(email, tempPassword, name);
+
+                showToast('User created and credentials sent!', 'success');
+
+                // Refresh list and select the new user
+                await loadUserAccounts();
+                document.getElementById('client-user-account').value = newUser.uid;
+
+                // Clean up
+                await secondaryAuth.signOut(); // Ensure signed out (though separate instance)
+
+            } catch (error) {
+                console.error('Error creating client user:', error);
+                let msg = error.message;
+                if (error.code === 'auth/email-already-in-use') msg = 'User already exists with this email';
+                showToast(msg, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        };
+
+        function generateRandomPassword() {
+            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let pass = "";
+            for (let i = 0; i < 12; i++) {
+                pass += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return pass;
+        }
+
+        window.viewClient = function (clientId) {
+            const client = allClients.find(c => c.id === clientId);
+            if (!client) return;
+
+            const statusColors = {
+                active: 'bg-green-100 text-green-600',
+                pending: 'bg-amber-100 text-amber-600',
+                inactive: 'bg-slate-100 text-slate-600'
+            };
+
+            document.getElementById('view-client-content').innerHTML = `
+                <div class="flex items-center gap-4 mb-6">
+                    ${client.logoUrl ?
+                    `<img src="${client.logoUrl}" alt="${client.name} logo" class="w-16 h-16 rounded-lg object-cover border border-slate-200 dark:border-slate-700">` :
+                    `<div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white font-bold text-xl">
+                            ${getInitials(client.name)}
+                        </div>`
+                }
+                    <div>
+                        <p class="text-xl font-bold text-slate-900 dark:text-white">${client.name}</p>
+                        <p class="text-slate-500">${client.company || 'No company'}</p>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                        <span class="text-slate-500">Email</span>
+                        <a href="mailto:${client.email}" class="font-medium text-primary">${client.email}</a>
+                    </div>
+                    <div class="flex justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                        <span class="text-slate-500">Phone</span>
+                        <span class="font-medium text-slate-900 dark:text-white">${client.phone || '-'}</span>
+                    </div>
+                    <div class="flex justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                        <span class="text-slate-500">Tax ID</span>
+                        <span class="font-medium text-slate-900 dark:text-white font-mono">${client.taxId || '-'}</span>
+                    </div>
+                    <div class="flex justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                        <span class="text-slate-500">Address</span>
+                        <span class="font-medium text-slate-900 dark:text-white text-right max-w-[60%]">${client.address || '-'}</span>
+                    </div>
+                    <div class="flex justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                        <span class="text-slate-500">Status</span>
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${statusColors[client.status] || statusColors.pending} capitalize">${client.status || 'pending'}</span>
+                    </div>
+                    <div class="flex justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                        <span class="text-slate-500">Linked User</span>
+                        <span class="font-medium text-slate-900 dark:text-white">${client.linkedUserId ? 'Yes' : 'No'}</span>
+                    </div>
+                    <div class="pt-3">
+                        <span class="text-slate-500 block mb-2">Notes</span>
+                        <p class="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800 whitespace-pre-line">${client.notes || 'No notes.'}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('view-client-modal').classList.remove('hidden');
+        };
+
+        window.closeViewClientModal = function () {
+            document.getElementById('view-client-modal').classList.add('hidden');
+        };
+
+        window.openDeleteModal = function (clientId) {
+            const client = allClients.find(c => c.id === clientId);
+            if (!client) return;
+
+            document.getElementById('delete-client-id').value = clientId;
+            document.getElementById('delete-client-name').textContent = `${client.name} (${client.company || 'No company'})`;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        };
+
+        window.closeDeleteModal = function () {
+            document.getElementById('delete-modal').classList.add('hidden');
+        };
+
+        window.confirmDelete = async function () {
+            const clientId = document.getElementById('delete-client-id').value;
+            if (!clientId) return;
+
+            try {
+                await deleteDoc(doc(db, 'clients', clientId));
+                showToast('Client deleted successfully', 'success');
+                closeDeleteModal();
+                loadClients();
+            } catch (error) {
+                console.error('Error deleting client:', error);
+                showToast('Error deleting client', 'error');
+            }
+        };
+
+        // Event listeners
+        document.getElementById('search-clients').addEventListener('input', filterClients);
+        document.getElementById('status-filter').addEventListener('change', filterClients);
+
+        // Initialize
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                init();
+            }
+        });
+    </script>
+</body>
+
+</html>
