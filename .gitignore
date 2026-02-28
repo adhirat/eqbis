@@ -53,3 +53,4 @@ dist/
 .pub-cache/
 .pub/
 build/
+*.DS_Store
