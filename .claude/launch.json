@@ -4,8 +4,8 @@
     {
       "name": "eqbis-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--workspace=@eqbis/web"],
-      "port": 3000
+      "runtimeArgs": ["run", "dev", "-w", "apps/web"],
+      "port": 8787
     }
   ]
 }

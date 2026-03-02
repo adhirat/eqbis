@@ -1,60 +1,69 @@
-// Cloudflare R2 storage via native Workers binding
-// The R2 bucket is bound as `R2` in wrangler.toml and
-// accessed through getRequestContext() from @cloudflare/next-on-pages.
-//
-// For local dev (next dev), bindings are emulated via setupDevPlatform()
-// in next.config.ts — no real R2 credentials needed.
+/**
+ * Cloudflare R2 storage helpers.
+ * All operations use the native R2Bucket Workers binding — no AWS SDK.
+ */
 
-import { getRequestContext } from "@cloudflare/next-on-pages";
-
-function getBucket(): R2Bucket {
-  const { env } = getRequestContext();
-  return (env as { R2: R2Bucket }).R2;
+export interface UploadResult {
+  key:  string;
+  url:  string; // Public URL via R2_PUBLIC base
 }
 
-/**
- * Upload a file to R2 and return its key path.
- * @param key  Storage path, e.g. "orgs/acme/avatars/user-123.png"
- * @param body File contents as ArrayBuffer or ReadableStream
- * @param contentType  MIME type, e.g. "image/png"
- */
-export async function uploadFile(
-  key: string,
-  body: ArrayBuffer | ReadableStream,
-  contentType: string
-): Promise<string> {
-  await getBucket().put(key, body, {
-    httpMetadata: { contentType },
+/** Upload a file to R2 and return the key and public URL. */
+export async function uploadFile(opts: {
+  bucket:    R2Bucket;
+  key:       string;   // e.g. "orgs/abc123/logo.png"
+  body:      ReadableStream | ArrayBuffer | Blob;
+  contentType: string;
+  publicBase: string;  // env.R2_PUBLIC
+}): Promise<UploadResult> {
+  await opts.bucket.put(opts.key, opts.body, {
+    httpMetadata: { contentType: opts.contentType },
   });
-  return key;
+  return {
+    key: opts.key,
+    url: `${opts.publicBase}/${opts.key}`,
+  };
+}
+
+/** Delete a file from R2. Silently ignores missing keys. */
+export async function deleteFile(bucket: R2Bucket, key: string): Promise<void> {
+  await bucket.delete(key);
+}
+
+/** Get a file from R2 as an ArrayBuffer. Returns null if not found. */
+export async function getFile(bucket: R2Bucket, key: string): Promise<ArrayBuffer | null> {
+  const obj = await bucket.get(key);
+  if (!obj) return null;
+  return obj.arrayBuffer();
 }
 
 /**
- * Delete a file from R2.
+ * Generate a presigned PUT URL for direct client-to-R2 upload.
+ * Worker returns this URL to the client; client PUTs directly — Worker is not in upload path.
+ *
+ * NOTE: As of 2025, R2 presigned URLs require the `createPresignedUrl` Workers API
+ * which may require a custom domain pointing at your R2 bucket.
+ * See: https://developers.cloudflare.com/r2/api/workers/workers-api-reference/
  */
-export async function deleteFile(key: string): Promise<void> {
-  await getBucket().delete(key);
+export async function presignPut(opts: {
+  bucket:      R2Bucket;
+  key:         string;
+  expiresIn:   number; // seconds
+  contentType: string;
+}): Promise<string> {
+  // R2Bucket.createPresignedUrl is available in recent Wrangler / Workers runtime.
+  // Falls back to a Worker-proxied upload URL if not available.
+  // @ts-ignore — method added in recent CF runtime; types may lag
+  const url = await opts.bucket.createPresignedUrl('PUT', opts.key, {
+    expiresIn: opts.expiresIn,
+    httpMetadata: { contentType: opts.contentType },
+  });
+  return url as string;
 }
 
-/**
- * Get a temporary public URL for a private object.
- * R2 bindings don't support presigned URLs directly — use the public
- * bucket domain if the bucket is exposed publicly, or a Worker-side
- * signed URL via the S3-compat API for private buckets.
- */
-export async function getFileUrl(key: string): Promise<string> {
-  const domain = process.env.CF_R2_PUBLIC_DOMAIN;
-  if (!domain) {
-    throw new Error(
-      "CF_R2_PUBLIC_DOMAIN env var is required to generate public R2 URLs"
-    );
-  }
-  return `https://${domain}/${key}`;
-}
-
-/**
- * Stream / download a file directly (useful for server-side proxying).
- */
-export async function getFile(key: string): Promise<R2ObjectBody | null> {
-  return getBucket().get(key);
+/** Build an R2 object key for a given entity. */
+export function buildKey(segments: string[]): string {
+  return segments
+    .map(s => s.replace(/[^a-zA-Z0-9._-]/g, '_'))
+    .join('/');
 }

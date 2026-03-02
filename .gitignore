@@ -1,55 +1,43 @@
-# dependencies
-node_modules/
-.pnp
-.pnp.*
-.yarn/
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-coverage/
-
-# next.js
-.next/
-out/
-next-env.d.ts
-
-# production
-build/
-dist/
-
-# misc
+# macOS
 .DS_Store
-*.pem
-*.log
-.turbo/
-.wrangler/
-.vercel/
 
-# typescript
-*.tsbuildinfo
-
-# env files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env*.local
-
-# IDEs
+# Editor
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Flutter / Dart
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-build/
+# Logs
+*.log
+
+# Firebase local emulator artefacts
+.firebase/
+
+# Environment / secrets
+.env
+.env.local
+.dev.vars
+apps/web/.dev.vars
+
+# Node
+node_modules/
+.npm/
+
+# Wrangler build output
+.wrangler/
+apps/web/.wrangler/
+
+# Tailwind / build
+dist/
+apps/web/public/css/app.css
+
+# Flutter
+apps/mobile/.dart_tool/
+apps/mobile/.flutter-plugins
+apps/mobile/.flutter-plugins-dependencies
+apps/mobile/build/
+apps/mobile/.packages
+apps/mobile/pubspec.lock
+
+# Drizzle generated (keep migrations, ignore snapshot cache)
+apps/web/drizzle/meta/

@@ -11,30 +11,25 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailCtrl = TextEditingController();
-  final _passwordCtrl = TextEditingController();
-  bool _loading = false;
+  final _form     = GlobalKey<FormState>();
+  final _email    = TextEditingController();
+  final _password = TextEditingController();
+  bool _loading   = false;
   String? _error;
+  bool _obscure   = true;
 
-  @override
-  void dispose() {
-    _emailCtrl.dispose();
-    _passwordCtrl.dispose();
-    super.dispose();
-  }
+  Future<void> _submit() async {
+    if (!_form.currentState!.validate()) return;
 
-  Future<void> _signIn() async {
     setState(() { _loading = true; _error = null; });
+
     try {
-      await AuthService.instance.signIn(
-        email: _emailCtrl.text.trim(),
-        password: _passwordCtrl.text,
-      );
+      await authService.login(_email.text.trim(), _password.text);
       if (mounted) context.go('/portal/dashboard');
     } catch (e) {
-      setState(() => _error = 'Invalid email or password.');
+      setState(() { _error = e.toString().replaceFirst('Exception: ', ''); });
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) setState(() { _loading = false; });
     }
   }
 
@@ -44,127 +39,129 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            padding: const EdgeInsets.all(24),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 360),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Logo
-                  Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: Form(
+                key: _form,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Logo / brand
+                    Column(
                       children: [
                         Container(
-                          width: 32, height: 32,
+                          width: 48, height: 48,
                           decoration: BoxDecoration(
-                            gradient: AppColors.gradient,
-                            borderRadius: BorderRadius.circular(8),
+                            color: EqbisTheme.accent.withAlpha(20),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.bolt, color: Colors.white, size: 18),
+                          child: const Icon(Icons.business_rounded, color: EqbisTheme.accent, size: 28),
                         ),
-                        const SizedBox(width: 8),
-                        ShaderMask(
-                          shaderCallback: (b) => AppColors.gradient.createShader(b),
-                          child: const Text('Eqbis', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
+                        const SizedBox(height: 16),
+                        Text('Welcome back', style: Theme.of(context).textTheme.headlineMedium),
+                        const SizedBox(height: 4),
+                        Text('Sign in to your Eqbis account',
+                          style: Theme.of(context).textTheme.bodySmall),
+                      ],
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    if (_error != null) ...[
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: EqbisTheme.danger.withAlpha(20),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: EqbisTheme.danger.withAlpha(60)),
+                        ),
+                        child: Text(_error!, style: const TextStyle(color: EqbisTheme.danger, fontSize: 13)),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
+                    TextFormField(
+                      controller: _email,
+                      decoration: const InputDecoration(labelText: 'Email'),
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      autocorrect: false,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Email is required';
+                        if (!v.contains('@')) return 'Enter a valid email';
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    TextFormField(
+                      controller: _password,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(_obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                            size: 20, color: EqbisTheme.textMuted),
+                          onPressed: () => setState(() { _obscure = !_obscure; }),
+                        ),
+                      ),
+                      obscureText: _obscure,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _submit(),
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Password is required';
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {}, // TODO: forgot password
+                        child: const Text('Forgot password?', style: TextStyle(fontSize: 13)),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    ElevatedButton(
+                      onPressed: _loading ? null : _submit,
+                      child: _loading
+                        ? const SizedBox(width: 20, height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        : const Text('Sign In'),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Don't have an account?",
+                          style: Theme.of(context).textTheme.bodySmall),
+                        TextButton(
+                          onPressed: () => context.go('/auth/signup'),
+                          child: const Text('Get started', style: TextStyle(fontSize: 13)),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Card
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text('Welcome back', style: Theme.of(context).textTheme.headlineMedium),
-                          const SizedBox(height: 4),
-                          Text('Sign in to your workspace', style: Theme.of(context).textTheme.bodyMedium),
-                          const SizedBox(height: 24),
-
-                          // Email
-                          const Text('Email', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 6),
-                          TextField(
-                            controller: _emailCtrl,
-                            keyboardType: TextInputType.emailAddress,
-                            autocorrect: false,
-                            decoration: const InputDecoration(hintText: 'you@company.com'),
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Password
-                          const Text('Password', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 6),
-                          TextField(
-                            controller: _passwordCtrl,
-                            obscureText: true,
-                            decoration: const InputDecoration(hintText: '••••••••'),
-                            onSubmitted: (_) => _signIn(),
-                          ),
-
-                          // Error
-                          if (_error != null) ...[
-                            const SizedBox(height: 12),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: AppColors.error.withAlpha(25),
-                                border: Border.all(color: AppColors.error.withAlpha(60)),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(_error!, style: const TextStyle(color: AppColors.error, fontSize: 12)),
-                            ),
-                          ],
-
-                          const SizedBox(height: 20),
-
-                          // Sign in button
-                          SizedBox(
-                            height: 40,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: AppColors.gradient,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                ),
-                                onPressed: _loading ? null : _signIn,
-                                child: _loading
-                                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                                    : const Text('Sign in', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Don't have an account? ", style: Theme.of(context).textTheme.bodyMedium),
-                      GestureDetector(
-                        onTap: () => context.go('/signup'),
-                        child: const Text('Sign up free', style: TextStyle(color: AppColors.blue, fontWeight: FontWeight.w500)),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
   }
 }

@@ -1,92 +1,67 @@
-import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../config/env.dart';
-
-const _tokenKey = 'better_auth_token';
+import '../models/user.dart';
+import 'api_service.dart';
 
 class AuthService {
-  AuthService._()
-      : _dio = Dio(BaseOptions(
-          baseUrl: Env.apiBaseUrl,
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10),
-          headers: {'Content-Type': 'application/json'},
-        )),
-        _storage = const FlutterSecureStorage();
+  final ApiService _api;
 
-  static final AuthService instance = AuthService._();
+  AuthService(this._api);
 
-  final Dio _dio;
-  final FlutterSecureStorage _storage;
-
-  // ── Session token ─────────────────────────────────────────────────────────
-
-  Future<String?> getToken() => _storage.read(key: _tokenKey);
-
-  Future<void> _saveToken(String token) =>
-      _storage.write(key: _tokenKey, value: token);
-
-  Future<void> clearToken() => _storage.delete(key: _tokenKey);
-
-  Future<bool> isAuthenticated() async => (await getToken()) != null;
-
-  // ── Auth calls to Better Auth REST API ───────────────────────────────────
-
-  /// POST /api/auth/sign-in/email
-  Future<Map<String, dynamic>> signIn({
-    required String email,
-    required String password,
-  }) async {
-    final response = await _dio.post('/api/auth/sign-in/email', data: {
-      'email': email,
+  /// Login with email + password.
+  /// Returns the logged-in user on success.
+  Future<UserModel> login(String email, String password) async {
+    final data = await _api.post('/auth/login', body: {
+      'email':    email,
       'password': password,
     });
-    final token = response.data['token'] as String?;
-    if (token != null) await _saveToken(token);
-    return response.data as Map<String, dynamic>;
+
+    final token = data['token'] as String?;
+    if (token == null) throw Exception(data['error'] ?? 'Login failed');
+
+    await _api.saveToken(token);
+    // Fetch full profile (JWT payload expanded: roles, permissions, orgId, etc.)
+    return getMe();
   }
 
-  /// POST /api/auth/sign-up/email
-  Future<Map<String, dynamic>> signUp({
-    required String name,
+  /// Register a new org + admin user.
+  Future<UserModel> register({
     required String email,
     required String password,
+    required String fullName,
+    required String orgName,
+    required String orgSlug,
   }) async {
-    final response = await _dio.post('/api/auth/sign-up/email', data: {
-      'name': name,
-      'email': email,
+    final data = await _api.post('/auth/register', body: {
+      'email':    email,
       'password': password,
+      'fullName': fullName,
+      'orgName':  orgName,
+      'orgSlug':  orgSlug,
     });
-    final token = response.data['token'] as String?;
-    if (token != null) await _saveToken(token);
-    return response.data as Map<String, dynamic>;
+
+    final token = data['token'] as String?;
+    if (token == null) throw Exception(data['error'] ?? 'Registration failed');
+
+    await _api.saveToken(token);
+    // Fetch full profile (roles, permissions, orgId, etc.)
+    return getMe();
   }
 
-  /// POST /api/auth/sign-out
-  Future<void> signOut() async {
-    final token = await getToken();
-    if (token != null) {
-      await _dio.post(
-        '/api/auth/sign-out',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-    }
-    await clearToken();
-  }
-
-  /// GET /api/auth/get-session — returns current user or null
-  Future<Map<String, dynamic>?> getSession() async {
-    final token = await getToken();
-    if (token == null) return null;
+  /// Logout — clears stored token.
+  Future<void> logout() async {
     try {
-      final response = await _dio.get(
-        '/api/auth/get-session',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      return response.data as Map<String, dynamic>?;
-    } on DioException {
-      await clearToken();
-      return null;
+      await _api.post('/auth/logout');
+    } catch (_) {
+      // Best-effort server-side revocation
+    } finally {
+      await _api.clearToken();
     }
+  }
+
+  /// Fetch current user profile from API.
+  Future<UserModel> getMe() async {
+    final data = await _api.get('/me');
+    return UserModel.fromJson(data);
   }
 }
+
+final authService = AuthService(apiService);

@@ -2,26 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class PortalShell extends StatelessWidget {
-  const PortalShell({super.key, required this.child});
   final Widget child;
+  const PortalShell({super.key, required this.child});
 
-  static const _tabs = [
-    _Tab(
-        icon: Icons.grid_view_rounded,
-        label: 'Dashboard',
-        path: '/portal/dashboard'),
-    _Tab(icon: Icons.people_outline_rounded, label: 'HR', path: '/portal/hr'),
-    _Tab(
-        icon: Icons.receipt_long_outlined,
-        label: 'Finance',
-        path: '/portal/finance'),
-    _Tab(icon: Icons.menu_rounded, label: 'More', path: '/portal/more'),
-  ];
-
-  int _currentIndex(BuildContext context) {
+  int _selectedIndex(BuildContext context) {
     final loc = GoRouterState.of(context).matchedLocation;
-    final idx = _tabs.indexWhere((t) => loc.startsWith(t.path));
-    return idx < 0 ? 0 : idx;
+    if (loc.startsWith('/portal/hr'))      return 1;
+    if (loc.startsWith('/portal/finance')) return 2;
+    if (loc.startsWith('/portal/more'))    return 3;
+    return 0; // dashboard
+  }
+
+  void _onTap(BuildContext context, int idx) {
+    switch (idx) {
+      case 0: context.go('/portal/dashboard'); break;
+      case 1: context.go('/portal/hr');        break;
+      case 2: context.go('/portal/finance');   break;
+      case 3: context.go('/portal/more');      break;
+    }
   }
 
   @override
@@ -29,20 +27,31 @@ class PortalShell extends StatelessWidget {
     return Scaffold(
       body: child,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex(context),
-        onDestinationSelected: (i) => context.go(_tabs[i].path),
-        destinations: _tabs
-            .map((t) =>
-                NavigationDestination(icon: Icon(t.icon), label: t.label))
-            .toList(),
+        selectedIndex: _selectedIndex(context),
+        onDestinationSelected: (i) => _onTap(context, i),
+        destinations: const [
+          NavigationDestination(
+            icon:         Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard_rounded),
+            label:        'Dashboard',
+          ),
+          NavigationDestination(
+            icon:         Icon(Icons.people_outlined),
+            selectedIcon: Icon(Icons.people_rounded),
+            label:        'HR',
+          ),
+          NavigationDestination(
+            icon:         Icon(Icons.receipt_long_outlined),
+            selectedIcon: Icon(Icons.receipt_long_rounded),
+            label:        'Finance',
+          ),
+          NavigationDestination(
+            icon:         Icon(Icons.more_horiz_outlined),
+            selectedIcon: Icon(Icons.more_horiz_rounded),
+            label:        'More',
+          ),
+        ],
       ),
     );
   }
-}
-
-class _Tab {
-  const _Tab({required this.icon, required this.label, required this.path});
-  final IconData icon;
-  final String label;
-  final String path;
 }

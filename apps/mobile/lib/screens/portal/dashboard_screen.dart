@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
 import '../../theme/theme.dart';
-import '../../services/auth_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -10,19 +10,28 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  String _userName = 'there';
+  Map<String, dynamic>? _stats;
+  List<dynamic> _activity = [];
+  bool _loading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    _load();
   }
 
-  Future<void> _loadUser() async {
-    final session = await AuthService.instance.getSession();
-    if (mounted && session != null) {
-      final name = session['user']?['name'] as String? ?? '';
-      setState(() => _userName = name.split(' ').first.isNotEmpty ? name.split(' ').first : 'there');
+  Future<void> _load() async {
+    setState(() { _loading = true; _error = null; });
+    try {
+      final data = await apiService.get('/dashboard');
+      setState(() {
+        _stats    = data['stats'] as Map<String, dynamic>;
+        _activity = data['recentActivity'] as List<dynamic>? ?? [];
+        _loading  = false;
+      });
+    } catch (e) {
+      setState(() { _error = e.toString(); _loading = false; });
     }
   }
 
@@ -30,67 +39,98 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Hey, $_userName 👋', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-            Text("Here's your overview", style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withAlpha(128))),
-          ],
-        ),
+        title: const Text('Dashboard'),
         actions: [
-          IconButton(icon: const Icon(Icons.notifications_outlined, size: 20), onPressed: () {}),
-          const SizedBox(width: 4),
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded, size: 20),
+            onPressed: _load,
+          ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: _loadUser,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            // Stats grid
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.5,
-              children: const [
-                _StatCard(label: 'Total Employees', value: '—', delta: null, icon: Icons.people_outline_rounded),
-                _StatCard(label: 'Open Invoices', value: '—', delta: null, icon: Icons.receipt_long_outlined),
-                _StatCard(label: 'Active Projects', value: '—', delta: null, icon: Icons.folder_outlined),
-                _StatCard(label: 'Pending Leaves', value: '—', delta: null, icon: Icons.event_available_outlined),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            // Recent activity header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: _loading
+        ? const Center(child: CircularProgressIndicator())
+        : _error != null
+          ? Center(child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Recent Activity', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                Text('View all', style: TextStyle(fontSize: 12, color: AppColors.blue)),
+                Text(_error!, style: const TextStyle(color: EqbisTheme.danger)),
+                const SizedBox(height: 12),
+                ElevatedButton(onPressed: _load, child: const Text('Retry')),
               ],
-            ),
-            const SizedBox(height: 12),
-
-            // Empty state
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardTheme.color,
-                border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? AppColors.borderDark : AppColors.borderLight),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Column(
+            ))
+          : RefreshIndicator(
+              onRefresh: _load,
+              child: ListView(
+                padding: const EdgeInsets.all(16),
                 children: [
-                  Icon(Icons.inbox_outlined, size: 32, color: AppColors.textMutedDark),
-                  SizedBox(height: 8),
-                  Text('No recent activity', style: TextStyle(fontSize: 13, color: AppColors.textMutedDark)),
-                  SizedBox(height: 4),
-                  Text('Activity will appear here once you start using the platform.', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: AppColors.textMutedDark)),
+                  Text('Overview', style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(height: 12),
+
+                  // Stats grid
+                  GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 1.6,
+                    children: [
+                      _StatCard('Employees',      _stats?['employees'],      Icons.people_rounded,         EqbisTheme.accent),
+                      _StatCard('Open Invoices',  _stats?['invoicesOpen'],   Icons.receipt_long_rounded,   EqbisTheme.warning),
+                      _StatCard('Paid Invoices',  _stats?['invoicesPaid'],   Icons.check_circle_rounded,   EqbisTheme.success),
+                      _StatCard('Active Clients', _stats?['clients'],        Icons.business_rounded,       EqbisTheme.accent2),
+                      _StatCard('Open Tickets',   _stats?['tickets'],        Icons.support_agent_rounded,  EqbisTheme.danger),
+                      _StatCard('Pending Leaves', _stats?['pendingLeaves'],  Icons.event_busy_rounded,     EqbisTheme.warning),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+                  Text('Recent Activity', style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(height: 12),
+
+                  ..._activity.map((a) => _ActivityItem(a as Map<String, dynamic>)),
+
+                  if (_activity.isEmpty)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Text('No recent activity', style: Theme.of(context).textTheme.bodySmall),
+                      ),
+                    ),
                 ],
               ),
+            ),
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  final String label;
+  final dynamic value;
+  final IconData icon;
+  final Color color;
+
+  const _StatCard(this.label, this.value, this.icon, this.color);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Icon(icon, color: color, size: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(value?.toString() ?? '0',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: color)),
+                Text(label,
+                  style: Theme.of(context).textTheme.bodySmall,
+                  maxLines: 1, overflow: TextOverflow.ellipsis),
+              ],
             ),
           ],
         ),
@@ -99,58 +139,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.label,
-    required this.value,
-    required this.delta,
-    required this.icon,
-  });
-
-  final String label;
-  final String value;
-  final String? delta;
-  final IconData icon;
+class _ActivityItem extends StatelessWidget {
+  final Map<String, dynamic> activity;
+  const _ActivityItem(this.activity);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        border: Border.all(
-          color: Theme.of(context).brightness == Brightness.dark ? AppColors.borderDark : AppColors.borderLight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
+    final action  = activity['action']  as String? ?? '';
+    final module  = activity['module']  as String? ?? '';
+    final details = activity['details'] as String? ?? '';
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(icon, size: 16, color: AppColors.blue),
-              if (delta != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppColors.success.withAlpha(25),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(delta!, style: const TextStyle(fontSize: 10, color: AppColors.success, fontWeight: FontWeight.w600)),
-                ),
-            ],
+          Container(
+            width: 32, height: 32,
+            decoration: BoxDecoration(
+              color: EqbisTheme.surface,
+              shape: BoxShape.circle,
+              border: Border.all(color: EqbisTheme.border),
+            ),
+            child: Icon(_moduleIcon(module), size: 14, color: EqbisTheme.textMuted),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-              Text(label, style: const TextStyle(fontSize: 11, color: AppColors.textMutedDark)),
-            ],
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(details.isNotEmpty ? details : '$action in $module',
+                  style: const TextStyle(fontSize: 13)),
+                Text(module, style: Theme.of(context).textTheme.labelSmall),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
+
+  IconData _moduleIcon(String module) => switch (module) {
+    'hr'       => Icons.people_outlined,
+    'finance'  => Icons.receipt_long_outlined,
+    'crm'      => Icons.business_outlined,
+    'projects' => Icons.folder_outlined,
+    'support'  => Icons.support_agent_outlined,
+    _          => Icons.circle_outlined,
+  };
 }
