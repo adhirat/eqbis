@@ -1,0 +1,17 @@
+{
+  "name": "eqbis",
+  "private": true,
+  "workspaces": ["apps/web"],
+  "scripts": {
+    "dev":             "npm run dev             --workspace=apps/web",
+    "deploy:staging":  "npm run deploy:staging  --workspace=apps/web",
+    "deploy:prod":     "npm run deploy:prod     --workspace=apps/web",
+    "test":            "npm run test            --workspace=apps/web",
+    "tsc:check":       "npm run tsc:check       --workspace=apps/web",
+    "db:migrate:stg":  "wrangler d1 migrations apply eqbis-db-staging --remote --env staging  --config apps/web/wrangler.toml",
+    "db:migrate:prod": "wrangler d1 migrations apply eqbis-db         --remote --env production --config apps/web/wrangler.toml"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}

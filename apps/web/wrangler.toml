@@ -1,0 +1,103 @@
+name               = "eqbis"
+main               = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./public"
+binding   = "ASSETS"
+
+# ── LOCAL DEV ─────────────────────────────────────────────────────────────────
+# Used when running `wrangler dev --local` without an --env flag.
+# Copy .dev.vars.example → .dev.vars and fill in your local secrets.
+
+[[d1_databases]]
+binding        = "DB"
+database_name  = "eqbis-db-local"
+database_id    = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "src/db/migrations"
+
+[[r2_buckets]]
+binding     = "R2"
+bucket_name = "eqbis-storage-local"
+
+[[kv_namespaces]]
+binding = "KV"
+id      = "00000000000000000000000000000000"
+
+[vars]
+ENVIRONMENT = "local"
+APP_URL     = "http://localhost:8787"
+R2_PUBLIC   = "http://localhost:8787/__r2"
+CF_ZONE_ID  = ""
+
+# ── STAGING ──────────────────────────────────────────────────────────────────
+[env.staging]
+name = "eqbis-staging"
+
+[[env.staging.d1_databases]]
+binding        = "DB"
+database_name  = "eqbis-db-staging"
+database_id    = "73311ca9-45bb-44fb-9eb5-8ea6074df4b6"
+migrations_dir = "src/db/migrations"
+
+[[env.staging.r2_buckets]]
+binding     = "R2"
+bucket_name = "eqbis-storage-staging"
+
+[[env.staging.kv_namespaces]]
+binding = "KV"
+id      = "ad9bc0b2df6e405d9b46828840bdea8d"
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
+APP_URL     = "https://staging.eqbis.com"
+R2_PUBLIC   = "https://cdn-staging.eqbis.com"
+CF_ZONE_ID  = "FILL_AFTER_ZONE_LOOKUP"
+
+# Worker is reachable at the workers.dev subdomain by default.
+# Uncomment and fill in to add a custom route:
+[[env.staging.routes]]
+pattern = "staging.eqbis.com"
+custom_domain = true
+
+
+# ── PRODUCTION ────────────────────────────────────────────────────────────────
+[env.production]
+name = "eqbis"
+
+[[env.production.d1_databases]]
+binding        = "DB"
+database_name  = "eqbis-db"
+database_id    = "72a00f59-b131-4d50-b541-e6cfc3d2e9b1"
+migrations_dir = "src/db/migrations"
+
+[[env.production.r2_buckets]]
+binding     = "R2"
+bucket_name = "eqbis-storage"
+
+[[env.production.kv_namespaces]]
+binding = "KV"
+id      = "4413069517be46298edc92e897d8e875"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+APP_URL     = "https://eqbis.com"
+R2_PUBLIC   = "https://cdn.eqbis.com"
+CF_ZONE_ID  = "FILL_AFTER_ZONE_LOOKUP"
+
+# Uncomment and fill in after your domain is added to Cloudflare:
+[[env.production.routes]]
+pattern = "eqbis.com"
+custom_domain = true
+
+[[env.production.routes]]
+pattern = "*.eqbis.com/*"
+custom_domain = false
+
+
+# Secrets — set via `wrangler secret put --env {staging|production}`, NEVER commit here:
+#   JWT_SECRET        — HS256 signing secret (min 32 chars, cryptographically random)
+#   JWT_SECRET_PREV   — previous secret for zero-downtime rotation (can be empty initially)
+#   RESEND_API_KEY    — Resend transactional email API key
+#   CF_API_TOKEN      — Cloudflare API token (Custom Hostnames: Edit permission)

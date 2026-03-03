@@ -1,8 +1,8 @@
 /**
- * Adhirat Technologies - Email Notification Google Apps Script
+ * Eqbis Technologies - Email Notification Google Apps Script
  * 
  * This script sends beautiful, glassmorphism-styled email notifications
- * to admin@adhirat.com when contact forms are submitted or users subscribe
+ * to admin@eqbis.com when contact forms are submitted or users subscribe
  * to the newsletter.
  * 
  * DEPLOYMENT INSTRUCTIONS:
@@ -23,8 +23,8 @@
  * to apply updates.
  */
 
-const ADMIN_EMAIL = 'admin@adhirat.com';
-const COMPANY_NAME = 'Adhirat Technologies';
+const ADMIN_EMAIL = 'admin@eqbis.com';
+const COMPANY_NAME = 'Eqbis Technologies';
 
 /**
  * Handle incoming POST requests
@@ -64,7 +64,7 @@ function doPost(e) {
 function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify({ 
         status: 'OK',
-        message: 'Adhirat Email Notification Service is running'
+        message: 'Eqbis Email Notification Service is running'
     })).setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -104,7 +104,7 @@ function sendContactEmail(data) {
                                                 <tr>
                                                     <td style="vertical-align: middle;">
                                                         <div style="font-size: 28px; font-weight: 700; color: white; letter-spacing: -0.5px;">
-                                                            Adhirat<span style="background: linear-gradient(90deg, #8b5cf6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">.Tech</span>
+                                                            Eqbis<span style="background: linear-gradient(90deg, #8b5cf6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">.Tech</span>
                                                         </div>
                                                     </td>
                                                     <td align="right" style="vertical-align: middle;">
@@ -271,7 +271,7 @@ function sendContactEmail(data) {
                             <td align="center" style="padding: 32px 20px;">
                                 <p style="margin: 0; font-size: 12px; color: rgba(148, 163, 184, 0.5);">
                                     This notification was sent by <strong style="color: rgba(148, 163, 184, 0.7);">${COMPANY_NAME}</strong><br>
-                                    © ${new Date().getFullYear()} All rights reserved • <a href="https://adhirat.com" style="color: #8b5cf6; text-decoration: none;">adhirat.com</a>
+                                    © ${new Date().getFullYear()} All rights reserved • <a href="https://eqbis.com" style="color: #8b5cf6; text-decoration: none;">eqbis.com</a>
                                 </p>
                             </td>
                         </tr>
@@ -326,7 +326,7 @@ function sendNewsletterEmail(data) {
                                                 <tr>
                                                     <td>
                                                         <div style="font-size: 24px; font-weight: 700; color: white; letter-spacing: -0.5px;">
-                                                            Adhirat<span style="background: linear-gradient(90deg, #8b5cf6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">.Tech</span>
+                                                            Eqbis<span style="background: linear-gradient(90deg, #8b5cf6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">.Tech</span>
                                                         </div>
                                                     </td>
                                                     <td align="right">
@@ -401,7 +401,7 @@ function sendNewsletterEmail(data) {
                         <tr>
                             <td align="center" style="padding: 24px 20px;">
                                 <p style="margin: 0; font-size: 11px; color: rgba(148, 163, 184, 0.4);">
-                                    © ${new Date().getFullYear()} ${COMPANY_NAME} • <a href="https://adhirat.com" style="color: #8b5cf6; text-decoration: none;">adhirat.com</a>
+                                    © ${new Date().getFullYear()} ${COMPANY_NAME} • <a href="https://eqbis.com" style="color: #8b5cf6; text-decoration: none;">eqbis.com</a>
                                 </p>
                             </td>
                         </tr>
@@ -462,9 +462,9 @@ function sendBulkNewsletter(data) {
         return { success: false, error: 'No recipients provided' };
     }
     
-    const subject = data.subject || '📬 Newsletter from Adhirat Technologies';
+    const subject = data.subject || '📬 Newsletter from Eqbis Technologies';
     const content = data.content || 'Thank you for subscribing to our newsletter!';
-    const previewText = data.previewText || 'Latest updates from Adhirat Technologies';
+    const previewText = data.previewText || 'Latest updates from Eqbis Technologies';
     
     for (const recipient of data.recipients) {
         try {
@@ -478,7 +478,7 @@ function sendBulkNewsletter(data) {
             }
             
             const htmlBody = generateNewsletterTemplate(name, email, subject, content, previewText);
-            const plainText = `${subject}\n\nHi ${name},\n\n${stripHtml(content)}\n\n---\nAdhirat Technologies\nhttps://adhirat.com`;
+            const plainText = `${subject}\n\nHi ${name},\n\n${stripHtml(content)}\n\n---\nEqbis Technologies\nhttps://eqbis.com`;
             
             GmailApp.sendEmail(email, subject, plainText, { 
                 htmlBody: htmlBody,
@@ -555,7 +555,7 @@ function generateNewsletterTemplate(name, email, subject, content, previewText) 
                                                 <tr>
                                                     <td>
                                                         <div style="font-size: 28px; font-weight: 700; color: white;">
-                                                            Adhirat<span style="background: linear-gradient(90deg, #8b5cf6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">.Tech</span>
+                                                            Eqbis<span style="background: linear-gradient(90deg, #8b5cf6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">.Tech</span>
                                                         </div>
                                                     </td>
                                                     <td align="right">
@@ -606,7 +606,7 @@ function generateNewsletterTemplate(name, email, subject, content, previewText) 
                                 <table cellpadding="0" cellspacing="0" border="0" width="100%">
                                     <tr>
                                         <td align="center" style="padding: 28px 40px;">
-                                            <a href="https://adhirat.com" style="display: inline-block; background: linear-gradient(90deg, #8b5cf6, #06b6d4); color: white; padding: 12px 32px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;">
+                                            <a href="https://eqbis.com" style="display: inline-block; background: linear-gradient(90deg, #8b5cf6, #06b6d4); color: white; padding: 12px 32px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;">
                                                 Visit Our Website →
                                             </a>
                                         </td>
@@ -622,8 +622,8 @@ function generateNewsletterTemplate(name, email, subject, content, previewText) 
                         <tr>
                             <td align="center" style="padding: 24px 20px;">
                                 <p style="margin: 0; font-size: 11px; color: rgba(148, 163, 184, 0.5);">
-                                    © ${new Date().getFullYear()} ${COMPANY_NAME} • <a href="https://adhirat.com" style="color: #8b5cf6; text-decoration: none;">adhirat.com</a><br>
-                                    <a href="https://adhirat.com/unsubscribe?email=${encodeURIComponent(email)}" style="color: rgba(148, 163, 184, 0.5); text-decoration: underline;">Unsubscribe</a>
+                                    © ${new Date().getFullYear()} ${COMPANY_NAME} • <a href="https://eqbis.com" style="color: #8b5cf6; text-decoration: none;">eqbis.com</a><br>
+                                    <a href="https://eqbis.com/unsubscribe?email=${encodeURIComponent(email)}" style="color: rgba(148, 163, 184, 0.5); text-decoration: underline;">Unsubscribe</a>
                                 </p>
                             </td>
                         </tr>
@@ -661,14 +661,14 @@ function sendContractSentEmail(data) {
         projectName: data.projectName,
         value: data.value,
         expiryDate: data.expiryDate,
-        portalUrl: data.portalUrl || 'https://adhirat.com/portal/contracts.html',
+        portalUrl: data.portalUrl || 'https://eqbis.com/portal/contracts.html',
         buttonText: 'Review & Sign Contract',
         buttonColor: 'linear-gradient(90deg, #f59e0b, #d97706)',
         message: `A new contract has been prepared for you by ${COMPANY_NAME}. Please review the terms and conditions, then sign the contract at your earliest convenience.`
     });
     
     GmailApp.sendEmail(data.clientEmail, subject, 
-        `Contract Ready for Signature\n\nHi ${data.clientName},\n\nA new contract "${data.contractTitle}" is ready for your signature.\n\nPlease visit ${data.portalUrl || 'https://adhirat.com/portal'} to review and sign.\n\n${COMPANY_NAME}`,
+        `Contract Ready for Signature\n\nHi ${data.clientName},\n\nA new contract "${data.contractTitle}" is ready for your signature.\n\nPlease visit ${data.portalUrl || 'https://eqbis.com/portal'} to review and sign.\n\n${COMPANY_NAME}`,
         { htmlBody: htmlBody, name: COMPANY_NAME }
     );
     
@@ -701,7 +701,7 @@ function sendContractSignedEmail(data) {
         value: data.value,
         signedBy: data.signerName,
         signedAt: data.signedAt,
-        portalUrl: data.portalUrl || 'https://adhirat.com/portal/contracts.html',
+        portalUrl: data.portalUrl || 'https://eqbis.com/portal/contracts.html',
         buttonText: 'Review & Approve',
         buttonColor: 'linear-gradient(90deg, #3b82f6, #2563eb)',
         message: `The contract has been signed by ${data.clientName}. Please review and approve or reject the contract.`
@@ -815,7 +815,7 @@ function generateContractEmailTemplate(options) {
                                                 <tr>
                                                     <td style="vertical-align: middle;">
                                                         <div style="font-size: 28px; font-weight: 700; color: white; letter-spacing: -0.5px;">
-                                                            Adhirat<span style="background: linear-gradient(90deg, #8b5cf6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">.Tech</span>
+                                                            Eqbis<span style="background: linear-gradient(90deg, #8b5cf6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">.Tech</span>
                                                         </div>
                                                     </td>
                                                     <td align="right" style="vertical-align: middle;">
@@ -953,7 +953,7 @@ function generateContractEmailTemplate(options) {
                                 <table cellpadding="0" cellspacing="0" border="0" width="100%">
                                     <tr>
                                         <td align="center" style="padding: 32px 40px;">
-                                            <a href="${portalUrl || 'https://adhirat.com/portal/contracts.html'}" style="display: inline-block; background: ${buttonColor}; color: white; padding: 14px 32px; border-radius: 12px; font-size: 15px; font-weight: 600; text-decoration: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+                                            <a href="${portalUrl || 'https://eqbis.com/portal/contracts.html'}" style="display: inline-block; background: ${buttonColor}; color: white; padding: 14px 32px; border-radius: 12px; font-size: 15px; font-weight: 600; text-decoration: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
                                                 ${buttonText} →
                                             </a>
                                         </td>
@@ -970,7 +970,7 @@ function generateContractEmailTemplate(options) {
                             <td align="center" style="padding: 32px 20px;">
                                 <p style="margin: 0; font-size: 12px; color: rgba(148, 163, 184, 0.5);">
                                     This notification was sent by <strong style="color: rgba(148, 163, 184, 0.7);">${COMPANY_NAME}</strong><br>
-                                    © ${new Date().getFullYear()} All rights reserved • <a href="https://adhirat.com" style="color: #8b5cf6; text-decoration: none;">adhirat.com</a>
+                                    © ${new Date().getFullYear()} All rights reserved • <a href="https://eqbis.com" style="color: #8b5cf6; text-decoration: none;">eqbis.com</a>
                                 </p>
                             </td>
                         </tr>
@@ -992,11 +992,11 @@ function testContractSentEmail() {
     sendContractSentEmail({
         contractTitle: 'Service Agreement - Test Project',
         clientName: 'John Doe',
-        clientEmail: 'admin@adhirat.com',
+        clientEmail: 'admin@eqbis.com',
         projectName: 'Website Redesign',
         value: 15000,
         expiryDate: '2026-03-01',
-        portalUrl: 'https://adhirat.com/portal/contracts.html'
+        portalUrl: 'https://eqbis.com/portal/contracts.html'
     });
     Logger.log('Contract sent email test completed');
 }
@@ -1008,12 +1008,12 @@ function testContractSignedEmail() {
     sendContractSignedEmail({
         contractTitle: 'Service Agreement - Test Project',
         clientName: 'John Doe',
-        clientEmail: 'admin@adhirat.com',
+        clientEmail: 'admin@eqbis.com',
         signerName: 'John Doe',
         signedAt: new Date().toISOString(),
         projectName: 'Website Redesign',
         value: 15000,
-        portalUrl: 'https://adhirat.com/portal/contracts.html'
+        portalUrl: 'https://eqbis.com/portal/contracts.html'
     });
     Logger.log('Contract signed email test completed');
 }
@@ -1025,7 +1025,7 @@ function testContractApprovedEmail() {
     sendContractApprovedEmail({
         contractTitle: 'Service Agreement - Test Project',
         clientName: 'John Doe',
-        clientEmail: 'admin@adhirat.com',
+        clientEmail: 'admin@eqbis.com',
         projectName: 'Website Redesign',
         value: 15000,
         approvedAt: new Date().toISOString()
@@ -1043,10 +1043,10 @@ function testContractApprovedEmail() {
 function testBulkNewsletter() {
     const result = sendBulkNewsletter({
         recipients: [
-            { email: 'admin@adhirat.com', name: 'Admin' },
-            { email: 'test@adhirat.com', name: 'Test User' }
+            { email: 'admin@eqbis.com', name: 'Admin' },
+            { email: 'test@eqbis.com', name: 'Test User' }
         ],
-        subject: '🚀 Test Newsletter - Adhirat Technologies',
+        subject: '🚀 Test Newsletter - Eqbis Technologies',
         content: '<p>This is a <strong>test newsletter</strong> to verify the bulk email functionality is working correctly.</p><p>Features tested:</p><ul><li>Personalized greeting</li><li>HTML content rendering</li><li>Multiple recipients</li></ul>',
         previewText: 'Testing the bulk newsletter feature'
     });
@@ -1062,7 +1062,7 @@ function testBulkNewsletter() {
 function testSingleRecipient() {
     const result = sendBulkNewsletter({
         recipients: [
-            { email: 'admin@adhirat.com', name: 'Adhirat Admin' }
+            { email: 'admin@eqbis.com', name: 'Eqbis Admin' }
         ],
         subject: '✨ Single Recipient Test',
         content: '<p>This email was sent to a single recipient to test the newsletter functionality.</p>',
@@ -1103,7 +1103,7 @@ function testInvalidRecipients() {
         recipients: [
             { email: 'invalid-email', name: 'Invalid' },
             { email: '', name: 'Empty' },
-            { email: 'admin@adhirat.com', name: 'Valid Admin' }
+            { email: 'admin@eqbis.com', name: 'Valid Admin' }
         ],
         subject: '🧪 Invalid Recipients Test',
         content: '<p>Testing how the system handles invalid email addresses.</p>',

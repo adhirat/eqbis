@@ -21,7 +21,7 @@ service cloud.firestore {
     
     // Helper function to check if user is the admin email (for initial setup)
     function isAdminEmail() {
-      return isAuthenticated() && request.auth.token.email == 'admin@adhirat.com';
+      return isAuthenticated() && request.auth.token.email == 'admin@eqbis.com';
     }
     
     // Helper function to get user data

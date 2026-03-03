@@ -1,0 +1,43 @@
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Firebase local emulator artefacts
+.firebase/
+
+# Environment / secrets
+.env
+.env.local
+.dev.vars
+apps/web/.dev.vars
+
+# Node
+node_modules/
+.npm/
+
+# Wrangler build output
+.wrangler/
+apps/web/.wrangler/
+
+# Tailwind / build
+dist/
+apps/web/public/css/app.css
+
+# Flutter
+apps/mobile/.dart_tool/
+apps/mobile/.flutter-plugins
+apps/mobile/.flutter-plugins-dependencies
+apps/mobile/build/
+apps/mobile/.packages
+apps/mobile/pubspec.lock
+
+# Drizzle generated (keep migrations, ignore snapshot cache)
+apps/web/drizzle/meta/

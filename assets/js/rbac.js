@@ -1,6 +1,6 @@
 /**
  * Role-Based Access Control (RBAC) Module
- * Handles roles, permissions, and access control for the Adhirat Portal
+ * Handles roles, permissions, and access control for the Eqbis Portal
  */
 
 import {

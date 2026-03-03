@@ -1,0 +1,88 @@
+# Codemagic CI/CD — Eqbis Mobile (Flutter)
+# Triggered on version tags (e.g. v1.0.0)
+
+workflows:
+  android-release:
+    name: Android Release
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    triggering:
+      events: [tag]
+      tag_patterns:
+        - pattern: 'v*'
+          include: true
+
+    environment:
+      flutter: 3.27.0
+      groups:
+        - google_play_credentials
+      vars:
+        API_BASE_URL: https://eqbis.com
+        PACKAGE_NAME: com.eqbis.app
+
+    scripts:
+      - name: Set up keystore
+        script: |
+          echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.jks
+          cat >> "$CM_BUILD_DIR/apps/mobile/android/key.properties" <<EOF
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyPassword=$CM_KEY_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          storeFile=/tmp/keystore.jks
+          EOF
+
+      - name: Build Android App Bundle
+        script: |
+          cd apps/mobile
+          flutter pub get
+          flutter build appbundle --release \
+            --dart-define=API_BASE_URL=$API_BASE_URL
+
+    artifacts:
+      - apps/mobile/build/app/outputs/bundle/release/*.aab
+
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true
+
+  ios-release:
+    name: iOS Release
+    max_build_duration: 90
+    instance_type: mac_mini_m2
+    triggering:
+      events: [tag]
+      tag_patterns:
+        - pattern: 'v*'
+          include: true
+
+    integrations:
+      app_store_connect: Eqbis App Store Connect
+
+    environment:
+      flutter: 3.27.0
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.eqbis.app
+      vars:
+        API_BASE_URL: https://eqbis.com
+        APP_STORE_APP_ID: FILL_AFTER_CREATE
+
+    scripts:
+      - name: Build iOS IPA
+        script: |
+          cd apps/mobile
+          flutter pub get
+          flutter build ipa --release \
+            --dart-define=API_BASE_URL=$API_BASE_URL \
+            --export-options-plist=/Users/builder/export_options.plist
+
+    artifacts:
+      - apps/mobile/build/ios/ipa/*.ipa
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        expire_build_days: 30

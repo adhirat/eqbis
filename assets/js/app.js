@@ -321,13 +321,13 @@ function generateBreadcrumbs() {
     if (crumbs.length === 0 || crumbs[0].page !== 'index.html') {
         const hasIndex = crumbs.find(c => c.page === 'index.html');
         if (!hasIndex) {
-            crumbs.unshift({ page: 'index.html', title: 'Portal' });
+            crumbs.unshift({ page: 'index.html', title: 'Eqbis Portal' });
         } else {
             // Rename 'Home' to 'Portal' for context
-            hasIndex.title = 'Portal';
+            hasIndex.title = 'Eqbis Portal';
         }
     } else {
-        crumbs[0].title = 'Portal';
+        crumbs[0].title = 'Eqbis Portal';
     }
 
     // Generate HTML
@@ -1461,7 +1461,7 @@ function initSidebarSearch() {
     const links = [];
     sidebar.querySelectorAll('a').forEach(link => {
         // We only want links with clear labels, excluding logo link if it has no text context we want searchable
-        // But our logo link has "Adhirat Portal" text. We probably want menu items primarily.
+        // But our logo link has "Eqbis Portal" text. We probably want menu items primarily.
 
         // Let's target links inside 'nav' specifically to avoid header confusion
         const nav = sidebar.querySelector('nav');
@@ -1662,7 +1662,7 @@ function injectChatWidget() {
                         <span class="material-symbols-outlined text-lg">smart_toy</span>
                     </div>
                     <div>
-                        <h3 class="font-bold text-sm leading-tight">Adhirat AI</h3>
+                        <h3 class="font-bold text-sm leading-tight">Eqbis AI</h3>
                         <p class="text-[10px] opacity-80 flex items-center gap-1">
                             <span class="size-1.5 rounded-full bg-emerald-400"></span> Online
                         </p>
@@ -1826,7 +1826,7 @@ const helpDocs = {
         title: 'Dashboard',
         content: `
             <div class="prose dark:prose-invert prose-sm max-w-none">
-                <p>Welcome to your <strong>Dashboard</strong>. This is your central command center for the Adhirat Portal.</p>
+                <p>Welcome to your <strong>Dashboard</strong>. This is your central command center for the Eqbis Portal.</p>
                 <h3>Key Features:</h3>
                 <ul>
                     <li><strong>Overview Stats:</strong> Real-time metrics on users, revenue, and system health.</li>
@@ -1884,7 +1884,7 @@ const helpDocs = {
         title: 'Knowledge Base',
         content: `
             <div class="prose dark:prose-invert prose-sm max-w-none">
-                <p>The <strong>Knowledge Base</strong> is your library for all Adhirat Portal documentation.</p>
+                <p>The <strong>Knowledge Base</strong> is your library for all Eqbis Portal documentation.</p>
                 <h3>Features:</h3>
                 <ul>
                     <li><strong>Search:</strong> Use the hero search bar to find specific topics.</li>
@@ -1898,7 +1898,7 @@ const helpDocs = {
         title: 'Portal Help',
         content: `
             <div class="prose dark:prose-invert prose-sm max-w-none">
-                <p>Welcome to Adhirat Portal Help. This context-aware guide provides specific information based on the page you are viewing.</p>
+                <p>Welcome to Eqbis Portal Help. This context-aware guide provides specific information based on the page you are viewing.</p>
                 <p>Please navigate to a specific module to see its documentation here.</p>
             </div>
         `

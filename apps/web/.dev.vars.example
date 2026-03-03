@@ -1,0 +1,9 @@
+# Local development secrets for Wrangler
+# Copy this file to .dev.vars (gitignored) and fill in real values.
+# These are equivalent to `wrangler secret put` but for local `wrangler dev`.
+
+JWT_SECRET=local-dev-jwt-secret-change-in-production
+JWT_SECRET_PREV=
+RESEND_API_KEY=re_test_xxxxxxxxxxxx
+CF_API_TOKEN=
+CF_ZONE_ID=

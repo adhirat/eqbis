@@ -1,0 +1,30 @@
+{
+  "name": "@eqbis/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev":            "wrangler dev --local",
+    "dev:staging":    "wrangler dev --env staging --local",
+    "build:css":      "npx @tailwindcss/cli -i ./src/styles/input.css -o ./public/css/app.css --minify",
+    "deploy:staging": "npm run build:css && wrangler deploy --env staging",
+    "deploy:prod":    "npm run build:css && wrangler deploy --env production",
+    "db:new":         "wrangler d1 migrations create eqbis-db",
+    "tsc:check":      "tsc --noEmit",
+    "test":           "vitest run",
+    "test:watch":     "vitest"
+  },
+  "dependencies": {
+    "hono":                 "^4",
+    "@hono/zod-validator":  "^0.4",
+    "zod":                  "^3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types":       "^4",
+    "@cloudflare/vitest-pool-workers": "^0.5",
+    "typescript":                      "^5",
+    "vitest":                          "^2",
+    "wrangler":                        "^4",
+    "tailwindcss":                     "^4"
+  }
+}

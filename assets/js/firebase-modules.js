@@ -556,7 +556,7 @@ export async function getOrganizationProfile() {
         if (orgId === 'default' || !orgId) {
             const docRef = doc(db, "settings", "organization");
             const docSnap = await getDoc(docRef);
-            return docSnap.exists() ? docSnap.data() : { name: 'Adhirat Inc.' };
+            return docSnap.exists() ? docSnap.data() : { name: 'Eqbis Inc.' };
         }
 
         // Multi Tenant
@@ -727,7 +727,7 @@ export async function generateNextEmployeeId() {
  * Retrieves the currently active organization from localStorage or defaults
  */
 export function getCurrentOrgId() {
-    return localStorage.getItem('adhirat_current_org_id') || 'default';
+    return localStorage.getItem('eqbis_current_org_id') || 'default';
 }
 
 /**
@@ -735,7 +735,7 @@ export function getCurrentOrgId() {
  * Sets the active organization and reloads the page to apply context
  */
 export async function switchOrganization(orgId) {
-    localStorage.setItem('adhirat_current_org_id', orgId);
+    localStorage.setItem('eqbis_current_org_id', orgId);
     // Log switch if possible, guarding against circular deps if logActivity uses this
     try {
         // logic here

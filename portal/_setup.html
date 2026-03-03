@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Admin Setup - Adhirat Portal</title>
+    <title>Admin Setup - Eqbis Portal</title>
     <meta name="robots" content="noindex, nofollow">
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect" />
@@ -92,7 +92,7 @@
                         2</div>
                     <div class="flex-1">
                         <p class="font-semibold text-white">Find Admin User</p>
-                        <p class="text-sm text-slate-400">Locate admin@adhirat.com in users collection</p>
+                        <p class="text-sm text-slate-400">Locate admin@eqbis.com in users collection</p>
                     </div>
                     <span class="material-symbols-outlined text-slate-500" id="step-2-icon">pending</span>
                 </div>
@@ -102,7 +102,7 @@
                         3</div>
                     <div class="flex-1">
                         <p class="font-semibold text-white">Assign Admin Role</p>
-                        <p class="text-sm text-slate-400">Set admin@adhirat.com as administrator</p>
+                        <p class="text-sm text-slate-400">Set admin@eqbis.com as administrator</p>
                     </div>
                     <span class="material-symbols-outlined text-slate-500" id="step-3-icon">pending</span>
                 </div>
@@ -137,7 +137,7 @@
                     <span class="material-symbols-outlined text-emerald-400">check_circle</span>
                     <div>
                         <p class="font-semibold text-emerald-300">Setup Complete!</p>
-                        <p class="text-sm text-emerald-200/80 mt-1">Admin role has been assigned to admin@adhirat.com
+                        <p class="text-sm text-emerald-200/80 mt-1">Admin role has been assigned to admin@eqbis.com
                         </p>
                         <a href="index.html"
                             class="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-lg bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors">
@@ -269,7 +269,7 @@
 
                 // Step 2: Find or Create Admin User
                 updateStep(2, 'running');
-                updateStatus('Looking for admin@adhirat.com...', 'running');
+                updateStatus('Looking for admin@eqbis.com...', 'running');
                 await sleep(500);
 
                 let adminUserId;
@@ -277,13 +277,13 @@
 
                 // First check if user exists by querying
                 const usersRef = collection(db, 'users');
-                const q = query(usersRef, where('email', '==', 'admin@adhirat.com'));
+                const q = query(usersRef, where('email', '==', 'admin@eqbis.com'));
                 const snapshot = await getDocs(q);
 
                 if (snapshot.empty) {
-                    // User document doesn't exist - check if current user IS admin@adhirat.com
-                    if (currentUser.email === 'admin@adhirat.com') {
-                        updateStatus('Creating user profile for admin@adhirat.com...', 'running');
+                    // User document doesn't exist - check if current user IS admin@eqbis.com
+                    if (currentUser.email === 'admin@eqbis.com') {
+                        updateStatus('Creating user profile for admin@eqbis.com...', 'running');
 
                         // Create the user document
                         adminUserId = currentUser.uid;
@@ -301,7 +301,7 @@
                         console.log('Created user profile for:', currentUser.email);
                     } else {
                         updateStep(2, 'error');
-                        updateStatus(`You are logged in as ${currentUser.email}, not admin@adhirat.com`, 'error');
+                        updateStatus(`You are logged in as ${currentUser.email}, not admin@eqbis.com`, 'error');
                         btn.disabled = false;
                         btn.innerHTML = '<span class="material-symbols-outlined">rocket_launch</span> Retry Setup';
                         return;
@@ -334,7 +334,7 @@
                 btn.classList.add('hidden');
                 document.getElementById('success-message').classList.remove('hidden');
 
-                console.log('Setup complete! admin@adhirat.com now has admin role.');
+                console.log('Setup complete! admin@eqbis.com now has admin role.');
 
             } catch (error) {
                 console.error('Setup error:', error);
