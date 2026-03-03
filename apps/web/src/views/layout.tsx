@@ -316,6 +316,10 @@ export const Layout: FC<LayoutProps> = ({ title, user, currentPath, children }) 
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title} — EQBIS</title>
+        <link rel="icon" type="image/png" href="/images/logo.png" />
+        <link rel="apple-touch-icon" href="/images/logo.png" />
+        <meta property="og:image" content="/images/logo.png" />
+        <meta name="twitter:image" content="/images/logo.png" />
         <script dangerouslySetInnerHTML={{ __html: `(function(){var t=localStorage.getItem('eqbis-theme');if(t&&t!=='auto')document.documentElement.setAttribute('data-theme',t);var a=localStorage.getItem('eqbis-accent');if(a)document.documentElement.style.setProperty('--accent',a);})();` }} />
         <link rel="stylesheet" href="/css/app.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />

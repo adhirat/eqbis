@@ -21,7 +21,8 @@ export const RegisterSchema = z.object({
     .string()
     .min(3)
     .max(40)
-    .regex(/^[a-z0-9-]+$/, 'Slug may only contain lowercase letters, numbers, and hyphens'),
+    .regex(/^[a-zA-Z0-9-]+$/, 'Slug may only contain letters, numbers, and hyphens')
+    .transform(v => v.toLowerCase()),
 });
 
 export const ForgotPasswordSchema = z.object({
@@ -76,7 +77,7 @@ export const UpdateRoleSchema = CreateRoleSchema.partial();
 
 export const UpdateOrgSchema = z.object({
   name:         z.string().min(2).max(100).optional(),
-  slug:         z.string().min(3).max(40).regex(/^[a-z0-9-]+$/).optional(),
+  slug:         z.string().min(3).max(40).regex(/^[a-zA-Z0-9-]+$/).transform(v => v?.toLowerCase()).optional(),
   timezone:     z.string().optional(),
   empIdPrefix:  z.string().min(1).max(10).optional(),
 });
@@ -86,7 +87,8 @@ export const AddDomainSchema = z.object({
     .string()
     .min(4)
     .max(253)
-    .regex(/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$/, 'Invalid domain'),
+    .regex(/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$/, 'Invalid domain')
+    .transform(v => v.toLowerCase()),
 });
 
 // ── Employees ────────────────────────────────────────────────────────────────

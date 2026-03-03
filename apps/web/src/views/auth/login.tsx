@@ -15,7 +15,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 };
 
 export async function LoginPage({ csrfToken, error }: LoginPageProps): Promise<string> {
-  const errorMsg = error ? (ERROR_MESSAGES[error] ?? 'An error occurred. Please try again.') : null;
+  const errorMsg = error ? (ERROR_MESSAGES[error] ?? error) : null;
 
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -23,6 +23,8 @@ export async function LoginPage({ csrfToken, error }: LoginPageProps): Promise<s
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sign In — EQBIS</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link rel="apple-touch-icon" href="/images/logo.png">
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body class="min-h-screen flex items-center justify-center bg-[var(--bg)]">

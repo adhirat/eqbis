@@ -51,7 +51,11 @@ auth.post(
   '/login',
   rateLimit({ prefix: 'rl:auth:login', window: 60, limit: 10 }),
   csrfMiddleware,
-  zValidator('form', LoginSchema),
+  zValidator('form', LoginSchema, (result, c) => {
+    if (!result.success) {
+      return c.redirect('/auth/login?error=invalid');
+    }
+  }),
   async (c) => {
     const { email, password } = c.req.valid('form');
 
@@ -130,7 +134,12 @@ auth.post(
   '/register',
   rateLimit({ prefix: 'rl:auth:register', window: 300, limit: 5 }),
   csrfMiddleware,
-  zValidator('form', RegisterSchema),
+  zValidator('form', RegisterSchema, (result, c) => {
+    if (!result.success) {
+      const msg = result.error.issues[0].message;
+      return c.redirect(`/auth/register?error=${encodeURIComponent(msg)}`);
+    }
+  }),
   async (c) => {
     const data = c.req.valid('form');
 
@@ -246,8 +255,10 @@ auth.post('/refresh', authMiddleware, async (c) => {
 auth.get('/forgot-password', async (c) => {
   const csrf = await generateCsrfToken(c);
   return c.html(`<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head><meta charset="utf-8"><title>Forgot Password — EQBIS</title>
+<link rel="icon" type="image/png" href="/images/logo.png">
+<link rel="apple-touch-icon" href="/images/logo.png">
 <link rel="stylesheet" href="/css/app.css"></head>
 <body class="min-h-screen flex items-center justify-center bg-[var(--bg)]">
   <div class="w-full max-w-sm space-y-6 p-8">
@@ -297,8 +308,10 @@ auth.get('/reset-password', async (c) => {
 
   const csrf = await generateCsrfToken(c);
   return c.html(`<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head><meta charset="utf-8"><title>Reset Password — EQBIS</title>
+<link rel="icon" type="image/png" href="/images/logo.png">
+<link rel="apple-touch-icon" href="/images/logo.png">
 <link rel="stylesheet" href="/css/app.css"></head>
 <body class="min-h-screen flex items-center justify-center bg-[var(--bg)]">
   <div class="w-full max-w-sm space-y-6 p-8">
@@ -347,8 +360,10 @@ auth.get('/invite', async (c) => {
   const csrf = await generateCsrfToken(c);
 
   return c.html(`<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head><meta charset="utf-8"><title>Accept Invite — EQBIS</title>
+<link rel="icon" type="image/png" href="/images/logo.png">
+<link rel="apple-touch-icon" href="/images/logo.png">
 <link rel="stylesheet" href="/css/app.css"></head>
 <body class="min-h-screen flex items-center justify-center bg-[var(--bg)]">
   <div class="w-full max-w-sm space-y-6 p-8">
