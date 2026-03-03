@@ -12,6 +12,6 @@
     "db:migrate:prod": "wrangler d1 migrations apply eqbis-db         --remote --env production --config apps/web/wrangler.toml"
   },
   "devDependencies": {
-    "wrangler": "^4"
+    "wrangler": "^3.102.0"
   }
 }
