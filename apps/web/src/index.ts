@@ -134,6 +134,12 @@ app.notFound((c) => {
   return c.html(`<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head><meta charset="UTF-8"><title>404 — EQBIS</title>
+<link rel="icon" type="image/png" href="/images/logo.png">
+<link rel="apple-touch-icon" href="/images/logo.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="404 — EQBIS">
+<meta property="og:image" content="/images/logo.png">
+<meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="/css/app.css">
 </head>
 <body class="bg-[var(--bg)] text-[var(--text)] min-h-screen flex items-center justify-center">
@@ -159,6 +165,12 @@ app.onError((err, c) => {
   return c.html(`<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head><meta charset="UTF-8"><title>Error — EQBIS</title>
+<link rel="icon" type="image/png" href="/images/logo.png">
+<link rel="apple-touch-icon" href="/images/logo.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Error — EQBIS">
+<meta property="og:image" content="/images/logo.png">
+<meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="/css/app.css">
 </head>
 <body class="bg-[var(--bg)] text-[var(--text)] min-h-screen flex items-center justify-center">

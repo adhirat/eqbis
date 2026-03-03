@@ -257,6 +257,12 @@ auth.get('/forgot-password', async (c) => {
   return c.html(`<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head><meta charset="utf-8"><title>Forgot Password — EQBIS</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Forgot Password — EQBIS">
+<meta property="og:image" content="/images/logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Forgot Password — EQBIS">
+<meta name="twitter:image" content="/images/logo.png">
 <link rel="icon" type="image/png" href="/images/logo.png">
 <link rel="apple-touch-icon" href="/images/logo.png">
 <link rel="stylesheet" href="/css/app.css"></head>
@@ -310,6 +316,12 @@ auth.get('/reset-password', async (c) => {
   return c.html(`<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head><meta charset="utf-8"><title>Reset Password — EQBIS</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Reset Password — EQBIS">
+<meta property="og:image" content="/images/logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Reset Password — EQBIS">
+<meta name="twitter:image" content="/images/logo.png">
 <link rel="icon" type="image/png" href="/images/logo.png">
 <link rel="apple-touch-icon" href="/images/logo.png">
 <link rel="stylesheet" href="/css/app.css"></head>
@@ -362,6 +374,12 @@ auth.get('/invite', async (c) => {
   return c.html(`<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head><meta charset="utf-8"><title>Accept Invite — EQBIS</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Accept Invite — EQBIS">
+<meta property="og:image" content="/images/logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Accept Invite — EQBIS">
+<meta name="twitter:image" content="/images/logo.png">
 <link rel="icon" type="image/png" href="/images/logo.png">
 <link rel="apple-touch-icon" href="/images/logo.png">
 <link rel="stylesheet" href="/css/app.css"></head>

@@ -114,7 +114,13 @@ const HomePageInner: FC<{ contactSuccess?: boolean }> = ({ contactSuccess }) => 
       <meta name="description" content="HR, Finance, CRM, Projects, and Support — all unified in one powerful business platform." />
       <link rel="icon" type="image/png" href="/images/logo.png" />
       <link rel="apple-touch-icon" href="/images/logo.png" />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="EQBIS — The Business Platform for Modern Teams" />
+      <meta property="og:description" content="HR, Finance, CRM, Projects, and Support — all unified in one powerful business platform." />
       <meta property="og:image" content="/images/logo.png" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="EQBIS — The Business Platform for Modern Teams" />
+      <meta name="twitter:description" content="HR, Finance, CRM, Projects, and Support — all unified in one powerful business platform." />
       <meta name="twitter:image" content="/images/logo.png" />
       {/* Sync theme before paint */}
       <script dangerouslySetInnerHTML={{ __html: `(function(){var t=localStorage.getItem('eqbis-theme');if(t)document.documentElement.setAttribute('data-theme',t)})();` }} />

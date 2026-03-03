@@ -25,6 +25,12 @@ export async function LoginPage({ csrfToken, error }: LoginPageProps): Promise<s
   <title>Sign In — EQBIS</title>
   <link rel="icon" type="image/png" href="/images/logo.png">
   <link rel="apple-touch-icon" href="/images/logo.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sign In — EQBIS">
+  <meta property="og:image" content="/images/logo.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Sign In — EQBIS">
+  <meta name="twitter:image" content="/images/logo.png">
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body class="min-h-screen flex items-center justify-center bg-[var(--bg)]">
