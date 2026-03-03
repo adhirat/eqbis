@@ -67,7 +67,7 @@ portal.use('*', async (c, next) => {
   const innerHtml = bodyMatch[1];
 
   const currentPath = new URL(c.req.url).pathname;
-  const wrapped = renderPortalPage(user, currentPath, title, innerHtml);
+  const wrapped = renderPortalPage(user, currentPath, title, innerHtml, c.env.APP_URL);
 
   c.res = new Response(wrapped, {
     status:  200,

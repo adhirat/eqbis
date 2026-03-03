@@ -125,6 +125,7 @@ interface LayoutProps {
   user:        JWTPayload;
   currentPath: string;
   children:    unknown;
+  baseUrl?:    string;
 }
 
 // ── SidebarItem ───────────────────────────────────────────────────────────────
@@ -217,7 +218,7 @@ const SidebarItem: FC<{ item: NavItem; user: JWTPayload; currentPath: string }> 
 
 // ── Layout ────────────────────────────────────────────────────────────────────
 
-export const Layout: FC<LayoutProps> = ({ title, user, currentPath, children }) => {
+export function Layout({ title, user, currentPath, children, baseUrl = '' }: LayoutProps) {
   const initials = user.name.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
   const userId   = user.sub.slice(0, 10).toUpperCase();
 
@@ -317,13 +318,14 @@ export const Layout: FC<LayoutProps> = ({ title, user, currentPath, children }) 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title} — EQBIS</title>
         <link rel="icon" type="image/png" href="/images/logo.png" />
+        <link rel="shortcut icon" href="/images/logo.png" />
         <link rel="apple-touch-icon" href="/images/logo.png" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content={title} />
-        <meta property="og:image" content="/images/logo.png" />
+        <meta property="og:image" content={`${baseUrl}/images/logo.png`} />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={title} />
-        <meta name="twitter:image" content="/images/logo.png" />
+        <meta name="twitter:image" content={`${baseUrl}/images/logo.png`} />
         <script dangerouslySetInnerHTML={{ __html: `(function(){var t=localStorage.getItem('eqbis-theme');if(t&&t!=='auto')document.documentElement.setAttribute('data-theme',t);var a=localStorage.getItem('eqbis-accent');if(a)document.documentElement.style.setProperty('--accent',a);})();` }} />
         <link rel="stylesheet" href="/css/app.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />

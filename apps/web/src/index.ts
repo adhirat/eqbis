@@ -47,13 +47,13 @@ app.get('/css/*',    async (c) => c.env.ASSETS.fetch(c.req.raw));
 app.get('/js/*',     async (c) => c.env.ASSETS.fetch(c.req.raw));
 app.get('/images/*', async (c) => c.env.ASSETS.fetch(c.req.raw));
 app.get('/fonts/*',  async (c) => c.env.ASSETS.fetch(c.req.raw));
-app.get('/favicon.ico', async (c) => c.env.ASSETS.fetch(c.req.raw));
+app.get('/favicon.ico', (c) => c.redirect('/images/logo.png'));
 
 // ── Marketing routes ───────────────────────────────────────────────────────────
 
 app.get('/', (c) => {
   const contactSuccess = c.req.query('contact') === 'success';
-  return c.html(renderHomePage(contactSuccess));
+  return c.html(renderHomePage(contactSuccess, c.env.APP_URL));
 });
 
 app.get('/about',   (c) => c.redirect('/#features'));
@@ -138,7 +138,7 @@ app.notFound((c) => {
 <link rel="apple-touch-icon" href="/images/logo.png">
 <meta property="og:type" content="website">
 <meta property="og:title" content="404 — EQBIS">
-<meta property="og:image" content="/images/logo.png">
+<meta property="og:image" content="${c.env.APP_URL}/images/logo.png">
 <meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="/css/app.css">
 </head>
@@ -169,7 +169,7 @@ app.onError((err, c) => {
 <link rel="apple-touch-icon" href="/images/logo.png">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Error — EQBIS">
-<meta property="og:image" content="/images/logo.png">
+<meta property="og:image" content="${c.env.APP_URL}/images/logo.png">
 <meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="/css/app.css">
 </head>

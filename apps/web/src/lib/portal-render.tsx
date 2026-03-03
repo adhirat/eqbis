@@ -18,11 +18,12 @@ export function renderPortalPage(
   currentPath: string,
   title:       string,
   innerHtml:   string,
+  baseUrl = '',
 ): string {
   return (
     '<!DOCTYPE html>' +
     renderToString(
-      <Layout title={title} user={user} currentPath={currentPath}>
+      <Layout title={title} user={user} currentPath={currentPath} baseUrl={baseUrl}>
         <div class="p-6" dangerouslySetInnerHTML={{ __html: innerHtml }} />
       </Layout>,
     )

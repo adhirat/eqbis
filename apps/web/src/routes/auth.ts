@@ -44,7 +44,7 @@ const COOKIE_OPTS = {
 auth.get('/login', async (c) => {
   const csrf = await generateCsrfToken(c);
   const { LoginPage } = await import('../views/auth/login.js');
-  return c.html(await LoginPage({ csrfToken: csrf, error: c.req.query('error') }));
+  return c.html(await LoginPage({ csrfToken: csrf, error: c.req.query('error'), baseUrl: c.env.APP_URL }));
 });
 
 auth.post(
@@ -127,7 +127,7 @@ auth.post('/logout', authMiddleware, async (c) => {
 auth.get('/register', async (c) => {
   const csrf = await generateCsrfToken(c);
   const { SignupPage } = await import('../views/auth/signup.js');
-  return c.html(await SignupPage({ csrfToken: csrf, error: c.req.query('error') }));
+  return c.html(await SignupPage({ csrfToken: csrf, error: c.req.query('error'), baseUrl: c.env.APP_URL }));
 });
 
 auth.post(
@@ -259,10 +259,10 @@ auth.get('/forgot-password', async (c) => {
 <head><meta charset="utf-8"><title>Forgot Password — EQBIS</title>
 <meta property="og:type" content="website">
 <meta property="og:title" content="Forgot Password — EQBIS">
-<meta property="og:image" content="/images/logo.png">
+<meta property="og:image" content="${c.env.APP_URL}/images/logo.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Forgot Password — EQBIS">
-<meta name="twitter:image" content="/images/logo.png">
+<meta name="twitter:image" content="${c.env.APP_URL}/images/logo.png">
 <link rel="icon" type="image/png" href="/images/logo.png">
 <link rel="apple-touch-icon" href="/images/logo.png">
 <link rel="stylesheet" href="/css/app.css"></head>
@@ -318,10 +318,10 @@ auth.get('/reset-password', async (c) => {
 <head><meta charset="utf-8"><title>Reset Password — EQBIS</title>
 <meta property="og:type" content="website">
 <meta property="og:title" content="Reset Password — EQBIS">
-<meta property="og:image" content="/images/logo.png">
+<meta property="og:image" content="${c.env.APP_URL}/images/logo.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Reset Password — EQBIS">
-<meta name="twitter:image" content="/images/logo.png">
+<meta name="twitter:image" content="${c.env.APP_URL}/images/logo.png">
 <link rel="icon" type="image/png" href="/images/logo.png">
 <link rel="apple-touch-icon" href="/images/logo.png">
 <link rel="stylesheet" href="/css/app.css"></head>
@@ -376,10 +376,10 @@ auth.get('/invite', async (c) => {
 <head><meta charset="utf-8"><title>Accept Invite — EQBIS</title>
 <meta property="og:type" content="website">
 <meta property="og:title" content="Accept Invite — EQBIS">
-<meta property="og:image" content="/images/logo.png">
+<meta property="og:image" content="${c.env.APP_URL}/images/logo.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Accept Invite — EQBIS">
-<meta name="twitter:image" content="/images/logo.png">
+<meta name="twitter:image" content="${c.env.APP_URL}/images/logo.png">
 <link rel="icon" type="image/png" href="/images/logo.png">
 <link rel="apple-touch-icon" href="/images/logo.png">
 <link rel="stylesheet" href="/css/app.css"></head>
