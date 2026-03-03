@@ -98,7 +98,7 @@ function moduleIcon(module: string): string {
     hr:       'groups',
     finance:  'receipt_long',
     crm:      'handshake',
-    projects: 'folder_kanban',
+    projects: 'view_kanban',
     support:  'support_agent',
     comms:    'mark_email_unread',
     users:    'manage_accounts',

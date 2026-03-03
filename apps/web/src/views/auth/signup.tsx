@@ -16,7 +16,7 @@ export async function SignupPage({ csrfToken, error }: SignupPageProps): Promise
   const errorMsg = error ? (ERROR_MESSAGES[error] ?? 'An error occurred. Please try again.') : null;
 
   return `<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -43,6 +43,7 @@ export async function SignupPage({ csrfToken, error }: SignupPageProps): Promise
       <div>
         <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Full Name</label>
         <input name="fullName" type="text" required autocomplete="name"
+          minlength="2"
           placeholder="Jane Smith"
           class="w-full h-10 px-3 rounded border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] text-sm focus:outline-none focus:border-[var(--accent)]">
       </div>
@@ -57,6 +58,7 @@ export async function SignupPage({ csrfToken, error }: SignupPageProps): Promise
       <div>
         <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Organisation Name</label>
         <input name="orgName" type="text" required
+          minlength="2"
           placeholder="Acme Corp"
           class="w-full h-10 px-3 rounded border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] text-sm focus:outline-none focus:border-[var(--accent)]">
       </div>
@@ -67,6 +69,8 @@ export async function SignupPage({ csrfToken, error }: SignupPageProps): Promise
           <input name="orgSlug" type="text" required
             placeholder="acme"
             pattern="[a-z0-9-]+"
+            minlength="3"
+            title="Lowercase letters, numbers, and hyphens only (min 3 chars)"
             class="flex-1 h-10 px-3 text-[var(--text)] text-sm focus:outline-none bg-transparent">
           <span class="px-3 text-xs text-[var(--text-muted)] bg-[var(--bg)] border-l border-[var(--border)] h-full flex items-center">
             .eqbis.com
@@ -78,6 +82,9 @@ export async function SignupPage({ csrfToken, error }: SignupPageProps): Promise
       <div>
         <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Password</label>
         <input name="password" type="password" required autocomplete="new-password"
+          minlength="8"
+          pattern="(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+          title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
           placeholder="Minimum 8 characters"
           class="w-full h-10 px-3 rounded border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] text-sm focus:outline-none focus:border-[var(--accent)]">
       </div>

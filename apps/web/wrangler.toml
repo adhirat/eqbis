@@ -1,4 +1,4 @@
-name               = "eqbis-web"
+name               = "eqbis"
 main               = "src/index.ts"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
@@ -33,7 +33,7 @@ CF_ZONE_ID  = ""
 
 # ── STAGING ──────────────────────────────────────────────────────────────────
 [env.staging]
-name = "eqbis-web-staging"
+name = "eqbis-staging"
 
 [[env.staging.d1_databases]]
 binding        = "DB"
@@ -57,13 +57,17 @@ CF_ZONE_ID  = "FILL_AFTER_ZONE_LOOKUP"
 
 # Worker is reachable at the workers.dev subdomain by default.
 # Uncomment and fill in to add a custom route:
-# [[env.staging.routes]]
-# pattern = "staging.eqbis.com/*"
-# zone_name = "eqbis.com"
+[[env.staging.routes]]
+pattern = "staging.eqbis.com/*"
+custom_domain = true
+
+[[env.staging.routes]]
+pattern = "staging.eqbis.pages.dev/*"
+custom_domain = true
 
 # ── PRODUCTION ────────────────────────────────────────────────────────────────
 [env.production]
-name = "eqbis-web"
+name = "eqbis"
 
 [[env.production.d1_databases]]
 binding        = "DB"
@@ -86,13 +90,17 @@ R2_PUBLIC   = "https://cdn.eqbis.com"
 CF_ZONE_ID  = "FILL_AFTER_ZONE_LOOKUP"
 
 # Uncomment and fill in after your domain is added to Cloudflare:
-# [[env.production.routes]]
-# pattern = "eqbis.com/*"
-# zone_name = "eqbis.com"
+[[env.production.routes]]
+pattern = "eqbis.com/*"
+custom_domain = true
 
-# [[env.production.routes]]
-# pattern = "*.eqbis.com/*"
-# zone_name = "eqbis.com"
+[[env.production.routes]]
+pattern = "*.eqbis.com/*"
+custom_domain = true
+
+[[env.production.routes]]
+pattern = "eqbis.pages.dev/*"
+custom_domain = true
 
 # Secrets — set via `wrangler secret put --env {staging|production}`, NEVER commit here:
 #   JWT_SECRET        — HS256 signing secret (min 32 chars, cryptographically random)

@@ -238,9 +238,9 @@ export const Layout: FC<LayoutProps> = ({ title, user, currentPath, children }) 
   return (
     <html
       lang="en"
-      data-theme="dark"
+      data-theme="light"
       x-data={`{
-        theme:        localStorage.getItem('eqbis-theme')  || 'dark',
+        theme:        localStorage.getItem('eqbis-theme')  || 'light',
         collapsed:    localStorage.getItem('eqbis-sidebar') === 'true',
         sidebarWidth: Number(localStorage.getItem('eqbis-sidebar-w')) || (localStorage.getItem('eqbis-sidebar') === 'true' ? 48 : 208),
         isResizing:   false,

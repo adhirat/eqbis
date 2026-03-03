@@ -18,7 +18,7 @@ export async function LoginPage({ csrfToken, error }: LoginPageProps): Promise<s
   const errorMsg = error ? (ERROR_MESSAGES[error] ?? 'An error occurred. Please try again.') : null;
 
   return `<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -54,6 +54,7 @@ export async function LoginPage({ csrfToken, error }: LoginPageProps): Promise<s
         <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Password</label>
         <input
           name="password" type="password" required autocomplete="current-password"
+          minlength="8"
           placeholder="••••••••"
           class="w-full h-10 px-3 rounded border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] text-sm focus:outline-none focus:border-[var(--accent)]">
       </div>

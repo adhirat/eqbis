@@ -31,7 +31,7 @@ const FEATURES = [
     bg:    'rgba(245,158,11,0.08)',
   },
   {
-    icon:  'folder_kanban',
+    icon:  'view_kanban',
     title: 'Projects & Milestones',
     desc:  'Plan, track, and deliver projects on time. Milestones, comments, and progress — all visible.',
     color: '#8b5cf6',   // violet
