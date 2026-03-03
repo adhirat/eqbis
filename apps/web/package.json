@@ -24,7 +24,7 @@
     "@cloudflare/vitest-pool-workers": "^0.5",
     "typescript":                      "^5",
     "vitest":                          "^2",
-    "wrangler":                        "^4",
+    "wrangler":                        "^3.102.0",
     "tailwindcss":                     "^4"
   }
 }

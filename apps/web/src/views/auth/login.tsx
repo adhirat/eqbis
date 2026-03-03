@@ -6,6 +6,7 @@ import { csrfField } from '../../middleware/csrf.js';
 interface LoginPageProps {
   csrfToken: string;
   error?:    string;
+  baseUrl?:  string;
 }
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -14,8 +15,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   no_org:   'Your account is not linked to any organisation.',
 };
 
-export async function LoginPage({ csrfToken, error }: LoginPageProps): Promise<string> {
-  const errorMsg = error ? (ERROR_MESSAGES[error] ?? 'An error occurred. Please try again.') : null;
+export async function LoginPage({ csrfToken, error, baseUrl = '' }: LoginPageProps): Promise<string> {
+  const errorMsg = error ? (ERROR_MESSAGES[error] ?? error) : null;
 
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -23,6 +24,15 @@ export async function LoginPage({ csrfToken, error }: LoginPageProps): Promise<s
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sign In — EQBIS</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link rel="shortcut icon" href="/images/logo.png">
+  <link rel="apple-touch-icon" href="/images/logo.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sign In — EQBIS">
+  <meta property="og:image" content="${baseUrl}/images/logo.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Sign In — EQBIS">
+  <meta name="twitter:image" content="${baseUrl}/images/logo.png">
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body class="min-h-screen flex items-center justify-center bg-[var(--bg)]">

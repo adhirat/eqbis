@@ -95,12 +95,12 @@ const Check: FC = () => (
 );
 
 /* ── Render function (called from route handler) ─────────────────────────── */
-export function renderHomePage(contactSuccess = false): string {
-  return '<!DOCTYPE html>' + renderToString(<HomePageInner contactSuccess={contactSuccess} />);
+export function renderHomePage(contactSuccess = false, baseUrl = ''): string {
+  return '<!DOCTYPE html>' + renderToString(<HomePageInner contactSuccess={contactSuccess} baseUrl={baseUrl} />);
 }
 
 /* ── Main page component ─────────────────────────────────────────────────── */
-const HomePageInner: FC<{ contactSuccess?: boolean }> = ({ contactSuccess }) => (
+const HomePageInner: FC<{ contactSuccess?: boolean, baseUrl?: string }> = ({ contactSuccess, baseUrl = '' }) => (
   <html
     lang="en"
     data-theme="dark"
@@ -112,6 +112,17 @@ const HomePageInner: FC<{ contactSuccess?: boolean }> = ({ contactSuccess }) => 
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>EQBIS — The Business Platform for Modern Teams</title>
       <meta name="description" content="HR, Finance, CRM, Projects, and Support — all unified in one powerful business platform." />
+      <link rel="icon" type="image/png" href="/images/logo.png" />
+      <link rel="shortcut icon" href="/images/logo.png" />
+      <link rel="apple-touch-icon" href="/images/logo.png" />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="EQBIS — The Business Platform for Modern Teams" />
+      <meta property="og:description" content="HR, Finance, CRM, Projects, and Support — all unified in one powerful business platform." />
+      <meta property="og:image" content={`${baseUrl}/images/logo.png`} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="EQBIS — The Business Platform for Modern Teams" />
+      <meta name="twitter:description" content="HR, Finance, CRM, Projects, and Support — all unified in one powerful business platform." />
+      <meta name="twitter:image" content={`${baseUrl}/images/logo.png`} />
       {/* Sync theme before paint */}
       <script dangerouslySetInnerHTML={{ __html: `(function(){var t=localStorage.getItem('eqbis-theme');if(t)document.documentElement.setAttribute('data-theme',t)})();` }} />
       <link rel="stylesheet" href="/css/app.css" />
