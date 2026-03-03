@@ -38,7 +38,7 @@ name = "eqbis-web-staging"
 [[env.staging.d1_databases]]
 binding        = "DB"
 database_name  = "eqbis-db-staging"
-database_id    = "FILL_AFTER_d1_create"
+database_id    = "73311ca9-45bb-44fb-9eb5-8ea6074df4b6"
 migrations_dir = "src/db/migrations"
 
 [[env.staging.r2_buckets]]
@@ -47,7 +47,7 @@ bucket_name = "eqbis-storage-staging"
 
 [[env.staging.kv_namespaces]]
 binding = "KV"
-id      = "FILL_AFTER_kv_create"
+id      = "ad9bc0b2df6e405d9b46828840bdea8d"
 
 [env.staging.vars]
 ENVIRONMENT = "staging"
@@ -68,7 +68,7 @@ name = "eqbis-web"
 [[env.production.d1_databases]]
 binding        = "DB"
 database_name  = "eqbis-db"
-database_id    = "FILL_AFTER_d1_create"
+database_id    = "72a00f59-b131-4d50-b541-e6cfc3d2e9b1"
 migrations_dir = "src/db/migrations"
 
 [[env.production.r2_buckets]]
@@ -77,7 +77,7 @@ bucket_name = "eqbis-storage"
 
 [[env.production.kv_namespaces]]
 binding = "KV"
-id      = "FILL_AFTER_kv_create"
+id      = "4413069517be46298edc92e897d8e875"
 
 [env.production.vars]
 ENVIRONMENT = "production"
