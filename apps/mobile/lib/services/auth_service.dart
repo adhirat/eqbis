@@ -10,7 +10,7 @@ class AuthService {
   /// Returns the logged-in user on success.
   Future<UserModel> login(String email, String password) async {
     final data = await _api.post('/auth/login', body: {
-      'email':    email,
+      'email': email,
       'password': password,
     });
 
@@ -31,11 +31,11 @@ class AuthService {
     required String orgSlug,
   }) async {
     final data = await _api.post('/auth/register', body: {
-      'email':    email,
+      'email': email,
       'password': password,
       'fullName': fullName,
-      'orgName':  orgName,
-      'orgSlug':  orgSlug,
+      'orgName': orgName,
+      'orgSlug': orgSlug,
     });
 
     final token = data['token'] as String?;
@@ -44,6 +44,11 @@ class AuthService {
     await _api.saveToken(token);
     // Fetch full profile (roles, permissions, orgId, etc.)
     return getMe();
+  }
+
+  /// Requests a password reset link to be sent via email.
+  Future<void> forgotPassword(String email) async {
+    await _api.post('/auth/forgot-password', body: {'email': email});
   }
 
   /// Logout — clears stored token.

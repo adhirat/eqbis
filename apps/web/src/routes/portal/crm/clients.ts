@@ -154,11 +154,11 @@ clients.post(
     const orgId = user.orgId;
     const db    = c.env.DB;
 
-    const fd = await c.req.formData().catch(() => null);
-    let name: string, email: string | undefined, phone: string | undefined,
+    let name = '', email: string | undefined, phone: string | undefined,
         company: string | undefined, address: string | undefined,
-        notes: string | undefined, status: string;
+        notes: string | undefined, status = 'active';
 
+    const fd = await c.req.formData().catch(() => null);
     if (fd) {
       name    = fd.get('name')    as string;
       email   = fd.get('email')   as string || undefined;
@@ -169,12 +169,18 @@ clients.post(
       status  = fd.get('status')  as string || 'active';
     } else {
       const body = await c.req.json();
-      ({ name, email, phone, company, address, notes, status = 'active' } = body);
+      name    = body.name;
+      email   = body.email;
+      phone   = body.phone;
+      company = body.company;
+      address = body.address;
+      notes   = body.notes;
+      status  = body.status || 'active';
     }
 
     const id = ulid();
     await createClient(db, { id, orgId, name, email, phone, company, address, notes, status });
-    await logActivity(db, orgId, user.sub, 'create', 'crm', `Added client: ${name}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'create', module: 'crm', details: `Added client: ${name}` });
 
     if (isApi(c)) return c.json({ success: true, id });
     return c.redirect('/portal/crm/clients');
@@ -286,7 +292,7 @@ clients.post(
     const status = fd.get('status') as string;
 
     await updateClient(db, id, orgId, { status });
-    await logActivity(db, orgId, user.sub, 'update', 'crm', `Updated client status: ${status}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'update', module: 'crm', details: `Updated client status: ${status}` });
 
     if (isApi(c)) return c.json({ success: true });
     return c.redirect(`/portal/crm/clients/${id}`);

@@ -219,7 +219,7 @@ const SidebarItem: FC<{ item: NavItem; user: JWTPayload; currentPath: string }> 
 
 export const Layout: FC<LayoutProps> = ({ title, user, currentPath, children }) => {
   const initials = user.name.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
-  const userId   = (user.sub ?? user.userId ?? '').slice(0, 10).toUpperCase();
+  const userId   = user.sub.slice(0, 10).toUpperCase();
 
   // Compute which sections contain the currently active nav item (server-side, passed to Alpine)
   const activeSectionKeys: string[] = [];
@@ -769,7 +769,7 @@ export const Layout: FC<LayoutProps> = ({ title, user, currentPath, children }) 
               <span class="material-symbols-outlined" style="font-size:14px;">open_in_new</span>
               My Account
             </a>
-            <form method="POST" action="/auth/logout">
+            <form method="post" action="/auth/logout">
               <button
                 type="submit"
                 class="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-red-500/10 text-[var(--text-muted)] hover:text-red-400 transition-colors text-xs"

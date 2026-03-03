@@ -11,25 +11,33 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _form     = GlobalKey<FormState>();
-  final _email    = TextEditingController();
+  final _form = GlobalKey<FormState>();
+  final _email = TextEditingController();
   final _password = TextEditingController();
-  bool _loading   = false;
+  bool _loading = false;
   String? _error;
-  bool _obscure   = true;
+  bool _obscure = true;
 
   Future<void> _submit() async {
     if (!_form.currentState!.validate()) return;
 
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
 
     try {
       await authService.login(_email.text.trim(), _password.text);
       if (mounted) context.go('/portal/dashboard');
     } catch (e) {
-      setState(() { _error = e.toString().replaceFirst('Exception: ', ''); });
+      setState(() {
+        _error = e.toString().replaceFirst('Exception: ', '');
+      });
     } finally {
-      if (mounted) setState(() { _loading = false; });
+      if (mounted)
+        setState(() {
+          _loading = false;
+        });
     }
   }
 
@@ -51,18 +59,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     Column(
                       children: [
                         Container(
-                          width: 48, height: 48,
+                          width: 48,
+                          height: 48,
                           decoration: BoxDecoration(
                             color: EqbisTheme.accent.withAlpha(20),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.business_rounded, color: EqbisTheme.accent, size: 28),
+                          child: const Icon(Icons.business_rounded,
+                              color: EqbisTheme.accent, size: 28),
                         ),
                         const SizedBox(height: 16),
-                        Text('Welcome back', style: Theme.of(context).textTheme.headlineMedium),
+                        Text('Welcome back',
+                            style: Theme.of(context).textTheme.headlineMedium),
                         const SizedBox(height: 4),
                         Text('Sign in to your Eqbis account',
-                          style: Theme.of(context).textTheme.bodySmall),
+                            style: Theme.of(context).textTheme.bodySmall),
                       ],
                     ),
 
@@ -74,9 +85,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: BoxDecoration(
                           color: EqbisTheme.danger.withAlpha(20),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: EqbisTheme.danger.withAlpha(60)),
+                          border: Border.all(
+                              color: EqbisTheme.danger.withAlpha(60)),
                         ),
-                        child: Text(_error!, style: const TextStyle(color: EqbisTheme.danger, fontSize: 13)),
+                        child: Text(_error!,
+                            style: const TextStyle(
+                                color: EqbisTheme.danger, fontSize: 13)),
                       ),
                       const SizedBox(height: 16),
                     ],
@@ -101,16 +115,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: InputDecoration(
                         labelText: 'Password',
                         suffixIcon: IconButton(
-                          icon: Icon(_obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                            size: 20, color: EqbisTheme.textMuted),
-                          onPressed: () => setState(() { _obscure = !_obscure; }),
+                          icon: Icon(
+                              _obscure
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              size: 20,
+                              color: EqbisTheme.textMuted),
+                          onPressed: () => setState(() {
+                            _obscure = !_obscure;
+                          }),
                         ),
                       ),
                       obscureText: _obscure,
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _submit(),
                       validator: (v) {
-                        if (v == null || v.isEmpty) return 'Password is required';
+                        if (v == null || v.isEmpty)
+                          return 'Password is required';
                         return null;
                       },
                     ),
@@ -120,8 +141,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () {}, // TODO: forgot password
-                        child: const Text('Forgot password?', style: TextStyle(fontSize: 13)),
+                        onPressed: () => context.push('/auth/forgot-password'),
+                        child: const Text('Forgot password?',
+                            style: TextStyle(fontSize: 13)),
                       ),
                     ),
 
@@ -130,9 +152,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ElevatedButton(
                       onPressed: _loading ? null : _submit,
                       child: _loading
-                        ? const SizedBox(width: 20, height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : const Text('Sign In'),
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white))
+                          : const Text('Sign In'),
                     ),
 
                     const SizedBox(height: 24),
@@ -141,10 +166,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Don't have an account?",
-                          style: Theme.of(context).textTheme.bodySmall),
+                            style: Theme.of(context).textTheme.bodySmall),
                         TextButton(
                           onPressed: () => context.go('/auth/signup'),
-                          child: const Text('Get started', style: TextStyle(fontSize: 13)),
+                          child: const Text('Get started',
+                              style: TextStyle(fontSize: 13)),
                         ),
                       ],
                     ),

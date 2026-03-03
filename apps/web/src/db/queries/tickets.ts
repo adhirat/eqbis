@@ -120,6 +120,9 @@ export async function createTicketLog(
 export interface MessageRow {
   id: string; name: string; email: string; message: string; status: string;
   source: string; created_at: number;
+  responded_by?: string | null;
+  response?:     string | null;
+  responded_at?: number | null;
 }
 
 export async function getMessages(

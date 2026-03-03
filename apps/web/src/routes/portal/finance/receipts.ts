@@ -210,7 +210,7 @@ receipts.post(
     const { filename, contentType } = body as { filename: string; contentType: string };
     const user  = c.get('user');
     const key   = `receipts/${user.orgId}/${ulid()}-${filename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-    const url   = await presignPut(c.env.R2, key, contentType, 900);
+    const url   = await presignPut({ bucket: c.env.R2, key, contentType, expiresIn: 900 });
     return c.json({ url, key });
   },
 );
@@ -250,8 +250,8 @@ receipts.post(
       const id = ulid();
       await createReceipt(db, { id, orgId, userId: user.sub, title, amount, type, category, period, notes, fileKey });
 
-      await logActivity(db, orgId, user.sub, 'create', 'finance',
-        `Created ${type} record: ${title} (${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)})`);
+      await logActivity(db, { orgId, userId: user.sub, action: 'create', module: 'finance',
+        details: `Created ${type} record: ${title} (${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)})` });
 
       if (isApi(c)) return c.json({ success: true, id });
       return c.redirect('/portal/finance/receipts');
@@ -266,7 +266,7 @@ receipts.post(
     const id = ulid();
     await createReceipt(db, { id, orgId, userId: user.sub, title, amount, type, category, period, notes });
 
-    await logActivity(db, orgId, user.sub, 'create', 'finance', `Created ${type} record: ${title}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'create', module: 'finance', details: `Created ${type} record: ${title}` });
     return c.json({ success: true, id });
   },
 );

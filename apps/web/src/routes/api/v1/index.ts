@@ -15,7 +15,7 @@ import { PERMISSIONS } from '../../../lib/permissions.js';
 // DB queries
 import { getOrgUsers, getUserById, createUser, updateUser } from '../../../db/queries/users.js';
 import { getOrgRoles, getRolePermissions, createRole, setRolePermissions } from '../../../db/queries/roles.js';
-import { getOrgById, updateOrg, logActivity, getActivityLogs, getOrgSettings, setOrgSetting } from '../../../db/queries/orgs.js';
+import { getOrgById, updateOrg, logActivity, getActivityLogs, getOrgSettings, setOrgSetting, addMember } from '../../../db/queries/orgs.js';
 import { getEmployees, getEmployeeById, createEmployee, updateEmployee, getTimesheets, upsertTimesheet, updateTimesheetStatus, getLeaves, createLeave, updateLeaveStatus, getHrDocuments, getCareers, createCareer, getApplications, updateApplicationStatus } from '../../../db/queries/hr.js';
 import { getInvoices, getInvoiceById, getNextInvoiceNumber, createInvoice, updateInvoiceStatus, getInvoiceStats, getReceipts, createReceipt } from '../../../db/queries/finance.js';
 import { getClients, getClientById, createClient, updateClient, getProjects, getProjectById, createProject, updateProject, getMilestones, createMilestone, getComments, createComment } from '../../../db/queries/crm.js';
@@ -96,8 +96,7 @@ api.get(
   '/users/:id',
   requirePermission(PERMISSIONS.VIEW_USERS),
   async (c) => {
-    const { orgId } = c.get('user');
-    const u = await getUserById(c.env.DB, c.req.param('id'), orgId);
+    const u = await getUserById(c.env.DB, c.req.param('id'));
     if (!u) return c.json({ error: 'Not found' }, 404);
     return c.json({ user: u });
   },
@@ -118,9 +117,14 @@ api.post(
     const { email, fullName, password, roleId } = parsed.data;
     const hash = await hashPassword(password ?? Math.random().toString(36));
     const id   = ulid();
-    await createUser(db, { id, orgId, email, fullName, passwordHash: hash });
 
-    await logActivity(db, orgId, user.sub, 'create', 'users', `Created user: ${email}`);
+    // 1. Create global user record
+    await createUser(db, { id, email, full_name: fullName, password_hash: hash });
+
+    // 2. Link to current organisation
+    await addMember(db, { id: ulid(), orgId, userId: id, roleId });
+
+    await logActivity(db, { orgId, userId: user.sub, action: 'create', module: 'users', details: `Created user: ${email}` });
     return c.json({ success: true, id }, 201);
   },
 );
@@ -215,9 +219,15 @@ api.post(
     const customId  = `${prefix}-${seq}`;
 
     const id = ulid();
-    await createEmployee(db, { id, orgId, customId, ...parsed.data });
+    await createEmployee(db, {
+      ...parsed.data,
+      userId: parsed.data.userId ?? null,
+      id: ulid(),
+      orgId,
+      customId: `EMP-${Date.now().toString(36).toUpperCase()}`,
+    });
 
-    await logActivity(db, orgId, user.sub, 'create', 'hr', `Added employee: ${parsed.data.firstName} ${parsed.data.lastName}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'create', module: 'hr', details: `Added employee: ${parsed.data.firstName} ${parsed.data.lastName}` });
     return c.json({ success: true, id, customId }, 201);
   },
 );
@@ -235,7 +245,7 @@ api.get(
     const canManage = user.permissions.includes(PERMISSIONS.MANAGE_TIMESHEETS);
     const userId    = canManage ? c.req.query('userId') : user.sub;
 
-    return c.json({ timesheets: await getTimesheets(db, orgId, userId ?? undefined) });
+    return c.json({ timesheets: await getTimesheets(db, orgId, { userId: userId ?? undefined }) });
   },
 );
 
@@ -341,23 +351,36 @@ api.post(
     const parsed = CreateInvoiceSchema.safeParse(body);
     if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
 
-    const invoiceNumber = await getNextInvoiceNumber(db, orgId);
-    const subtotal      = parsed.data.items.reduce((s, i) => s + i.quantity * i.unitPrice, 0);
-    const taxRate       = parsed.data.taxRate ?? 0;
-    const taxAmount     = subtotal * taxRate / 100;
-    const total         = subtotal + taxAmount;
+    const { clientName, items, notes, clientId, clientEmail, dueDate, issueDate, taxRate } = parsed.data;
+    const subtotal = items.reduce((sum, i) => sum + (i.quantity * i.unitPrice), 0);
+    const tax      = subtotal * (taxRate ?? 0);
+    const total    = subtotal + tax;
 
     const id = ulid();
+    const invoiceNumber = await getNextInvoiceNumber(db, orgId);
+
     await createInvoice(db, {
-      id, orgId, invoiceNumber, createdBy: user.sub,
-      clientId: parsed.data.clientId, clientName: parsed.data.clientName,
-      clientEmail: parsed.data.clientEmail, issueDate: parsed.data.issueDate,
-      dueDate: parsed.data.dueDate, notes: parsed.data.notes,
-      subtotal, taxRate, taxAmount, total,
-      items: parsed.data.items.map(i => ({ ...i, total: i.quantity * i.unitPrice })),
+      id,
+      orgId,
+      clientId,
+      clientName,
+      clientEmail,
+      invoiceNumber,
+      dueDate,
+      subtotal,
+      taxRate: taxRate ?? 0,
+      taxAmount: tax,
+      total,
+      notes,
+      createdBy: user.sub,
+      items: items.map(i => ({
+        ...i,
+        id: ulid(),
+        total: i.quantity * i.unitPrice,
+      })),
     });
 
-    await logActivity(db, orgId, user.sub, 'create', 'finance', `Created invoice ${invoiceNumber}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'create', module: 'finance', details: `Created invoice ${invoiceNumber}` });
     return c.json({ success: true, id, invoiceNumber }, 201);
   },
 );
@@ -443,7 +466,7 @@ api.post(
 
     const id = ulid();
     await createClient(db, { id, orgId, ...parsed.data });
-    await logActivity(db, orgId, user.sub, 'create', 'crm', `Added client: ${parsed.data.name}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'create', module: 'crm', details: `Added client: ${parsed.data.name}` });
     return c.json({ success: true, id }, 201);
   },
 );
@@ -456,7 +479,7 @@ api.get(
   async (c) => {
     const { orgId } = c.get('user');
     const status = c.req.query('status');
-    return c.json({ projects: await getProjects(c.env.DB, orgId, status ?? undefined) });
+    return c.json({ projects: await getProjects(c.env.DB, orgId, { status: status ?? undefined }) });
   },
 );
 

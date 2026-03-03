@@ -11,6 +11,7 @@ export interface UserRow {
   photo_key:  string | null;
   is_active:  number;
   created_at: number;
+  password_hash?: string;
   // joined from org_members / user_roles
   role_id?:   string;
   role_name?: string;

@@ -49,6 +49,7 @@ export const CreateUserSchema = z.object({
   email:    z.string().email(),
   fullName: z.string().min(2).max(100),
   roleId:   z.string().min(1),
+  password: z.string().min(8).optional(),
 });
 
 export const UpdateUserSchema = z.object({
@@ -91,7 +92,7 @@ export const AddDomainSchema = z.object({
 // ── Employees ────────────────────────────────────────────────────────────────
 
 export const CreateEmployeeSchema = z.object({
-  userId:     z.string().optional(), // link to existing portal user
+  userId:     z.string().nullable().optional(), // link to existing portal user
   firstName:  z.string().min(1).max(50),
   lastName:   z.string().min(1).max(50),
   email:      z.string().email(),
@@ -144,7 +145,9 @@ export const CreateInvoiceSchema = z.object({
   clientId:   z.string().optional(),
   clientName: z.string().min(1).max(100),
   clientEmail:z.string().email().optional(),
+  issueDate:  z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   dueDate:    z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  taxRate:    z.number().nonnegative().optional(),
   notes:      z.string().max(1000).optional(),
   items:      z.array(InvoiceItemSchema).min(1),
 });
@@ -162,6 +165,7 @@ export const CreateClientSchema = z.object({
   company: z.string().max(100).optional(),
   address: z.string().max(300).optional(),
   notes:   z.string().max(1000).optional(),
+  status:  z.enum(['active', 'inactive', 'lead']).default('active'),
 });
 
 export const UpdateClientSchema = CreateClientSchema.partial();

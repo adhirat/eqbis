@@ -490,7 +490,7 @@ const HomePageInner: FC<{ contactSuccess?: boolean }> = ({ contactSuccess }) => 
           )}
 
           <form
-            method="POST"
+            method="post"
             action="/contact"
             style="display:flex;flex-direction:column;gap:16px;"
           >

@@ -47,7 +47,7 @@ projects.get(
     const status = c.req.query('status');
 
     const [all, clientList] = await Promise.all([
-      getProjects(db, orgId, status ?? undefined),
+      getProjects(db, orgId, { status: status ?? undefined }),
       getClients(db, orgId, 'active'),
     ]);
 
@@ -194,7 +194,7 @@ projects.post(
 
     const id = ulid();
     await createProject(db, { id, orgId, clientId, name, status, startDate, endDate, budget, description, createdBy: user.sub });
-    await logActivity(db, orgId, user.sub, 'create', 'projects', `Created project: ${name}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'create', module: 'projects', details: `Created project: ${name}` });
 
     if (isApi(c)) return c.json({ success: true, id });
     return c.redirect(`/portal/projects/${id}`);
@@ -346,7 +346,7 @@ projects.post(
     const status = fd.get('status') as string;
 
     await updateProject(db, id, orgId, { status });
-    await logActivity(db, orgId, user.sub, 'update', 'projects', `Updated project status: ${status}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'update', module: 'projects', details: `Updated project status: ${status}` });
 
     if (isApi(c)) return c.json({ success: true });
     return c.redirect(`/portal/projects/${id}`);

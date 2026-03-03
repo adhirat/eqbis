@@ -156,7 +156,7 @@ tickets.post(
       await createTicketLog(db, { id: logId, orgId, ticketId: id, userId: user.sub, content: description, type: 'reply' });
     }
 
-    await logActivity(db, orgId, user.sub, 'create', 'support', `Created ticket: ${subject}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'create', module: 'support', details: `Created ticket: ${subject}` });
 
     if (isApi(c)) return c.json({ success: true, id });
     return c.redirect(`/portal/support/tickets/${id}`);
@@ -345,7 +345,7 @@ tickets.post(
     await createTicketLog(db, { id: logId, orgId, ticketId: id, userId: user.sub,
       content: `Status changed to ${status}`, type: 'status_change' });
 
-    await logActivity(db, orgId, user.sub, 'update', 'support', `Updated ticket status: ${status}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'update', module: 'support', details: `Updated ticket status: ${status}` });
 
     if (isApi(c)) return c.json({ success: true });
     return c.redirect(`/portal/support/tickets/${id}`);

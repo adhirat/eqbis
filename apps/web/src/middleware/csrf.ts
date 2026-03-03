@@ -15,7 +15,7 @@ import type { Env } from '../types/env.js';
 const CSRF_TTL = 3600; // 1 hour
 
 /** Store a new CSRF token in KV and return it. */
-export async function generateCsrfToken(c: Context<{ Bindings: Env }>): Promise<string> {
+export async function generateCsrfToken(c: Context<any>): Promise<string> {
   const token = uuid();
   await c.env.KV.put(`csrf:${token}`, '1', { expirationTtl: CSRF_TTL });
   return token;

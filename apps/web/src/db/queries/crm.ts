@@ -28,11 +28,11 @@ export async function getClientById(
 
 export async function createClient(
   db: D1Database,
-  c: { id: string; orgId: string; name: string; email?: string; phone?: string; company?: string; address?: string; notes?: string },
+  c: { id: string; orgId: string; name: string; email?: string; phone?: string; company?: string; address?: string; notes?: string; status: string },
 ): Promise<void> {
   await db
-    .prepare('INSERT INTO clients (id, org_id, name, email, phone, company, address, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-    .bind(c.id, c.orgId, c.name, c.email ?? null, c.phone ?? null, c.company ?? null, c.address ?? null, c.notes ?? null)
+    .prepare('INSERT INTO clients (id, org_id, name, email, phone, company, address, notes, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(c.id, c.orgId, c.name, c.email ?? null, c.phone ?? null, c.company ?? null, c.address ?? null, c.notes ?? null, c.status)
     .run();
 }
 
@@ -59,11 +59,14 @@ export interface ProjectRow {
 }
 
 export async function getProjects(
-  db: D1Database, orgId: string, status?: string,
+  db: D1Database,
+  orgId: string,
+  opts: { clientId?: string; status?: string } = {},
 ): Promise<ProjectRow[]> {
   const conditions = ['p.org_id = ?'];
   const vals: unknown[] = [orgId];
-  if (status) { conditions.push('p.status = ?'); vals.push(status); }
+  if (opts.clientId) { conditions.push('p.client_id = ?'); vals.push(opts.clientId); }
+  if (opts.status)   { conditions.push('p.status = ?');    vals.push(opts.status); }
 
   return (await db
     .prepare(
@@ -129,11 +132,11 @@ export async function getMilestones(db: D1Database, projectId: string, orgId: st
 
 export async function createMilestone(
   db: D1Database,
-  m: { id: string; orgId: string; projectId: string; title: string; dueDate?: string; status: string },
+  m: { id: string; orgId: string; projectId: string; title: string; dueDate?: string; status?: string },
 ): Promise<void> {
   await db
     .prepare('INSERT INTO project_milestones (id, org_id, project_id, title, due_date, status) VALUES (?, ?, ?, ?, ?, ?)')
-    .bind(m.id, m.orgId, m.projectId, m.title, m.dueDate ?? null, m.status)
+    .bind(m.id, m.orgId, m.projectId, m.title, m.dueDate ?? null, m.status ?? 'pending')
     .run();
 }
 

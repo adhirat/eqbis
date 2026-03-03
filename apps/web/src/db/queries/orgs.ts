@@ -110,23 +110,35 @@ export async function getNextEmployeeId(
 
 /** Positional helper — generates a unique ID automatically. */
 export async function logActivity(
-  db:      D1Database,
-  orgId:   string,
-  userId:  string | null,
-  action:  string,
-  module:  string,
-  details?: unknown,
-  ip?:     string,
+  db: D1Database,
+  opts: {
+    orgId: string;
+    userId: string | null;
+    action: string;
+    module: string;
+    details?: unknown;
+    ip?: string;
+    entityId?: string;
+    id?: string;
+  },
 ): Promise<void> {
-  // Compact unique ID (timestamp + random, no import cycle needed)
-  const id = Date.now().toString(36).toUpperCase().padStart(10, '0') +
-    Math.random().toString(36).slice(2, 12).toUpperCase().padEnd(10, '0');
+  const id = opts.id || (Date.now().toString(36).toUpperCase().padStart(10, '0') +
+    Math.random().toString(36).slice(2, 12).toUpperCase().padEnd(10, '0'));
   await db
     .prepare(
-      `INSERT INTO activity_logs (id, org_id, user_id, action, module, details, ip)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO activity_logs (id, org_id, user_id, action, module, details, ip, entity_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     )
-    .bind(id, orgId, userId, action, module, details ? JSON.stringify(details) : null, ip ?? null)
+    .bind(
+      id,
+      opts.orgId,
+      opts.userId,
+      opts.action,
+      opts.module,
+      opts.details ? JSON.stringify(opts.details) : null,
+      opts.ip ?? null,
+      opts.entityId ?? null,
+    )
     .run();
 }
 

@@ -18,10 +18,11 @@ export type TenantVariables = {
 const APEX        = 'eqbis.com';
 const CACHE_TTL   = 300; // 5 minutes
 
-/** Resolve the org ID from the Host header. Returns null for unknown / apex domains. */
-export async function resolveTenantId(
-  c: Context<{ Bindings: Env }>,
-): Promise<string | null> {
+/**
+ * Given the current host, resolve the tenant D1 DB ID.
+ *   Returns ID (string) or null.
+ */
+export async function resolveTenantId(c: Context<any>): Promise<string | null> {
   const host = (c.req.header('Host') ?? '').split(':')[0].toLowerCase();
 
   // Apex domain — no tenant
@@ -35,7 +36,7 @@ export async function resolveTenantId(
     const org = await c.env.DB
       .prepare('SELECT id FROM organizations WHERE slug = ? LIMIT 1')
       .bind(slug)
-      .first<{ id: string }>();
+      .first() as { id: string } | null;
     return org?.id ?? null;
   }
 
@@ -47,14 +48,16 @@ export async function resolveTenantId(
   // Look up in D1
   const row = await c.env.DB
     .prepare(
-      'SELECT org_id FROM custom_domains WHERE domain = ? AND status = ? LIMIT 1',
+      `SELECT org_id FROM custom_domains
+       WHERE domain = ? AND status = ? LIMIT 1`,
     )
     .bind(host, 'active')
-    .first<{ org_id: string }>();
+    .first() as { org_id: string } | null;
 
   if (row) {
-    await c.env.KV.put(cacheKey, row.org_id, { expirationTtl: CACHE_TTL });
-    return row.org_id;
+    const orgId = row.org_id;
+    await c.env.KV.put(cacheKey, orgId, { expirationTtl: CACHE_TTL });
+    return orgId;
   }
 
   return null; // Unknown domain

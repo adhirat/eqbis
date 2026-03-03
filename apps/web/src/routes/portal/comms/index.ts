@@ -123,7 +123,7 @@ comms.post(
     const response = fd.get('response') as string || undefined;
 
     await updateMessageStatus(db, id, orgId, status, user.sub, response);
-    await logActivity(db, orgId, user.sub, 'update', 'comms', `Updated message status: ${status}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'update', module: 'comms', details: `Updated message status: ${status}` });
 
     if (isApi(c)) return c.json({ success: true });
     return c.redirect('/portal/comms/messages');
@@ -212,7 +212,7 @@ comms.post(
     const status = fd.get('status') as string;
 
     await updateNewsletterStatus(db, id, orgId, status);
-    await logActivity(db, orgId, user.sub, 'update', 'comms', `Updated newsletter subscriber status: ${status}`);
+    await logActivity(db, { orgId, userId: user.sub, action: 'update', module: 'comms', details: `Updated newsletter subscriber status: ${status}` });
 
     if (isApi(c)) return c.json({ success: true });
     return c.redirect('/portal/comms/newsletter');

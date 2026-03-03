@@ -169,7 +169,7 @@ auth.post(
       .bind(userId, orgId)
       .run();
 
-    await logActivity(c.env.DB, orgId, userId, 'registered', 'auth', undefined, c.req.header('CF-Connecting-IP'));
+    await logActivity(c.env.DB, { orgId, userId, action: 'registered', module: 'auth', ip: c.req.header('CF-Connecting-IP') });
 
     // Auto-login
     const permissions = await getUserPermissions(c.env.DB, userId, orgId);
@@ -396,7 +396,7 @@ auth.post(
     await addMember(c.env.DB, { id: ulid(), orgId: invite.orgId, userId: user.id, roleId: invite.roleId });
     await c.env.KV.delete(`invite:${token}`);
 
-    await logActivity(c.env.DB, invite.orgId, user.id, 'accepted_invite', 'auth');
+    await logActivity(c.env.DB, { orgId: invite.orgId, userId: user.id, action: 'accepted_invite', module: 'auth' });
 
     // Auto-login
     const org = await getOrgById(c.env.DB, invite.orgId);
