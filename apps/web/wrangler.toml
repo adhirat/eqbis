@@ -58,11 +58,11 @@ CF_ZONE_ID  = "FILL_AFTER_ZONE_LOOKUP"
 # Worker is reachable at the workers.dev subdomain by default.
 # Uncomment and fill in to add a custom route:
 [[env.staging.routes]]
-pattern = "staging.eqbis.com/*"
+pattern = "staging.eqbis.com"
 custom_domain = true
 
 [[env.staging.routes]]
-pattern = "staging.eqbis.pages.dev/*"
+pattern = "staging.eqbis.pages.dev"
 custom_domain = true
 
 # ── PRODUCTION ────────────────────────────────────────────────────────────────
@@ -91,15 +91,15 @@ CF_ZONE_ID  = "FILL_AFTER_ZONE_LOOKUP"
 
 # Uncomment and fill in after your domain is added to Cloudflare:
 [[env.production.routes]]
-pattern = "eqbis.com/*"
+pattern = "eqbis.com"
 custom_domain = true
 
 [[env.production.routes]]
 pattern = "*.eqbis.com/*"
-custom_domain = true
+custom_domain = false
 
 [[env.production.routes]]
-pattern = "eqbis.pages.dev/*"
+pattern = "eqbis.pages.dev"
 custom_domain = true
 
 # Secrets — set via `wrangler secret put --env {staging|production}`, NEVER commit here:
