@@ -1,5 +1,6 @@
 /** @jsxImportSource hono/jsx */
 
+import { html, raw } from 'hono/html';
 import { csrfField } from '../../middleware/csrf.js';
 
 interface SignupPageProps {
@@ -16,7 +17,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 export async function SignupPage({ csrfToken, error, baseUrl = '' }: SignupPageProps): Promise<string> {
   const errorMsg = error ? (ERROR_MESSAGES[error] ?? error) : null;
 
-  return `<!DOCTYPE html>
+  const res = html`<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
@@ -42,13 +43,13 @@ export async function SignupPage({ csrfToken, error, baseUrl = '' }: SignupPageP
       <p class="text-sm text-[var(--text-muted)]">Set up your organisation on EQBIS</p>
     </div>
 
-    ${errorMsg ? `
+    ${errorMsg ? html`
     <div class="flex items-center gap-2 px-3 py-2 rounded border text-sm bg-red-500/10 border-red-500/30 text-red-400">
       <span>&#9888;</span> ${errorMsg}
     </div>` : ''}
 
     <form method="POST" action="/auth/register" class="space-y-4">
-      ${csrfField(csrfToken)}
+      ${raw(csrfField(csrfToken))}
 
       <div>
         <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Full Name</label>
@@ -93,8 +94,8 @@ export async function SignupPage({ csrfToken, error, baseUrl = '' }: SignupPageP
         <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Password</label>
         <input name="password" type="password" required autocomplete="new-password"
           minlength="8"
-          pattern="(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-          title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+          pattern="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}"
+          title="Must contain at least one number, one uppercase and one lowercase letter, and at least 8 characters"
           placeholder="Minimum 8 characters"
           class="w-full h-10 px-3 rounded border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] text-sm focus:outline-none focus:border-[var(--accent)]">
       </div>
@@ -112,4 +113,6 @@ export async function SignupPage({ csrfToken, error, baseUrl = '' }: SignupPageP
   </div>
 </body>
 </html>`;
+
+  return res.toString();
 }

@@ -1,6 +1,6 @@
 /** @jsxImportSource hono/jsx */
 
-import { renderToString } from 'hono/jsx/dom/server';
+import { html, raw } from 'hono/html';
 import { csrfField } from '../../middleware/csrf.js';
 
 interface LoginPageProps {
@@ -18,7 +18,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 export async function LoginPage({ csrfToken, error, baseUrl = '' }: LoginPageProps): Promise<string> {
   const errorMsg = error ? (ERROR_MESSAGES[error] ?? error) : null;
 
-  return `<!DOCTYPE html>
+  const res = html`<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
@@ -44,13 +44,13 @@ export async function LoginPage({ csrfToken, error, baseUrl = '' }: LoginPagePro
       <p class="text-sm text-[var(--text-muted)]">Sign in to your portal</p>
     </div>
 
-    ${errorMsg ? `
+    ${errorMsg ? html`
     <div class="flex items-center gap-2 px-3 py-2 rounded border text-sm bg-red-500/10 border-red-500/30 text-red-400">
       <span>&#9888;</span> ${errorMsg}
     </div>` : ''}
 
     <form method="POST" action="/auth/login" class="space-y-4">
-      ${csrfField(csrfToken)}
+      ${raw(csrfField(csrfToken))}
 
       <div>
         <label class="block text-xs font-medium text-[var(--text-muted)] mb-1">Email</label>
@@ -88,4 +88,6 @@ export async function LoginPage({ csrfToken, error, baseUrl = '' }: LoginPagePro
   </div>
 </body>
 </html>`;
+
+  return res.toString();
 }

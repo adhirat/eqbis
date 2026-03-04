@@ -23,13 +23,25 @@ export function rateLimit(opts: RateLimitOptions): MiddlewareHandler<{ Bindings:
   const limit  = opts.limit  ?? 20;
 
   return async (c, next) => {
+    if (!c.env.KV) {
+      console.warn('[RateLimit] KV binding "KV" is missing. Rate limiting is disabled.');
+      return next();
+    }
+
     const ip  = c.req.header('CF-Connecting-IP') ?? c.req.header('X-Forwarded-For') ?? 'unknown';
     const key = `${opts.prefix}:${opts.keyFn ? opts.keyFn(c) : ip}`;
 
-    const raw = await c.env.KV.get(key);
-    const count = raw ? parseInt(raw, 10) : 0;
+    let count = 0;
+    try {
+      const raw = await c.env.KV.get(key);
+      count = raw ? parseInt(raw, 10) : 0;
+    } catch (err) {
+      console.error('[RateLimit] KV error:', err);
+      return next(); // Fail open for rate limiting if KV is down
+    }
 
     if (count >= limit) {
+      console.info(`[RateLimit] Blocked ${key} (limit: ${limit})`);
       return c.json(
         { error: 'Too many requests. Please try again later.' },
         429,
@@ -38,10 +50,10 @@ export function rateLimit(opts: RateLimitOptions): MiddlewareHandler<{ Bindings:
     }
 
     // Increment — set TTL on first request, extend on subsequent
-    await c.env.KV.put(key, String(count + 1), { expirationTtl: window });
+    await c.env.KV.put(key, String(count + 1), { expirationTtl: Math.max(window, 60) });
 
     c.header('X-RateLimit-Limit',     String(limit));
-    c.header('X-RateLimit-Remaining', String(limit - count - 1));
+    c.header('X-RateLimit-Remaining', String(Math.max(0, limit - count - 1)));
 
     await next();
   };

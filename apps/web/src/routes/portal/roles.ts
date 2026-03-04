@@ -102,7 +102,8 @@ roles.post(
 );
 
 roles.get('/:id', requirePermission(PERMISSIONS.VIEW_ROLES), async (c) => {
-  const role = await getRoleById(c.env.DB, c.req.param('id'));
+  const { orgId } = c.get('user');
+  const role = await getRoleById(c.env.DB, c.req.param('id'), orgId);
   if (!role) return c.json({ error: 'Not found' }, 404);
   const perms = await getRolePermissions(c.env.DB, role.id);
   if (isApi(c)) return c.json({ role, permissions: perms });
@@ -155,7 +156,7 @@ roles.post(
   async (c) => {
     const { orgId, sub: userId } = c.get('user');
     const roleId = c.req.param('id');
-    const role = await getRoleById(c.env.DB, roleId);
+    const role = await getRoleById(c.env.DB, roleId, orgId);
     if (!role || (role.is_default && role.name === 'Admin')) {
       return c.json({ error: 'Cannot modify this role' }, 403);
     }
@@ -174,7 +175,7 @@ roles.post(
   async (c) => {
     const { orgId, sub: userId } = c.get('user');
     const roleId = c.req.param('id');
-    await deleteRole(c.env.DB, roleId);
+    await deleteRole(c.env.DB, roleId, orgId);
     await logActivity(c.env.DB, { id: ulid(), orgId, userId, action: 'deleted_role', module: 'roles', entityId: roleId });
     return c.redirect('/portal/roles');
   },

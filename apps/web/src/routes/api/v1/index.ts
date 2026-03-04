@@ -96,7 +96,8 @@ api.get(
   '/users/:id',
   requirePermission(PERMISSIONS.VIEW_USERS),
   async (c) => {
-    const u = await getUserById(c.env.DB, c.req.param('id'));
+    const { orgId } = c.get('user');
+    const u = await getUserById(c.env.DB, c.req.param('id'), orgId);
     if (!u) return c.json({ error: 'Not found' }, 404);
     return c.json({ user: u });
   },

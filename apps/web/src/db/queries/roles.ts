@@ -31,7 +31,13 @@ export async function getOrgRoles(db: D1Database, orgId: string): Promise<RoleRo
   return rows.results;
 }
 
-export async function getRoleById(db: D1Database, roleId: string): Promise<RoleRow | null> {
+export async function getRoleById(db: D1Database, roleId: string, orgId?: string): Promise<RoleRow | null> {
+  if (orgId) {
+    return db
+      .prepare('SELECT * FROM roles WHERE id = ? AND (org_id = ? OR org_id IS NULL) LIMIT 1')
+      .bind(roleId, orgId)
+      .first<RoleRow>();
+  }
   return db.prepare('SELECT * FROM roles WHERE id = ? LIMIT 1').bind(roleId).first<RoleRow>();
 }
 
@@ -60,6 +66,7 @@ export async function updateRole(
   db: D1Database,
   roleId: string,
   fields: Partial<{ name: string; description: string; color: string }>,
+  orgId?: string,
 ): Promise<void> {
   const sets: string[] = [];
   const vals: unknown[] = [];
@@ -69,13 +76,26 @@ export async function updateRole(
   }
   if (sets.length === 0) return;
   sets.push('updated_at = unixepoch()');
-  vals.push(roleId);
 
-  await db.prepare(`UPDATE roles SET ${sets.join(', ')} WHERE id = ?`).bind(...vals).run();
+  if (orgId) {
+    await db
+      .prepare(`UPDATE roles SET ${sets.join(', ')} WHERE id = ? AND org_id = ?`)
+      .bind(...vals, roleId, orgId)
+      .run();
+  } else {
+    await db.prepare(`UPDATE roles SET ${sets.join(', ')} WHERE id = ?`).bind(...vals, roleId).run();
+  }
 }
 
-export async function deleteRole(db: D1Database, roleId: string): Promise<void> {
-  await db.prepare('DELETE FROM roles WHERE id = ? AND is_default = 0').bind(roleId).run();
+export async function deleteRole(db: D1Database, roleId: string, orgId?: string): Promise<void> {
+  if (orgId) {
+    await db
+      .prepare('DELETE FROM roles WHERE id = ? AND org_id = ? AND is_default = 0')
+      .bind(roleId, orgId)
+      .run();
+  } else {
+    await db.prepare('DELETE FROM roles WHERE id = ? AND is_default = 0').bind(roleId).run();
+  }
 }
 
 /** Replace all permissions for a role (used on role edit). */

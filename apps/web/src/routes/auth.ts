@@ -5,6 +5,7 @@
  */
 
 import { Hono } from 'hono';
+import { html, raw } from 'hono/html';
 import { setCookie, deleteCookie } from 'hono/cookie';
 import { zValidator } from '@hono/zod-validator';
 import type { Env } from '../types/env.js';
@@ -159,24 +160,14 @@ auth.post(
     const orgId  = ulid();
     const hash   = await hashPassword(data.password);
 
-    // Create user + org + membership in a single logical transaction
-    await createUser(c.env.DB, {
-      id: userId, email: data.email, full_name: data.fullName, password_hash: hash,
-    });
-
-    await createOrg(c.env.DB, {
-      id: orgId, name: data.orgName, slug: data.orgSlug, emp_id_prefix: 'EMP',
-    });
-
-    await addMember(c.env.DB, {
-      id: ulid(), orgId, userId, roleId: 'role_admin',
-    });
-
-    // Update org owner
-    await c.env.DB
-      .prepare('UPDATE organizations SET owner_id = ? WHERE id = ?')
-      .bind(userId, orgId)
-      .run();
+    // Create user + org + membership in a single atomic batch
+    await c.env.DB.batch([
+      c.env.DB.prepare('INSERT INTO users (id, email, full_name, password_hash) VALUES (?, ?, ?, ?)').bind(userId, data.email.toLowerCase().trim(), data.fullName, hash),
+      c.env.DB.prepare('INSERT INTO organizations (id, name, slug, emp_id_prefix, timezone) VALUES (?, ?, ?, ?, ?)').bind(orgId, data.orgName, data.orgSlug, 'EMP', 'UTC'),
+      c.env.DB.prepare('INSERT INTO org_members (id, org_id, user_id, primary_role_id) VALUES (?, ?, ?, ?)').bind(ulid(), orgId, userId, 'role_admin'),
+      c.env.DB.prepare('INSERT INTO user_roles (user_id, org_id, role_id) VALUES (?, ?, ?)').bind(userId, orgId, 'role_admin'),
+      c.env.DB.prepare('UPDATE organizations SET owner_id = ? WHERE id = ?').bind(userId, orgId),
+    ]);
 
     await logActivity(c.env.DB, { orgId, userId, action: 'registered', module: 'auth', ip: c.req.header('CF-Connecting-IP') });
 
@@ -254,7 +245,9 @@ auth.post('/refresh', authMiddleware, async (c) => {
 // ── Forgot Password ───────────────────────────────────────────────────────────
 auth.get('/forgot-password', async (c) => {
   const csrf = await generateCsrfToken(c);
-  return c.html(`<!DOCTYPE html>
+  const sent = c.req.query('sent') === '1';
+
+  return c.html(html`<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head><meta charset="utf-8"><title>Forgot Password — EQBIS</title>
 <meta property="og:type" content="website">
@@ -268,16 +261,26 @@ auth.get('/forgot-password', async (c) => {
 <link rel="stylesheet" href="/css/app.css"></head>
 <body class="min-h-screen flex items-center justify-center bg-[var(--bg)]">
   <div class="w-full max-w-sm space-y-6 p-8">
-    <h1 class="text-2xl font-bold text-[var(--text)]">Reset your password</h1>
+    <div class="text-center space-y-1">
+      <a href="/"><img src="/images/logo.png" alt="EQBIS" class="w-12 h-12 mx-auto mb-4 hover:opacity-80 transition-opacity"></a>
+      <h1 class="text-2xl font-bold text-[var(--text)]">Reset your password</h1>
+      <p class="text-sm text-[var(--text-muted)]">We will send a link to your email</p>
+    </div>
+
+    ${sent ? html`
+    <div class="px-3 py-3 rounded border border-green-500/30 bg-green-500/10 text-green-400 text-sm flex items-center gap-2">
+      <span>&#10003;</span> If that account exists, an email has been sent.
+    </div>` : ''}
+
     <form method="POST" class="space-y-4">
-      ${csrfField(csrf)}
+      ${raw(csrfField(csrf))}
       <input name="email" type="email" required placeholder="Your email"
-        class="w-full h-10 px-3 rounded border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] text-sm">
-      <button type="submit" class="w-full h-10 rounded bg-[var(--accent)] text-white font-semibold text-sm">
+        class="w-full h-10 px-3 rounded border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] text-sm focus:outline-none focus:border-[var(--accent)]">
+      <button type="submit" class="w-full h-10 rounded bg-[var(--accent)] text-white font-semibold text-sm hover:opacity-90 transition-opacity">
         Send reset link
       </button>
     </form>
-    <p class="text-center text-sm text-[var(--text-muted)]"><a href="/auth/login" class="text-[var(--accent)]">Back to login</a></p>
+    <p class="text-center text-sm text-[var(--text-muted)]"><a href="/auth/login" class="text-[var(--accent)] hover:underline">Back to login</a></p>
   </div>
 </body></html>`);
 });
@@ -313,7 +316,7 @@ auth.get('/reset-password', async (c) => {
   if (!token) return c.redirect('/auth/login');
 
   const csrf = await generateCsrfToken(c);
-  return c.html(`<!DOCTYPE html>
+  return c.html(html`<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head><meta charset="utf-8"><title>Reset Password — EQBIS</title>
 <meta property="og:type" content="website">
@@ -327,16 +330,21 @@ auth.get('/reset-password', async (c) => {
 <link rel="stylesheet" href="/css/app.css"></head>
 <body class="min-h-screen flex items-center justify-center bg-[var(--bg)]">
   <div class="w-full max-w-sm space-y-6 p-8">
-    <h1 class="text-2xl font-bold text-[var(--text)]">Set new password</h1>
+    <div class="text-center space-y-1">
+      <a href="/"><img src="/images/logo.png" alt="EQBIS" class="w-12 h-12 mx-auto mb-4 hover:opacity-80 transition-opacity"></a>
+      <h1 class="text-2xl font-bold text-[var(--text)]">Set new password</h1>
+      <p class="text-sm text-[var(--text-muted)]">Please choose a strong password</p>
+    </div>
     <form method="POST" class="space-y-4">
-      ${csrfField(csrf)}
+      ${raw(csrfField(csrf))}
       <input type="hidden" name="token" value="${token}">
       <input name="password" type="password" required placeholder="New password (min 8 chars)"
-        class="w-full h-10 px-3 rounded border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] text-sm">
-      <button type="submit" class="w-full h-10 rounded bg-[var(--accent)] text-white font-semibold text-sm">
+        class="w-full h-10 px-3 rounded border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] text-sm focus:outline-none focus:border-[var(--accent)]">
+      <button type="submit" class="w-full h-10 rounded bg-[var(--accent)] text-white font-semibold text-sm hover:opacity-90 transition-opacity">
         Update password
       </button>
     </form>
+    <p class="text-center text-sm text-[var(--text-muted)]"><a href="/auth/login" class="text-[var(--accent)] hover:underline">Cancel</a></p>
   </div>
 </body></html>`);
 });

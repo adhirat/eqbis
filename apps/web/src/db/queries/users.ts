@@ -34,7 +34,17 @@ export async function getOrgUsers(db: D1Database, orgId: string): Promise<UserRo
   return rows.results;
 }
 
-export async function getUserById(db: D1Database, userId: string): Promise<UserRow | null> {
+export async function getUserById(db: D1Database, userId: string, orgId?: string): Promise<UserRow | null> {
+  if (orgId) {
+    return db
+      .prepare(`
+        SELECT u.* FROM users u
+        JOIN org_members om ON om.user_id = u.id AND om.org_id = ?
+        WHERE u.id = ? LIMIT 1
+      `)
+      .bind(orgId, userId)
+      .first<UserRow>();
+  }
   return db
     .prepare('SELECT * FROM users WHERE id = ? LIMIT 1')
     .bind(userId)
@@ -64,6 +74,7 @@ export async function updateUser(
   db: D1Database,
   userId: string,
   fields: Partial<{ full_name: string; photo_key: string; is_active: number }>,
+  orgId?: string,
 ): Promise<void> {
   const sets: string[] = [];
   const vals: unknown[] = [];
@@ -74,12 +85,18 @@ export async function updateUser(
 
   if (sets.length === 0) return;
   sets.push('updated_at = unixepoch()');
-  vals.push(userId);
 
-  await db
-    .prepare(`UPDATE users SET ${sets.join(', ')} WHERE id = ?`)
-    .bind(...vals)
-    .run();
+  if (orgId) {
+    await db
+      .prepare(`UPDATE users SET ${sets.join(', ')} WHERE id = ? AND id IN (SELECT user_id FROM org_members WHERE org_id = ?)`)
+      .bind(...vals, userId, orgId)
+      .run();
+  } else {
+    await db
+      .prepare(`UPDATE users SET ${sets.join(', ')} WHERE id = ?`)
+      .bind(...vals, userId)
+      .run();
+  }
 }
 
 export async function updatePassword(

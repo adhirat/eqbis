@@ -147,9 +147,21 @@ users.post(
 
 // View user
 users.get('/:id', requirePermission(PERMISSIONS.VIEW_USERS), async (c) => {
-  const user = await getUserById(c.env.DB, c.req.param('id'));
+  const { orgId } = c.get('user');
+  const user = await getUserById(c.env.DB, c.req.param('id'), orgId);
   if (!user) return c.json({ error: 'Not found' }, 404);
-  return isApi(c) ? c.json({ user }) : c.html(`<pre>${JSON.stringify(user, null, 2)}</pre>`);
+  return isApi(c) ? c.json({ user }) : c.html(`<div class="p-6 h-full flex flex-col items-center justify-center space-y-4">
+    <div class="h-20 w-20 rounded-full bg-[var(--accent)] flex items-center justify-center text-3xl font-bold text-white uppercase">
+      ${user.full_name[0]}
+    </div>
+    <div class="text-center">
+      <h2 class="text-xl font-bold">${user.full_name}</h2>
+      <p class="text-[var(--text-muted)]">${user.email}</p>
+    </div>
+    <div class="flex gap-2">
+      <a href="/portal/users" class="px-4 py-2 rounded border border-[var(--border)] text-sm">Back to users</a>
+    </div>
+  </div>`);
 });
 
 // Assign role
@@ -182,7 +194,7 @@ users.post(
     const { orgId, sub: adminId } = c.get('user');
     const userId = c.req.param('id');
 
-    await updateUser(c.env.DB, userId, { is_active: 0 });
+    await updateUser(c.env.DB, userId, { is_active: 0 }, orgId);
     await logActivity(c.env.DB, {
       id: ulid(), orgId, userId: adminId, action: 'deactivated_user', module: 'users', entityId: userId,
     });
