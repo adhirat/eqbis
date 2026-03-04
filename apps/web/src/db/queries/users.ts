@@ -10,6 +10,7 @@ export interface UserRow {
   full_name:  string;
   photo_key:  string | null;
   is_active:  number;
+  is_verified: number; // NEW
   created_at: number;
   password_hash?: string;
   // joined from org_members / user_roles
@@ -107,6 +108,13 @@ export async function updatePassword(
   await db
     .prepare('UPDATE users SET password_hash = ?, updated_at = unixepoch() WHERE id = ?')
     .bind(passwordHash, userId)
+    .run();
+}
+
+export async function verifyUser(db: D1Database, userId: string): Promise<void> {
+  await db
+    .prepare('UPDATE users SET is_verified = 1, updated_at = unixepoch() WHERE id = ?')
+    .bind(userId)
     .run();
 }
 

@@ -13,26 +13,71 @@ export interface EmailOptions {
 
 const FROM_DEFAULT = 'EQBIS <no-reply@eqbis.com>';
 
-export async function sendEmail(opts: EmailOptions, apiKey: string): Promise<void> {
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from:     opts.from ?? FROM_DEFAULT,
-      to:       Array.isArray(opts.to) ? opts.to : [opts.to],
-      subject:  opts.subject,
-      html:     opts.html,
-      reply_to: opts.replyTo,
-    }),
-  });
+export async function sendEmail(opts: EmailOptions, env: { RESEND_API_KEY?: string; EMAIL?: any; ENVIRONMENT?: string }): Promise<void> {
+  const from = opts.from ?? FROM_DEFAULT;
+  const toArr = Array.isArray(opts.to) ? opts.to : [opts.to];
+  const isLocal = env.ENVIRONMENT === 'local';
 
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Resend error ${res.status}: ${body}`);
+  if (isLocal) {
+    console.log('---------------------------------------------------------');
+    console.log('[LOCAL EMAIL] To:', toArr.join(', '));
+    console.log('[LOCAL EMAIL] Subject:', opts.subject);
+    console.log('[LOCAL EMAIL] HTML preview (first 100 chars):', opts.html.substring(0, 100) + '...');
+    console.log('---------------------------------------------------------');
   }
+
+  // 1. Try Cloudflare Workers Email
+  if (env.EMAIL) {
+    try {
+      await env.EMAIL.send({
+        from: from,
+        to: toArr[0],
+        subject: opts.subject,
+        html: opts.html,
+      });
+      return;
+    } catch (err) {
+      console.error('[Email] Cloudflare Email failed, falling back to Resend:', err);
+    }
+  }
+
+  // 2. Fallback to Resend
+  if (env.RESEND_API_KEY) {
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from,
+          to:       toArr,
+          subject:  opts.subject,
+          html:     opts.html,
+          reply_to: opts.replyTo,
+        }),
+      });
+
+      if (res.ok) return;
+
+      const body = await res.text();
+      const errorMsg = `Resend error ${res.status}: ${body}`;
+      if (!isLocal) throw new Error(errorMsg);
+      console.error('[Email]', errorMsg);
+    } catch (err) {
+      if (!isLocal) throw err;
+      console.error('[Email] Resend failed:', err);
+    }
+  }
+
+  // Final check for local
+  if (isLocal) {
+    console.log('[LOCAL EMAIL] Email delivery skipped/failed but allowing flow to continue.');
+    return;
+  }
+
+  throw new Error('No email service configured or all services failed (missing RESEND_API_KEY and EMAIL binding)');
 }
 
 // ── Helpers for common email types ──────────────────────────────────────────
@@ -67,5 +112,21 @@ export function contactNotificationHtml(opts: {
     <p><strong>Message:</strong></p>
     <blockquote>${opts.message}</blockquote>
     <p>Log in to EQBIS to respond.</p>
+  `;
+}
+
+export function verificationEmailHtml(opts: { code: string }): string {
+  return `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+      <h2 style="color: #4f46e5;">Verify your EQBIS account</h2>
+      <p>Please enter the following verification code to complete your registration:</p>
+      <div style="background: #f3f4f6; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #111;">${opts.code}</span>
+      </div>
+      <p>This code expires in 390 minutes.</p>
+      <p>If you did not create an account on EQBIS, please ignore this email.</p>
+      <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
+      <p style="font-size: 12px; color: #6b7280; text-align: center;">&copy; ${new Date().getFullYear()} EQBIS. All rights reserved.</p>
+    </div>
   `;
 }

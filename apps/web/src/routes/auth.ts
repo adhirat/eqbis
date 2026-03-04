@@ -95,6 +95,7 @@ auth.post(
       roles,
       permissions,
       photo:       user.photo_key ?? null,
+      isVerified:  user.is_verified === 1,
     });
 
     const token = await signToken(payload, c.env.JWT_SECRET);
@@ -104,16 +105,97 @@ auth.post(
       (c.req.header('Accept') ?? '').includes('application/json');
 
     if (isApi) {
-      return c.json({ token, user: { id: user.id, email: user.email, name: user.full_name } });
+      return c.json({ token, user: { id: user.id, email: user.email, name: user.full_name, isVerified: user.is_verified === 1 } });
     }
 
     setCookie(c, 'auth_token', token, COOKIE_OPTS);
+
+    if (!user.is_verified) {
+      return c.redirect('/auth/verify');
+    }
+
     return c.redirect('/portal');
   },
 );
 
+// ── Verification ──────────────────────────────────────────────────────────────
+auth.get('/verify', authMiddleware, async (c) => {
+  const user = c.get('user');
+  if (user.isVerified) return c.redirect('/portal');
+
+  const csrf = await generateCsrfToken(c);
+  const { VerifyPage } = await import('../views/auth/verify.js');
+  return c.html(await VerifyPage({
+    csrfToken: csrf,
+    email: user.email,
+    error: c.req.query('error'),
+    success: c.req.query('success'),
+  }));
+});
+
+auth.post('/verify', authMiddleware, csrfMiddleware, async (c) => {
+  const user = c.get('user');
+  if (user.isVerified) return c.redirect('/portal');
+
+  const { code } = await c.req.parseBody<{ code: string }>();
+  if (!code || code.length !== 6) {
+    return c.redirect('/auth/verify?error=Invalid code format');
+  }
+
+  const storedCode = await c.env.KV.get(`verify:${user.sub}`);
+  if (!storedCode) {
+    return c.redirect('/auth/verify?error=Code expired or not found');
+  }
+
+  if (storedCode !== code) {
+    return c.redirect('/auth/verify?error=Incorrect code');
+  }
+
+  // 1. Update DB
+  const { verifyUser } = await import('../db/queries/users.js');
+  await verifyUser(c.env.DB, user.sub);
+
+  // 2. Issue new JWT
+  const payload = buildPayload({
+    ...user,
+    isVerified: true,
+  });
+  const token = await signToken(payload, c.env.JWT_SECRET);
+  setCookie(c, 'auth_token', token, COOKIE_OPTS);
+
+  // 3. Delete code from KV
+  await c.env.KV.delete(`verify:${user.sub}`);
+
+  return c.redirect('/portal');
+});
+
+auth.post('/resend-code', authMiddleware, csrfMiddleware, async (c) => {
+  const user = c.get('user');
+  if (user.isVerified) return c.redirect('/portal');
+
+  // Rate limit resend (60 seconds)
+  const lastResend = await c.env.KV.get(`resend_limit:${user.sub}`);
+  if (lastResend) {
+    return c.redirect('/auth/verify?error=Please wait 60 seconds before resending');
+  }
+
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  const { verificationEmailHtml } = await import('../lib/email.js');
+
+  // Store in KV (390 minutes = 23400 secs)
+  await c.env.KV.put(`verify:${user.sub}`, code, { expirationTtl: 390 * 60 });
+  await c.env.KV.put(`resend_limit:${user.sub}`, '1', { expirationTtl: 60 });
+
+  await sendEmail(
+    { to: user.email, subject: `${code} is your EQBIS verification code`, html: verificationEmailHtml({ code }) },
+    c.env,
+  );
+
+  return c.redirect('/auth/verify?success=Verification code resent');
+});
+
 // ── Logout ────────────────────────────────────────────────────────────────────
-auth.post('/logout', authMiddleware, async (c) => {
+auth.on(['GET', 'POST'], '/logout', authMiddleware, async (c) => {
   const user = c.get('user');
   // Revoke JTI in KV (TTL = remaining lifetime of the token)
   const remaining = user.exp - Math.floor(Date.now() / 1000);
@@ -171,15 +253,28 @@ auth.post(
 
     await logActivity(c.env.DB, { orgId, userId, action: 'registered', module: 'auth', ip: c.req.header('CF-Connecting-IP') });
 
-    // Auto-login
+    // Generate Verification Code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const { verificationEmailHtml } = await import('../lib/email.js');
+
+    // Store in KV (390 minutes = 23400 secs)
+    await c.env.KV.put(`verify:${userId}`, code, { expirationTtl: 390 * 60 });
+
+    await sendEmail(
+      { to: data.email, subject: `${code} is your EQBIS verification code`, html: verificationEmailHtml({ code }) },
+      c.env,
+    );
+
+    // Auto-login (but restricted)
     const permissions = await getUserPermissions(c.env.DB, userId, orgId);
     const payload = buildPayload({
       sub: userId, email: data.email, name: data.fullName,
       orgId, orgSlug: data.orgSlug, roles: ['role_admin'], permissions, photo: null,
+      isVerified: false,
     });
     const token = await signToken(payload, c.env.JWT_SECRET);
     setCookie(c, 'auth_token', token, COOKIE_OPTS);
-    return c.redirect('/portal');
+    return c.redirect('/auth/verify');
   },
 );
 
@@ -205,6 +300,7 @@ auth.post('/switch-org', authMiddleware, zValidator('json', SwitchOrgSchema), as
   const payload = buildPayload({
     sub: current.sub, email: current.email, name: current.name,
     orgId: org.id, orgSlug: org.slug, roles, permissions, photo: current.photo,
+    isVerified: current.isVerified,
   });
 
   const token = await signToken(payload, c.env.JWT_SECRET);
@@ -236,6 +332,7 @@ auth.post('/refresh', authMiddleware, async (c) => {
     sub: current.sub, email: current.email, name: current.name,
     orgId: current.orgId, orgSlug: current.orgSlug,
     roles: current.roles, permissions: current.permissions, photo: current.photo,
+    isVerified: current.isVerified,
   });
 
   const token = await signToken(payload, c.env.JWT_SECRET);
@@ -302,7 +399,7 @@ auth.post(
       const link = `${c.env.APP_URL}/auth/reset-password?token=${token}`;
       await sendEmail(
         { to: email, subject: 'Reset your EQBIS password', html: passwordResetEmailHtml({ link }) },
-        c.env.RESEND_API_KEY,
+        c.env,
       );
     }
 
@@ -429,9 +526,13 @@ auth.post(
     if (!user) {
       const userId = ulid();
       await createUser(c.env.DB, { id: userId, email: invite.email, full_name: fullName, password_hash: hash });
+      const { verifyUser } = await import('../db/queries/users.js');
+      await verifyUser(c.env.DB, userId);
       user = await getUserById(c.env.DB, userId) as NonNullable<typeof user>;
     } else {
       await updatePassword(c.env.DB, user.id, hash);
+      const { verifyUser } = await import('../db/queries/users.js');
+      await verifyUser(c.env.DB, user.id);
     }
 
     await addMember(c.env.DB, { id: ulid(), orgId: invite.orgId, userId: user.id, roleId: invite.roleId });
@@ -447,6 +548,7 @@ auth.post(
     const payload = buildPayload({
       sub: user.id, email: user.email, name: fullName,
       orgId: org.id, orgSlug: org.slug, roles: [invite.roleId], permissions, photo: null,
+      isVerified: true,
     });
     const jwtToken = await signToken(payload, c.env.JWT_SECRET);
     setCookie(c, 'auth_token', jwtToken, COOKIE_OPTS);

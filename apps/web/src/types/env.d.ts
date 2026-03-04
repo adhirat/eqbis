@@ -5,6 +5,7 @@ export interface Env {
   R2:     R2Bucket;
   KV:     KVNamespace;
   ASSETS: Fetcher;
+  EMAIL?: { send: (msg: any) => Promise<void> };
 
   // Secrets (set via wrangler secret put)
   JWT_SECRET:      string;
@@ -13,7 +14,7 @@ export interface Env {
   CF_API_TOKEN:    string; // Custom Hostnames:Edit permission
 
   // Vars (set in wrangler.toml [env.*.vars])
-  ENVIRONMENT:  'staging' | 'production';
+  ENVIRONMENT:  'local' | 'staging' | 'production';
   APP_URL:      string;  // https://eqbis.com or https://staging.eqbis.com
   R2_PUBLIC:    string;  // https://cdn.eqbis.com
   CF_ZONE_ID:   string;  // Cloudflare zone ID for eqbis.com

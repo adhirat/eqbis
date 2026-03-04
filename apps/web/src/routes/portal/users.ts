@@ -133,7 +133,7 @@ users.post(
     const link = `${c.env.APP_URL}/auth/invite?token=${token}`;
     await sendEmail(
       { to: email, subject: 'You have been invited to EQBIS', html: inviteEmailHtml({ name: fullName, orgName: orgId, link }) },
-      c.env.RESEND_API_KEY,
+      c.env,
     );
 
     await logActivity(c.env.DB, {

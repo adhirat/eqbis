@@ -25,6 +25,9 @@ bucket_name = "eqbis-storage-local"
 binding = "KV"
 id      = "00000000000000000000000000000000"
 
+[[send_email]]
+name = "EMAIL"
+
 [vars]
 ENVIRONMENT = "local"
 APP_URL     = "http://localhost:8787"
@@ -48,6 +51,9 @@ bucket_name = "eqbis-storage-staging"
 [[env.staging.kv_namespaces]]
 binding = "KV"
 id      = "ad9bc0b2df6e405d9b46828840bdea8d"
+
+[[env.staging.send_email]]
+name = "EMAIL"
 
 [env.staging.vars]
 ENVIRONMENT = "staging"
@@ -79,6 +85,9 @@ bucket_name = "eqbis-storage"
 [[env.production.kv_namespaces]]
 binding = "KV"
 id      = "4413069517be46298edc92e897d8e875"
+
+[[env.production.send_email]]
+name = "EMAIL"
 
 [env.production.vars]
 ENVIRONMENT = "production"

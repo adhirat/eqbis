@@ -64,6 +64,17 @@ export const authMiddleware: MiddlewareHandler<{ Bindings: Env; Variables: AuthV
       }
 
       c.set('user', payload);
+
+      // Check verification status
+      const isVerifyRoute = c.req.path === '/auth/verify' || c.req.path === '/auth/resend-code';
+      const isLogoutRoute = c.req.path.startsWith('/auth/logout');
+
+      if (!payload.isVerified && !isVerifyRoute && !isLogoutRoute) {
+        return isApiRequest(c)
+          ? c.json({ error: 'Account unverified', code: 'UNVERIFIED' }, 403)
+          : c.redirect('/auth/verify');
+      }
+
       await next();
     } catch {
       return isApiRequest(c)

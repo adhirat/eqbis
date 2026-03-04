@@ -7,6 +7,7 @@ export interface JWTPayload {
   roles:       string[];     // role IDs for active org
   permissions: string[];     // flattened, pre-computed at login — no per-request DB call
   photo:       string | null;
+  isVerified?: boolean;      // NEW: Account verification status
   iat:         number;
   exp:         number;       // iat + 604800 (7 days)
   jti:         string;       // UUID for revocation via KV
