@@ -517,6 +517,28 @@ export function Layout({ title, user, currentPath, children, baseUrl = '' }: Lay
                 </button>
               </div>
             </header>
+ 
+            {/* Verification Warning Banner */}
+            {!user.isVerified && (
+              <div class="bg-red-500/5 border-b border-red-500/20 px-4 py-1.5 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-red-500" style="font-size:14px;">warning</span>
+                  </div>
+                  <p class="text-[11px] font-medium text-[var(--text)]">
+                    Your account is unverified. Please verify your email now to prevent automatic deletion.
+                  </p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <a 
+                    href="/auth/verify" 
+                    class="text-[11px] font-bold text-red-500 hover:underline flex items-center gap-0.5"
+                  >
+                    Resend Link <span class="material-symbols-outlined" style="font-size:12px;">mail</span>
+                  </a>
+                </div>
+              </div>
+            )}
 
             {/* Page content */}
             <main class="flex-1 overflow-y-auto">

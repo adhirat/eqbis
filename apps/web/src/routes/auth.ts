@@ -111,7 +111,8 @@ auth.post(
     setCookie(c, 'auth_token', token, COOKIE_OPTS);
 
     if (!user.is_verified) {
-      return c.redirect('/auth/verify');
+      // Allow unverified users to access the portal with a warning banner
+      return c.redirect('/portal');
     }
 
     return c.redirect('/portal');
@@ -134,64 +135,62 @@ auth.get('/verify', authMiddleware, async (c) => {
 });
 
 auth.post('/verify', authMiddleware, csrfMiddleware, async (c) => {
-  const user = c.get('user');
-  if (user.isVerified) return c.redirect('/portal');
+  // This route is deprecated in favor of GET /auth/verify-link
+  // Redirect back to verify page
+  return c.redirect('/auth/verify');
+});
 
-  const { code } = await c.req.parseBody<{ code: string }>();
-  if (!code || code.length !== 6) {
-    return c.redirect('/auth/verify?error=Invalid code format');
+auth.get('/verify-link', async (c) => {
+  const token = c.req.query('token');
+  if (!token) {
+    return c.redirect('/auth/login?error=Invalid verification link');
   }
 
-  const storedCode = await c.env.KV.get(`verify:${user.sub}`);
-  if (!storedCode) {
-    return c.redirect('/auth/verify?error=Code expired or not found');
-  }
-
-  if (storedCode !== code) {
-    return c.redirect('/auth/verify?error=Incorrect code');
+  // Look up userId in KV
+  const userId = await c.env.KV.get(`vlink:${token}`);
+  if (!userId) {
+    return c.redirect('/auth/verify?error=The verification link has expired. Please request a new one.');
   }
 
   // 1. Update DB
   const { verifyUser } = await import('../db/queries/users.js');
-  await verifyUser(c.env.DB, user.sub);
+  await verifyUser(c.env.DB, userId);
 
-  // 2. Issue new JWT
-  const payload = buildPayload({
-    ...user,
-    isVerified: true,
-  });
-  const token = await signToken(payload, c.env.JWT_SECRET);
-  setCookie(c, 'auth_token', token, COOKIE_OPTS);
+  // 2. Clear token from KV
+  await c.env.KV.delete(`vlink:${token}`);
 
-  // 3. Delete code from KV
-  await c.env.KV.delete(`verify:${user.sub}`);
-
-  return c.redirect('/portal');
+  // 3. Issue new JWT if the user is already logged in (optional, but good for UX)
+  // Or just redirect to login if not.
+  // Actually, we can just redirect to /portal and let the middleware handle it if they have a cookie.
+  // If they click on a different device, they'll need to login.
+  
+  return c.redirect('/portal?success=Account verified successfully');
 });
 
-auth.post('/resend-code', authMiddleware, csrfMiddleware, async (c) => {
+auth.post('/resend-link', authMiddleware, csrfMiddleware, async (c) => {
   const user = c.get('user');
   if (user.isVerified) return c.redirect('/portal');
 
   // Rate limit resend (60 seconds)
   const lastResend = await c.env.KV.get(`resend_limit:${user.sub}`);
   if (lastResend) {
-    return c.redirect('/auth/verify?error=Please wait 60 seconds before resending');
+    return c.redirect('/auth/verify?error=Please wait 60 seconds before requesting another link');
   }
 
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  const token = uuid();
+  const verifyLink = `${c.env.APP_URL}/auth/verify-link?token=${token}`;
   const { verificationEmailHtml } = await import('../lib/email.js');
 
-  // Store in KV (390 minutes = 23400 secs)
-  await c.env.KV.put(`verify:${user.sub}`, code, { expirationTtl: 390 * 60 });
+  // Store in KV (30 minutes = 1800 secs)
+  await c.env.KV.put(`vlink:${token}`, user.sub, { expirationTtl: 30 * 60 });
   await c.env.KV.put(`resend_limit:${user.sub}`, '1', { expirationTtl: 60 });
 
   await sendEmail(
-    { to: user.email, subject: `${code} is your EQBIS verification code`, html: verificationEmailHtml({ code }) },
+    { to: user.email, subject: `Verify your EQBIS account`, html: verificationEmailHtml({ link: verifyLink }) },
     c.env,
   );
 
-  return c.redirect('/auth/verify?success=Verification code resent');
+  return c.redirect('/auth/verify?success=A new verification link has been sent to your email.');
 });
 
 // ── Logout ────────────────────────────────────────────────────────────────────
@@ -253,15 +252,16 @@ auth.post(
 
     await logActivity(c.env.DB, { orgId, userId, action: 'registered', module: 'auth', ip: c.req.header('CF-Connecting-IP') });
 
-    // Generate Verification Code
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate Verification Link
+    const vtoken = uuid();
+    const verifyLink = `${c.env.APP_URL}/auth/verify-link?token=${vtoken}`;
     const { verificationEmailHtml } = await import('../lib/email.js');
 
-    // Store in KV (390 minutes = 23400 secs)
-    await c.env.KV.put(`verify:${userId}`, code, { expirationTtl: 390 * 60 });
+    // Store in KV (30 minutes = 1800 secs)
+    await c.env.KV.put(`vlink:${vtoken}`, userId, { expirationTtl: 30 * 60 });
 
     await sendEmail(
-      { to: data.email, subject: `${code} is your EQBIS verification code`, html: verificationEmailHtml({ code }) },
+      { to: data.email, subject: `Verify your EQBIS account`, html: verificationEmailHtml({ link: verifyLink }) },
       c.env,
     );
 
@@ -274,7 +274,7 @@ auth.post(
     });
     const token = await signToken(payload, c.env.JWT_SECRET);
     setCookie(c, 'auth_token', token, COOKIE_OPTS);
-    return c.redirect('/auth/verify');
+    return c.redirect('/portal');
   },
 );
 

@@ -115,17 +115,18 @@ export function contactNotificationHtml(opts: {
   `;
 }
 
-export function verificationEmailHtml(opts: { code: string }): string {
+export function verificationEmailHtml(opts: { link: string }): string {
   return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
       <h2 style="color: #4f46e5;">Verify your EQBIS account</h2>
-      <p>Please enter the following verification code to complete your registration:</p>
-      <div style="background: #f3f4f6; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
-        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #111;">${opts.code}</span>
+      <p>Thank you for registering on EQBIS! Please click the button below to verify your email address and activate your account:</p>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${opts.link}" style="background: #4f46e5; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">Verify Email Address</a>
       </div>
-      <p>This code expires in 390 minutes.</p>
-      <p>If you did not create an account on EQBIS, please ignore this email.</p>
-      <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
+      <p style="font-size: 14px; color: #6b7280;">This link will expire in 30 minutes. If you did not create an account on EQBIS, please ignore this email.</p>
+      <p style="font-size: 12px; color: #9ca3af; margin-top: 20px;">If the button above doesn't work, you can copy and paste this link into your browser:</p>
+      <p style="font-size: 11px; word-break: break-all; color: #9ca3af;">${opts.link}</p>
+      <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
       <p style="font-size: 12px; color: #6b7280; text-align: center;">&copy; ${new Date().getFullYear()} EQBIS. All rights reserved.</p>
     </div>
   `;
